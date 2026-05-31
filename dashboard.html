@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Lunaris</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Share+Tech+Mono&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep:       #000000;
+    --bg-card:       #0a0a14;
+    --border:        rgba(148,163,210,0.1);
+    --border-bright: rgba(148,163,210,0.28);
+    --moon-silver:   #c8d0e8;
+    --accent:        #4f6fbb;
+    --accent-bright: #7da0f0;
+    --text-primary:  #e8ecf7;
+    --text-secondary:#8a97b8;
+    --text-dim:      #3a4460;
+    --success:       #27ae60;
+    --warning:       #f39c12;
+    --danger:        #e74c3c;
+    --discord:       #5865F2;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: #000;
+    color: var(--text-primary);
+    font-family: 'Raleway', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── CURSOR ── */
+  #cursor-dot {
+    position: fixed; pointer-events: none; z-index: 99999;
+    width: 8px; height: 8px; border-radius: 50%; background: #fff;
+    box-shadow: 0 0 8px #fff, 0 0 18px rgba(125,160,240,0.9), 0 0 32px rgba(79,111,187,0.5);
+    transform: translate(-50%,-50%);
+    transition: width .15s, height .15s, box-shadow .15s;
+  }
+  #cursor-ring {
+    position: fixed; pointer-events: none; z-index: 99998;
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 1px solid rgba(125,160,240,0.5);
+    transform: translate(-50%,-50%);
+    transition: width .2s, height .2s, border-color .2s;
+  }
+  body.cursor-hover #cursor-dot { width:12px;height:12px;box-shadow:0 0 12px #fff,0 0 28px rgba(125,160,240,1),0 0 50px rgba(79,111,187,.7); }
+  body.cursor-hover #cursor-ring { width:42px;height:42px;border-color:rgba(125,160,240,.8); }
+
+  /* ── STARFIELD ── */
+  #starfield { position:fixed;inset:0;z-index:0;pointer-events:none; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top:0;left:0;right:0; z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 2rem; height:64px;
+    background:rgba(0,0,0,0.75);
+    backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--border);
+  }
+  nav::after {
+    content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.45;
+  }
+  .nav-brand { display:flex;align-items:center;gap:.75rem;text-decoration:none; }
+  .nav-logo {
+    width:36px;height:36px;border-radius:50%;border:1px solid var(--border-bright);
+    object-fit:cover;box-shadow:0 0 12px rgba(79,111,187,.35);
+  }
+  .nav-title {
+    font-family:'Cinzel',serif;font-weight:700;font-size:1.1rem;
+    letter-spacing:.25em;color:var(--moon-silver);
+    text-shadow:0 0 20px rgba(143,163,212,.4);
+  }
+  .nav-page {
+    position:absolute;left:50%;transform:translateX(-50%);
+    font-family:'Share Tech Mono',monospace;font-size:.7rem;
+    letter-spacing:.3em;color:var(--text-dim);text-transform:uppercase;
+    display:flex;align-items:center;gap:.5rem;
+  }
+  .nav-page::before,.nav-page::after{content:'';display:inline-block;width:20px;height:1px;background:var(--text-dim);}
+  .nav-right { display:flex;align-items:center;gap:.6rem; }
+
+  .nav-btn {
+    display:flex;align-items:center;gap:.4rem;padding:.4rem 1rem;
+    background:transparent;border:1px solid var(--border);border-radius:8px;
+    color:var(--text-secondary);font-family:'Share Tech Mono',monospace;
+    font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;
+    cursor:pointer;transition:all .2s;text-decoration:none;
+  }
+  .nav-btn:hover { border-color:var(--accent);color:var(--accent-bright);background:rgba(79,111,187,.08); }
+  .nav-btn.primary { border-color:var(--accent);color:var(--accent-bright);background:rgba(79,111,187,.1); }
+  .nav-btn.primary:hover { background:rgba(79,111,187,.2);box-shadow:0 0 18px rgba(79,111,187,.3); }
+
+  .nav-avatar-wrap { position:relative; }
+  .nav-avatar {
+    width:34px;height:34px;border-radius:50%;border:1px solid var(--border-bright);
+    background:var(--bg-card);cursor:pointer;display:flex;align-items:center;
+    justify-content:center;transition:all .2s;overflow:hidden;
+  }
+  .nav-avatar:hover { border-color:var(--accent-bright);box-shadow:0 0 14px rgba(79,111,187,.4); }
+  .nav-avatar svg { width:18px;height:18px;fill:var(--text-secondary); }
+  .nav-avatar img { width:100%;height:100%;object-fit:cover; }
+
+  .nav-dropdown {
+    position:absolute;top:calc(100% + 10px);right:0;min-width:190px;
+    background:rgba(5,5,14,0.97);border:1px solid var(--border-bright);
+    border-radius:12px;overflow:hidden;opacity:0;
+    transform:translateY(-6px) scale(.97);pointer-events:none;
+    transition:all .22s cubic-bezier(.34,1.56,.64,1);
+    box-shadow:0 16px 48px rgba(0,0,0,.7);backdrop-filter:blur(24px);
+    padding:.35rem;
+  }
+  .nav-dropdown.open { opacity:1;transform:translateY(0) scale(1);pointer-events:all; }
+  .dropdown-item {
+    display:flex;align-items:center;gap:.6rem;padding:.7rem 1rem;
+    font-family:'Share Tech Mono',monospace;font-size:.7rem;
+    letter-spacing:.08em;color:var(--text-secondary);text-transform:uppercase;
+    cursor:pointer;transition:all .15s;text-decoration:none;border-radius:8px;
+  }
+  .dropdown-item:hover { background:rgba(79,111,187,.12);color:var(--accent-bright); }
+  .dropdown-item.danger:hover { background:rgba(231,76,60,.12);color:var(--danger); }
+  .dropdown-item svg { width:13px;height:13px;fill:currentColor;flex-shrink:0; }
+
+  /* ── TOAST ── */
+  #toast {
+    position:fixed;bottom:2rem;left:50%;
+    transform:translateX(-50%) translateY(80px);
+    background:rgba(8,8,20,.9);border:1px solid var(--border-bright);
+    border-radius:12px;padding:.8rem 1.6rem;
+    font-family:'Share Tech Mono',monospace;font-size:.72rem;
+    letter-spacing:.1em;color:var(--text-primary);z-index:9999;
+    transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .35s;
+    opacity:0;display:flex;align-items:center;gap:.6rem;
+    backdrop-filter:blur(24px);box-shadow:0 8px 32px rgba(0,0,0,.6);
+    white-space:nowrap;
+  }
+  #toast.show { transform:translateX(-50%) translateY(0);opacity:1; }
+  #toast.success { border-color:rgba(39,174,96,.5); }
+  #toast.success::before { content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success); }
+  #toast.error { border-color:rgba(231,76,60,.5); }
+  #toast.error::before { content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--danger);box-shadow:0 0 6px var(--danger); }
+
+  /* ── MAIN ── */
+  main { position:relative;z-index:1;padding-top:64px;min-height:100vh; }
+
+  .page-header {
+    padding:2.5rem 2rem 2rem;
+    border-bottom:1px solid var(--border);
+    background:linear-gradient(135deg,rgba(79,111,187,.05) 0%,transparent 100%);
+    display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;
+  }
+  .page-header h1 {
+    font-family:'Cinzel',serif;font-size:2rem;font-weight:700;
+    letter-spacing:.1em;color:var(--moon-silver);
+    text-shadow:0 0 30px rgba(143,163,212,.3);margin-bottom:.3rem;
+  }
+  .page-header p {
+    font-family:'Share Tech Mono',monospace;font-size:.7rem;
+    letter-spacing:.2em;color:var(--text-dim);text-transform:uppercase;
+  }
+
+  .bot-status {
+    display:flex;align-items:center;gap:.5rem;
+    font-family:'Share Tech Mono',monospace;font-size:.65rem;
+    letter-spacing:.1em;text-transform:uppercase;
+    padding:.4rem .9rem;border-radius:999px;
+    border:1px solid var(--border);color:var(--text-dim);
+    background:rgba(0,0,0,.3);transition:all .3s;
+  }
+  .bot-status.online { border-color:rgba(39,174,96,.4);color:var(--success);background:rgba(39,174,96,.06); }
+  .bot-status.offline { border-color:rgba(231,76,60,.4);color:var(--danger);background:rgba(231,76,60,.06); }
+  .bot-status-dot {
+    width:6px;height:6px;border-radius:50%;background:currentColor;
+    box-shadow:0 0 6px currentColor;animation:pulse-dot 2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.5}}
+
+  .container { max-width:1400px;margin:0 auto;padding:2rem; }
+
+  /* ── GUILD SELECTOR ── */
+  .guild-section { margin-bottom:2.5rem; }
+  .guild-section-title {
+    font-family:'Share Tech Mono',monospace;font-size:.65rem;
+    letter-spacing:.3em;color:var(--text-dim);text-transform:uppercase;
+    margin-bottom:1rem;
+  }
+  .guilds-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+    gap:1rem;
+  }
+  .guild-card {
+    background:rgba(5,5,14,.6);border:1px solid var(--border);
+    border-radius:14px;padding:1.2rem 1rem;
+    display:flex;flex-direction:column;align-items:center;text-align:center;
+    gap:.6rem;transition:all .2s;backdrop-filter:blur(8px);
+  }
+  .guild-card.has-bot { cursor:pointer; }
+  .guild-card.has-bot:hover { border-color:var(--accent);box-shadow:0 4px 20px rgba(79,111,187,.15); }
+  .guild-card.has-bot.active { border-color:var(--accent-bright);background:rgba(79,111,187,.1);box-shadow:0 0 20px rgba(79,111,187,.2); }
+  .guild-card.invite-bot { border-color:rgba(243,156,18,.2);background:rgba(243,156,18,.03); }
+  .guild-card img, .guild-card-initial {
+    width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid var(--border-bright);
+  }
+  .guild-card-initial {
+    background:rgba(79,111,187,.2);display:flex;align-items:center;justify-content:center;
+    font-family:'Cinzel',serif;font-size:1.2rem;color:var(--accent-bright);
+  }
+  .guild-card-name {
+    font-family:'Share Tech Mono',monospace;font-size:.68rem;letter-spacing:.04em;
+    color:var(--text-secondary);line-height:1.3;word-break:break-word;
+  }
+  .guild-card-badge {
+    font-family:'Share Tech Mono',monospace;font-size:.55rem;letter-spacing:.12em;
+    text-transform:uppercase;padding:.2rem .5rem;border-radius:999px;border:1px solid;
+  }
+  .guild-card-badge.active-badge { color:var(--success);border-color:rgba(39,174,96,.4);background:rgba(39,174,96,.08); }
+  .guild-card-badge.invite-badge { color:var(--warning);border-color:rgba(243,156,18,.4);background:rgba(243,156,18,.08); }
+  .invite-btn {
+    margin-top:.3rem;padding:.35rem .8rem;
+    background:rgba(243,156,18,.1);border:1px solid rgba(243,156,18,.35);
+    border-radius:8px;color:var(--warning);
+    font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;
+    cursor:pointer;transition:all .2s;
+  }
+  .invite-btn:hover { background:rgba(243,156,18,.2);border-color:var(--warning);box-shadow:0 0 10px rgba(243,156,18,.2); }
+
+  /* ── COMMANDS ── */
+  .commands-header {
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;
+  }
+  .commands-title { font-family:'Cinzel',serif;font-size:1.2rem;font-weight:600;letter-spacing:.08em;color:var(--moon-silver); }
+  .commands-meta { font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.15em;color:var(--text-dim);text-transform:uppercase; }
+  .search-bar {
+    width:100%;max-width:320px;padding:.5rem 1rem;
+    background:rgba(79,111,187,.05);border:1px solid var(--border);border-radius:8px;
+    color:var(--text-primary);font-family:'Share Tech Mono',monospace;font-size:.75rem;
+    letter-spacing:.05em;transition:all .2s;
+  }
+  .search-bar:focus { outline:none;border-color:var(--accent);background:rgba(79,111,187,.1);box-shadow:0 0 12px rgba(79,111,187,.15); }
+  .search-bar::placeholder { color:var(--text-dim); }
+  .commands-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1rem; }
+
+  /* ── COMMAND CARD ── */
+  .cmd-card {
+    background:rgba(5,5,14,.6);border:1px solid var(--border);border-radius:14px;
+    overflow:hidden;transition:all .25s;backdrop-filter:blur(8px);
+  }
+  .cmd-card:hover { border-color:var(--border-bright);box-shadow:0 6px 24px rgba(79,111,187,.12); }
+  .cmd-card.disabled { opacity:.5; }
+  .cmd-card-header {
+    display:flex;align-items:center;justify-content:space-between;
+    padding:1rem 1.2rem;border-bottom:1px solid var(--border);
+    background:rgba(79,111,187,.03);
+  }
+  .cmd-name { font-family:'Share Tech Mono',monospace;font-size:.9rem;letter-spacing:.08em;color:var(--accent-bright); }
+  .cmd-name span { color:var(--text-dim); }
+  .toggle-wrap { display:flex;align-items:center;gap:.5rem; }
+  .toggle-label { font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.1em;color:var(--text-dim);text-transform:uppercase; }
+  .toggle {
+    position:relative;width:38px;height:20px;
+    background:rgba(79,111,187,.15);border:1px solid var(--border);
+    border-radius:999px;cursor:pointer;transition:all .25s;flex-shrink:0;
+  }
+  .toggle.on { background:rgba(39,174,96,.25);border-color:rgba(39,174,96,.5); }
+  .toggle::after {
+    content:'';position:absolute;top:2px;left:2px;
+    width:14px;height:14px;border-radius:50%;
+    background:var(--text-dim);transition:all .25s;
+  }
+  .toggle.on::after { transform:translateX(18px);background:var(--success);box-shadow:0 0 6px var(--success); }
+  .cmd-card-body { padding:1rem 1.2rem; }
+  .cmd-desc { font-size:.82rem;color:var(--text-secondary);line-height:1.6;margin-bottom:1rem; }
+  .params-label {
+    font-family:'Share Tech Mono',monospace;font-size:.6rem;
+    letter-spacing:.2em;color:var(--text-dim);text-transform:uppercase;
+    margin-bottom:.6rem;display:flex;align-items:center;gap:.5rem;
+  }
+  .params-label::after { content:'';flex:1;height:1px;background:var(--border); }
+  .param-row { display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem;align-items:center; }
+  .param-name-label {
+    font-family:'Share Tech Mono',monospace;font-size:.68rem;
+    color:var(--text-secondary);letter-spacing:.05em;
+    display:flex;align-items:center;gap:.3rem;
+  }
+  .param-required { color:var(--danger);font-size:.6rem; }
+  .param-type-badge {
+    display:inline-block;padding:.1rem .4rem;
+    background:rgba(79,111,187,.1);border:1px solid rgba(79,111,187,.2);
+    border-radius:4px;font-size:.55rem;color:var(--accent);
+    font-family:'Share Tech Mono',monospace;letter-spacing:.05em;margin-left:.3rem;
+  }
+  .param-input {
+    padding:.4rem .7rem;background:rgba(79,111,187,.05);
+    border:1px solid var(--border);border-radius:6px;
+    color:var(--text-primary);font-family:'Share Tech Mono',monospace;
+    font-size:.72rem;transition:all .2s;width:100%;
+  }
+  .param-input:focus { outline:none;border-color:var(--accent);background:rgba(79,111,187,.1); }
+  .param-input::placeholder { color:var(--text-dim); }
+  .cmd-save-btn {
+    width:100%;margin-top:.9rem;padding:.55rem;
+    background:rgba(79,111,187,.1);border:1px solid var(--border);
+    border-radius:8px;color:var(--text-secondary);
+    font-family:'Share Tech Mono',monospace;font-size:.68rem;
+    letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;
+  }
+  .cmd-save-btn:hover { border-color:var(--accent);color:var(--accent-bright);background:rgba(79,111,187,.18); }
+  .cmd-save-btn.saved { border-color:rgba(39,174,96,.4);color:var(--success);background:rgba(39,174,96,.08); }
+
+  /* ── EDIT MESSAGE BUTTON ── */
+  .cmd-edit-msg-btn {
+    display:flex;align-items:center;gap:.5rem;
+    width:100%;margin-top:.6rem;padding:.5rem .8rem;
+    background:rgba(88,101,242,.08);border:1px solid rgba(88,101,242,.25);
+    border-radius:8px;color:#8b9cf7;
+    font-family:'Share Tech Mono',monospace;font-size:.65rem;
+    letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;
+  }
+  .cmd-edit-msg-btn:hover {
+    border-color:rgba(88,101,242,.6);color:#a8b4ff;
+    background:rgba(88,101,242,.15);box-shadow:0 0 14px rgba(88,101,242,.2);
+  }
+  .cmd-edit-msg-btn svg { width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;flex-shrink:0; }
+
+  /* ── EMPTY / LOADING ── */
+  .state-box {
+    text-align:center;padding:4rem 2rem;
+    font-family:'Share Tech Mono',monospace;font-size:.75rem;
+    letter-spacing:.15em;color:var(--text-dim);text-transform:uppercase;
+  }
+  .state-box svg { width:40px;height:40px;margin-bottom:1rem;opacity:.3;display:block;margin:0 auto 1rem; }
+  .spinner-ring {
+    width:32px;height:32px;border-radius:50%;
+    border:2px solid var(--border);border-top-color:var(--accent);
+    animation:spin-fast .8s linear infinite;margin:0 auto 1rem;
+  }
+  @keyframes spin-fast{to{transform:rotate(360deg)}}
+
+  /* ── FOOTER ── */
+  footer {
+    position:relative;z-index:1;border-top:1px solid var(--border);
+    padding:2rem 2.5rem;display:flex;align-items:center;
+    justify-content:space-between;flex-wrap:wrap;gap:1rem;
+    background:rgba(0,0,0,.5);
+  }
+  .footer-brand { font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.2em;color:var(--moon-silver); }
+  .footer-meta { font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:.15em;color:var(--text-dim); }
+
+  ::-webkit-scrollbar { width:6px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:rgba(79,111,187,.2);border-radius:3px; }
+  ::-webkit-scrollbar-thumb:hover { background:rgba(79,111,187,.4); }
+
+  /* ══════════════════════════════════════════
+     MESSAGE BUILDER OVERLAY
+  ══════════════════════════════════════════ */
+  #msgBuilderOverlay {
+    position:fixed;inset:0;z-index:1000;
+    background:rgba(0,0,0,.75);
+    backdrop-filter:blur(6px);
+    opacity:0;pointer-events:none;
+    transition:opacity .3s;
+  }
+  #msgBuilderOverlay.open { opacity:1;pointer-events:all; }
+
+  #msgBuilderPanel {
+    position:fixed;top:0;right:0;bottom:0;z-index:1001;
+    width:min(900px, 95vw);
+    background:rgba(4,4,14,.97);
+    border-left:1px solid var(--border-bright);
+    display:flex;flex-direction:column;
+    transform:translateX(100%);
+    transition:transform .35s cubic-bezier(.4,0,.2,1);
+    box-shadow:-20px 0 60px rgba(0,0,0,.8);
+  }
+  #msgBuilderPanel.open { transform:translateX(0); }
+
+  /* Panel header */
+  .mb-header {
+    display:flex;align-items:center;justify-content:space-between;
+    padding:1.2rem 1.5rem;
+    border-bottom:1px solid var(--border);
+    background:rgba(79,111,187,.04);
+    flex-shrink:0;
+  }
+  .mb-header-left { display:flex;align-items:center;gap:.75rem; }
+  .mb-header-icon {
+    width:32px;height:32px;border-radius:8px;
+    background:rgba(88,101,242,.15);border:1px solid rgba(88,101,242,.3);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .mb-header-icon svg { width:15px;height:15px;fill:none;stroke:#8b9cf7;stroke-width:2; }
+  .mb-title {
+    font-family:'Cinzel',serif;font-size:1rem;font-weight:600;
+    letter-spacing:.08em;color:var(--moon-silver);
+  }
+  .mb-subtitle {
+    font-family:'Share Tech Mono',monospace;font-size:.6rem;
+    letter-spacing:.15em;color:var(--text-dim);text-transform:uppercase;
+    margin-top:.15rem;
+  }
+  .mb-close {
+    width:34px;height:34px;border-radius:8px;
+    background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.2);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;transition:all .2s;color:var(--danger);
+  }
+  .mb-close:hover { background:rgba(231,76,60,.18);border-color:rgba(231,76,60,.5); }
+  .mb-close svg { width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.5; }
+
+  /* Tabs */
+  .mb-tabs {
+    display:flex;gap:0;border-bottom:1px solid var(--border);
+    flex-shrink:0;overflow-x:auto;
+    scrollbar-width:none;
+  }
+  .mb-tabs::-webkit-scrollbar { display:none; }
+  .mb-tab {
+    padding:.7rem 1.2rem;
+    font-family:'Share Tech Mono',monospace;font-size:.65rem;
+    letter-spacing:.1em;color:var(--text-dim);text-transform:uppercase;
+    cursor:pointer;transition:all .2s;
+    border-bottom:2px solid transparent;
+    white-space:nowrap;flex-shrink:0;
+  }
+  .mb-tab:hover { color:var(--text-secondary);background:rgba(79,111,187,.04); }
+  .mb-tab.active {
+    color:var(--accent-bright);border-bottom-color:var(--accent-bright);
+    background:rgba(79,111,187,.06);
+  }
+
+  /* Body: two-column */
+  .mb-body {
+    flex:1;display:flex;overflow:hidden;min-height:0;
+  }
+
+  /* Left: editor */
+  .mb-editor {
+    flex:1;overflow-y:auto;padding:1.5rem;
+    border-right:1px solid var(--border);
+    display:flex;flex-direction:column;gap:1.2rem;
+  }
+
+  /* Field group */
+  .mb-field {
+    display:flex;flex-direction:column;gap:.5rem;
+  }
+  .mb-field-header {
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:.1rem;
+  }
+  .mb-field-label {
+    font-family:'Share Tech Mono',monospace;font-size:.62rem;
+    letter-spacing:.18em;color:var(--text-dim);text-transform:uppercase;
+  }
+  .mb-field-hint {
+    font-family:'Share Tech Mono',monospace;font-size:.55rem;
+    letter-spacing:.08em;color:var(--text-dim);opacity:.7;
+  }
+
+  /* Variable chips */
+  .mb-var-chips {
+    display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.2rem;
+  }
+  .mb-var-chip {
+    padding:.2rem .5rem;
+    background:rgba(79,111,187,.12);border:1px solid rgba(79,111,187,.25);
+    border-radius:4px;
+    font-family:'Share Tech Mono',monospace;font-size:.6rem;
+    color:var(--accent-bright);cursor:pointer;transition:all .15s;
+    letter-spacing:.04em;user-select:none;
+  }
+  .mb-var-chip:hover {
+    background:rgba(79,111,187,.25);border-color:var(--accent);
+    box-shadow:0 0 8px rgba(79,111,187,.25);
+    transform:translateY(-1px);
+  }
+
+  /* Inputs */
+  .mb-input, .mb-textarea {
+    width:100%;
+    background:rgba(79,111,187,.05);
+    border:1px solid var(--border);border-radius:8px;
+    color:var(--text-primary);
+    font-family:'Share Tech Mono',monospace;font-size:.75rem;
+    letter-spacing:.03em;line-height:1.5;
+    transition:all .2s;padding:.6rem .9rem;
+  }
+  .mb-textarea { resize:vertical;min-height:80px; }
+  .mb-input:focus,.mb-textarea:focus {
+    outline:none;border-color:var(--accent);
+    background:rgba(79,111,187,.1);box-shadow:0 0 12px rgba(79,111,187,.15);
+  }
+  .mb-input::placeholder,.mb-textarea::placeholder { color:var(--text-dim); }
+
+  /* Color picker row */
+  .mb-color-row {
+    display:flex;align-items:center;gap:.75rem;
+  }
+  .mb-color-swatch {
+    width:36px;height:36px;border-radius:8px;border:2px solid var(--border-bright);
+    cursor:pointer;transition:border-color .2s;flex-shrink:0;
+    position:relative;overflow:hidden;
+  }
+  .mb-color-swatch:hover { border-color:var(--accent-bright); }
+  .mb-color-swatch input[type=color] {
+    position:absolute;inset:-4px;opacity:0;cursor:pointer;width:calc(100%+8px);height:calc(100%+8px);
+  }
+  .mb-color-hex {
+    flex:1;background:rgba(79,111,187,.05);
+    border:1px solid var(--border);border-radius:8px;
+    color:var(--text-primary);font-family:'Share Tech Mono',monospace;
+    font-size:.75rem;padding:.55rem .9rem;transition:all .2s;
+  }
+  .mb-color-hex:focus { outline:none;border-color:var(--accent);background:rgba(79,111,187,.1); }
+
+  /* Button label list */
+  .mb-btn-labels { display:flex;flex-direction:column;gap:.5rem; }
+  .mb-btn-label-row { display:flex;align-items:center;gap:.6rem; }
+  .mb-btn-emoji {
+    width:28px;text-align:center;font-size:.9rem;flex-shrink:0;
+  }
+
+  /* Divider */
+  .mb-divider {
+    height:1px;background:var(--border);margin:.2rem 0;
+  }
+
+  /* Right: preview */
+  .mb-preview {
+    width:340px;flex-shrink:0;padding:1.2rem;overflow-y:auto;
+    background:rgba(2,2,10,.5);
+    display:flex;flex-direction:column;gap:.8rem;
+  }
+  .mb-preview-label {
+    font-family:'Share Tech Mono',monospace;font-size:.6rem;
+    letter-spacing:.25em;color:var(--text-dim);text-transform:uppercase;
+    display:flex;align-items:center;gap:.5rem;
+    flex-shrink:0;
+  }
+  .mb-preview-label::after { content:'';flex:1;height:1px;background:var(--border); }
+
+  /* Discord embed mockup */
+  .discord-mockup {
+    background:#313338;border-radius:8px;overflow:hidden;
+    font-family:'Whitney','Helvetica Neue',sans-serif;
+  }
+  .discord-msg-area {
+    padding:.75rem 1rem;display:flex;gap:.75rem;
+  }
+  .discord-avatar {
+    width:40px;height:40px;border-radius:50%;flex-shrink:0;
+    background:linear-gradient(135deg,#5865f2,#7289da);
+    display:flex;align-items:center;justify-content:center;
+    font-size:.85rem;color:#fff;font-weight:700;
+  }
+  .discord-content { flex:1;min-width:0; }
+  .discord-username {
+    font-size:.85rem;font-weight:600;color:#f2f3f5;
+    line-height:1.2;margin-bottom:.2rem;display:flex;align-items:center;gap:.4rem;
+  }
+  .discord-bot-tag {
+    font-size:.55rem;background:#5865f2;color:#fff;
+    padding:.1rem .3rem;border-radius:3px;font-weight:600;letter-spacing:.03em;
+  }
+  .discord-timestamp { font-size:.65rem;color:#949ba4; }
+  .discord-embed {
+    margin-top:.4rem;
+    border-left:4px solid var(--embed-color, #4f6fbb);
+    background:#2b2d31;border-radius:0 4px 4px 0;
+    overflow:hidden;
+  }
+  .discord-embed-inner { padding:.6rem .75rem; }
+  .discord-embed-banner {
+    width:100%;height:80px;object-fit:cover;display:block;
+    background:linear-gradient(135deg,rgba(79,111,187,.4),rgba(88,101,242,.2));
+  }
+  .discord-embed-banner.placeholder {
+    display:flex;align-items:center;justify-content:center;
+    font-size:.6rem;color:#4a4f5a;letter-spacing:.1em;font-family:'Share Tech Mono',monospace;
+  }
+  .discord-embed-title {
+    font-size:.9rem;font-weight:700;color:#f2f3f5;margin-bottom:.3rem;
+    word-break:break-word;
+  }
+  .discord-embed-desc {
+    font-size:.78rem;color:#dbdee1;line-height:1.5;word-break:break-word;white-space:pre-wrap;
+  }
+  .discord-embed-field {
+    margin-top:.4rem;
+  }
+  .discord-embed-field-name { font-size:.75rem;font-weight:600;color:#f2f3f5;margin-bottom:.1rem; }
+  .discord-embed-field-value { font-size:.72rem;color:#dbdee1;line-height:1.4; }
+  .discord-embed-footer {
+    padding:.4rem .75rem;border-top:1px solid rgba(255,255,255,.06);
+    font-size:.65rem;color:#949ba4;
+  }
+
+  /* Discord buttons mockup */
+  .discord-btns {
+    padding:.5rem .75rem .75rem;display:flex;flex-wrap:wrap;gap:.35rem;
+  }
+  .discord-btn-mock {
+    padding:.35rem .75rem;border-radius:3px;
+    font-size:.72rem;font-weight:600;color:#fff;
+    background:#4e5058;cursor:default;letter-spacing:.01em;
+  }
+  .discord-btn-mock.green { background:#248046; }
+  .discord-btn-mock.yellow { background:#9c7a00; }
+  .discord-btn-mock.red { background:#da373c; }
+
+  /* Footer bar */
+  .mb-footer {
+    display:flex;align-items:center;justify-content:flex-end;gap:.8rem;
+    padding:1rem 1.5rem;border-top:1px solid var(--border);
+    flex-shrink:0;background:rgba(0,0,0,.3);
+  }
+  .mb-btn {
+    padding:.55rem 1.3rem;border-radius:8px;cursor:pointer;
+    font-family:'Share Tech Mono',monospace;font-size:.7rem;
+    letter-spacing:.1em;text-transform:uppercase;transition:all .2s;
+    border:1px solid;
+  }
+  .mb-btn.cancel {
+    background:transparent;border-color:var(--border);color:var(--text-secondary);
+  }
+  .mb-btn.cancel:hover { border-color:var(--border-bright);color:var(--text-primary); }
+  .mb-btn.save {
+    background:rgba(79,111,187,.15);border-color:var(--accent);color:var(--accent-bright);
+  }
+  .mb-btn.save:hover { background:rgba(79,111,187,.28);box-shadow:0 0 18px rgba(79,111,187,.3); }
+  .mb-btn.save.saving { opacity:.6;pointer-events:none; }
+
+  /* Responsive: hide preview on small screens */
+  @media(max-width:700px){
+    .mb-preview { display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<div id="toast"></div>
+<canvas id="starfield"></canvas>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-brand">
+    <img src="LunarisIcon.png" class="nav-logo" alt="Lunaris">
+    <span class="nav-title">LUNARIS</span>
+  </a>
+  <div class="nav-page">DASHBOARD</div>
+  <div class="nav-right">
+    <div id="userDisplay" style="display:none;align-items:center;gap:.5rem;font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--moon-silver);letter-spacing:.05em;"></div>
+    <div class="nav-avatar-wrap">
+      <div class="nav-avatar" id="navAvatar" onclick="toggleDropdown()">
+        <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+      </div>
+      <div class="nav-dropdown" id="dropdown">
+        <a href="index.html" class="dropdown-item">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+          Home
+        </a>
+        <a href="#" class="dropdown-item danger" onclick="logout()">
+          <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          Log Out
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main>
+  <div class="page-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p>SEA Military · Command Configuration</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;">
+      <div class="bot-status" id="botStatus">
+        <div class="bot-status-dot"></div>
+        Checking...
+      </div>
+      <div id="botMeta" style="font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--text-dim);letter-spacing:.1em;"></div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Guild selector -->
+    <div class="guild-section">
+      <div class="guild-section-title">// Select Server</div>
+      <div class="guilds-grid" id="guildsGrid">
+        <div class="state-box" style="padding:1rem;">
+          <div class="spinner-ring"></div>
+          Loading servers...
+        </div>
+      </div>
+    </div>
+
+    <!-- Commands area -->
+    <div id="commandsArea" style="display:none;">
+      <div class="commands-header">
+        <div>
+          <div class="commands-title" id="commandsTitle">Commands</div>
+          <div class="commands-meta" id="commandsMeta"></div>
+        </div>
+        <input type="text" class="search-bar" id="searchBar" placeholder="Search commands..." oninput="filterCommands()">
+      </div>
+      <div class="commands-grid" id="commandsGrid"></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <span class="footer-brand">LUNARIS</span>
+  <span class="footer-meta">SEA MILITARY · © 2026</span>
+</footer>
+
+<!-- ════════════════════════════════════════
+     MESSAGE BUILDER PANEL
+════════════════════════════════════════ -->
+<div id="msgBuilderOverlay" onclick="closeMsgBuilder()"></div>
+
+<div id="msgBuilderPanel">
+  <!-- Header -->
+  <div class="mb-header">
+    <div class="mb-header-left">
+      <div class="mb-header-icon">
+        <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </div>
+      <div>
+        <div class="mb-title" id="mbTitle">Edit Message</div>
+        <div class="mb-subtitle" id="mbSubtitle">Configure output template</div>
+      </div>
+    </div>
+    <div class="mb-close" onclick="closeMsgBuilder()">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="mb-tabs" id="mbTabs"></div>
+
+  <!-- Body -->
+  <div class="mb-body">
+    <div class="mb-editor" id="mbEditor"></div>
+    <div class="mb-preview">
+      <div class="mb-preview-label">Live Preview</div>
+      <div class="discord-mockup" id="discordPreview">
+        <div class="discord-msg-area">
+          <div class="discord-avatar">L</div>
+          <div class="discord-content">
+            <div class="discord-username">
+              Lunaris
+              <span class="discord-bot-tag">BOT</span>
+              <span class="discord-timestamp" id="previewTimestamp">Today at 00:00</span>
+            </div>
+            <div class="discord-embed" id="previewEmbed" style="--embed-color:#4f6fbb;">
+              <div class="discord-embed-banner placeholder" id="previewBanner">NO BANNER</div>
+              <div class="discord-embed-inner">
+                <div class="discord-embed-title" id="previewTitle">Title</div>
+                <div class="discord-embed-desc" id="previewDesc">Description</div>
+                <div id="previewFields"></div>
+              </div>
+              <div class="discord-embed-footer" id="previewFooter"></div>
+            </div>
+            <div class="discord-btns" id="previewBtns"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="mb-footer">
+    <button class="mb-btn cancel" onclick="closeMsgBuilder()">Cancel</button>
+    <button class="mb-btn save" id="mbSaveBtn" onclick="saveMsgConfig()">Save Template</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════
+const DISCORD_CLIENT_ID = '1509283594357702799';
+const BOT_API           = 'http://localhost:3000';
+const REDIRECT_URI      = window.location.origin + window.location.pathname;
+
+const TYPE_LABELS = {
+  1:'sub-command',2:'sub-group',3:'string',4:'integer',
+  5:'boolean',6:'user',7:'channel',8:'role',9:'mentionable',
+  10:'number',11:'attachment'
+};
+
+// ═══════════════════════════════════════════════════
+//  MESSAGE BUILDER DEFINITIONS
+//  Commands that have configurable message output
+// ═══════════════════════════════════════════════════
+const MSG_COMMANDS = ['raid', 'schedule-event', 'start', 'end', 'rules'];
+
+// Schema for each command's tabs and fields
+const MSG_SCHEMAS = {
+  'raid': {
+    tabs: ['Schedule'],
+    fields: {
+      'Schedule': [
+        { key:'title',       label:'Title',       type:'input',    vars:['{title}'],               hint:'Embed title' },
+        { key:'description', label:'Description', type:'textarea', vars:['{title}','{time}','{leader}','{link}'], hint:'Body text, supports variables' },
+        { key:'timeLine',    label:'Time Line',   type:'input',    vars:['{time}'],                hint:'e.g. ⏰ {time}' },
+        { key:'linkLine',    label:'Link Line',   type:'input',    vars:['{link}'],                hint:'e.g. 🔗 {link}' },
+        { key:'leaderLine',  label:'Leader Line', type:'input',    vars:['{leader}'],              hint:'e.g. 👑 {leader}' },
+        { key:'bannerUrl',   label:'Banner URL',  type:'input',    vars:[],                        hint:'Direct image URL' },
+        { key:'accentColor', label:'Accent Color',type:'color',    vars:[],                        hint:'Left border color' },
+        { key:'btnAttend',   label:'Button: Attending',   type:'input', vars:[], hint:'Button label text' },
+        { key:'btnHesitant', label:'Button: Hesitant',    type:'input', vars:[], hint:'Button label text' },
+        { key:'btnUnavail',  label:'Button: Unavailable', type:'input', vars:[], hint:'Button label text' },
+      ]
+    }
+  },
+  'schedule-event': {
+    tabs: ['Schedule'],
+    fields: {
+      'Schedule': [
+        { key:'title',       label:'Title',       type:'input',    vars:['{title}'],               hint:'Embed title' },
+        { key:'description', label:'Description', type:'textarea', vars:['{title}','{time}','{host}','{link}'], hint:'Body text, supports variables' },
+        { key:'timeLine',    label:'Time Line',   type:'input',    vars:['{time}'],                hint:'e.g. ⏰ {time}' },
+        { key:'linkLine',    label:'Link Line',   type:'input',    vars:['{link}'],                hint:'e.g. 🔗 {link}' },
+        { key:'hostLine',    label:'Host Line',   type:'input',    vars:['{host}'],                hint:'e.g. 👑 {host}' },
+        { key:'bannerUrl',   label:'Banner URL',  type:'input',    vars:[],                        hint:'Direct image URL' },
+        { key:'accentColor', label:'Accent Color',type:'color',    vars:[],                        hint:'Left border color' },
+        { key:'btnAttend',   label:'Button: Attending',   type:'input', vars:[], hint:'Button label text' },
+        { key:'btnHesitant', label:'Button: Hesitant',    type:'input', vars:[], hint:'Button label text' },
+        { key:'btnUnavail',  label:'Button: Unavailable', type:'input', vars:[], hint:'Button label text' },
+      ]
+    }
+  },
+  'start': {
+    tabs: ['Event', 'Raid'],
+    fields: {
+      'Event': [
+        { key:'header',   label:'Header Text',  type:'input',    vars:['{name}'],                   hint:'e.g. 🎯 {name} has begun!' },
+        { key:'hostLine', label:'Host Line',     type:'input',    vars:['{host}'],                   hint:'e.g. 👑 Hosted by {host}' },
+        { key:'linkLine', label:'Link Line',     type:'input',    vars:['{link}'],                   hint:'e.g. 🔗 {link}' },
+        { key:'notes',    label:'Notes Line',    type:'input',    vars:['{notes}'],                  hint:'e.g. 📝 {notes}' },
+        { key:'bannerUrl',label:'Banner URL',    type:'input',    vars:[],                           hint:'Direct image URL' },
+        { key:'accentColor', label:'Accent Color',type:'color',   vars:[],                           hint:'Left border color' },
+      ],
+      'Raid': [
+        { key:'header',     label:'Header Text',  type:'input',    vars:['{name}'],                  hint:'e.g. ⚔️ {name} has started!' },
+        { key:'hostLine',   label:'Host Line',    type:'input',    vars:['{host}'],                  hint:'e.g. 👑 Led by {host}' },
+        { key:'linkLine',   label:'Link Line',    type:'input',    vars:['{link}'],                  hint:'e.g. 🔗 {link}' },
+        { key:'notes',      label:'Notes Line',   type:'input',    vars:['{notes}'],                 hint:'e.g. 📝 {notes}' },
+        { key:'bannerUrl',  label:'Banner URL',   type:'input',    vars:[],                          hint:'Direct image URL' },
+        { key:'accentColor',label:'Accent Color', type:'color',    vars:[],                          hint:'Left border color' },
+      ]
+    }
+  },
+  'end': {
+    tabs: ['Event', 'Raid'],
+    fields: {
+      'Event': [
+        { key:'header',     label:'Header Text',    type:'input',    vars:['{title}'],               hint:'e.g. ✅ {title} Complete' },
+        { key:'coHostLine', label:'Co-Host Line',   type:'input',    vars:['{coHost}'],              hint:'e.g. 🤝 Co-hosted by {coHost}' },
+        { key:'attendLine', label:'Attendees Line', type:'input',    vars:['{attendees}'],           hint:'e.g. 👥 Attendees: {attendees}' },
+        { key:'passLine',   label:'Passed Line',    type:'input',    vars:['{passed}'],              hint:'e.g. ✅ Passed: {passed}' },
+        { key:'failLine',   label:'Failed Line',    type:'input',    vars:['{failed}'],              hint:'e.g. ❌ Failed: {failed}' },
+        { key:'bonusLine',  label:'Bonus EXP Line', type:'input',    vars:['{bonusExp}'],            hint:'e.g. ⭐ Bonus EXP: {bonusExp}' },
+        { key:'mapLine',    label:'Map Line',       type:'input',    vars:['{map}'],                 hint:'e.g. 🗺️ Map: {map}' },
+        { key:'durLine',    label:'Duration Line',  type:'input',    vars:['{duration}'],            hint:'e.g. ⏱️ Duration: {duration}' },
+        { key:'notes',      label:'Notes Line',     type:'input',    vars:['{notes}'],              hint:'e.g. 📝 {notes}' },
+        { key:'bannerUrl',  label:'Banner URL',     type:'input',    vars:[],                       hint:'Direct image URL' },
+        { key:'accentColor',label:'Accent Color',   type:'color',    vars:[],                       hint:'Left border color' },
+      ],
+      'Raid': [
+        { key:'header',     label:'Header Text',    type:'input',    vars:['{title}'],               hint:'e.g. ⚔️ {title} Ended' },
+        { key:'coHostLine', label:'Co-Host Line',   type:'input',    vars:['{coHost}'],              hint:'e.g. 🤝 Co-led by {coHost}' },
+        { key:'attendLine', label:'Attendees Line', type:'input',    vars:['{attendees}'],           hint:'e.g. 👥 Attendees: {attendees}' },
+        { key:'passLine',   label:'Passed Line',    type:'input',    vars:['{passed}'],              hint:'e.g. ✅ Cleared: {passed}' },
+        { key:'failLine',   label:'Failed Line',    type:'input',    vars:['{failed}'],              hint:'e.g. ❌ Failed: {failed}' },
+        { key:'bonusLine',  label:'Bonus EXP Line', type:'input',    vars:['{bonusExp}'],            hint:'e.g. ⭐ Bonus EXP: {bonusExp}' },
+        { key:'mapLine',    label:'Map Line',       type:'input',    vars:['{map}'],                 hint:'e.g. 🗺️ Map: {map}' },
+        { key:'durLine',    label:'Duration Line',  type:'input',    vars:['{duration}'],            hint:'e.g. ⏱️ Duration: {duration}' },
+        { key:'notes',      label:'Notes Line',     type:'textarea', vars:['{notes}'],              hint:'e.g. 📝 {notes}' },
+        { key:'bannerUrl',  label:'Banner URL',     type:'input',    vars:[],                       hint:'Direct image URL' },
+        { key:'accentColor',label:'Accent Color',   type:'color',    vars:[],                       hint:'Left border color' },
+      ]
+    }
+  },
+  'rules': {
+    tabs: ['Rules'],
+    fields: {
+      'Rules': [
+        { key:'bannerUrl',   label:'Banner URL',   type:'input', vars:[], hint:'Direct image URL for the rules banner' },
+        { key:'accentColor', label:'Accent Color', type:'color', vars:[], hint:'Left border accent color' },
+      ]
+    }
+  }
+};
+
+// ═══════════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════════
+function getToken()  { return sessionStorage.getItem('lunaris_discord_token'); }
+function getUser()   { return JSON.parse(sessionStorage.getItem('lunaris_discord_user') || 'null'); }
+function logout() { sessionStorage.clear(); window.location.href = 'index.html'; }
+
+async function fetchDiscordUser(token) {
+  const r = await fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${token}` } });
+  if (!r.ok) throw new Error('Auth failed');
+  return r.json();
+}
+async function fetchGuilds(token) {
+  const r = await fetch('https://discord.com/api/users/@me/guilds', { headers: { Authorization: `Bearer ${token}` } });
+  if (!r.ok) throw new Error('Guild fetch failed');
+  return r.json();
+}
+function extractToken() {
+  const h = window.location.hash.substring(1);
+  if (!h) return null;
+  const p = new URLSearchParams(h);
+  const t = p.get('access_token');
+  if (t) { history.replaceState(null,'',window.location.pathname); return t; }
+  return null;
+}
+
+(async function init() {
+  const fresh = extractToken();
+  if (fresh) {
+    sessionStorage.setItem('lunaris_discord_token', fresh);
+    try {
+      const user = await fetchDiscordUser(fresh);
+      sessionStorage.setItem('lunaris_discord_user', JSON.stringify(user));
+    } catch { window.location.href = 'index.html'; return; }
+  }
+  const token = getToken();
+  const user  = getUser();
+  if (!token || !user) { window.location.href = 'index.html'; return; }
+
+  const ud = document.getElementById('userDisplay');
+  ud.style.display = 'flex';
+  ud.textContent = user.global_name || user.username;
+  if (user.avatar) {
+    const img = document.createElement('img');
+    img.src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=64`;
+    img.style.cssText = 'width:28px;height:28px;border-radius:50%;border:1px solid var(--border-bright);object-fit:cover;';
+    document.getElementById('navAvatar').innerHTML = '';
+    document.getElementById('navAvatar').appendChild(img);
+  }
+  checkBotHealth();
+  loadGuilds(token);
+})();
+
+// ═══════════════════════════════════════════════════
+//  BOT HEALTH
+// ═══════════════════════════════════════════════════
+async function checkBotHealth() {
+  const el   = document.getElementById('botStatus');
+  const meta = document.getElementById('botMeta');
+  try {
+    const r = await fetch(`${BOT_API}/health`);
+    if (!r.ok) throw new Error();
+    const d = await r.json();
+    if (d.online) {
+      el.className = 'bot-status online';
+      el.innerHTML = '<div class="bot-status-dot"></div> Bot Online';
+      const upSec = Math.floor((d.uptime||0)/1000);
+      const upStr = upSec > 3600
+        ? `${Math.floor(upSec/3600)}h ${Math.floor((upSec%3600)/60)}m`
+        : `${Math.floor(upSec/60)}m ${upSec%60}s`;
+      meta.textContent = `Ping: ${d.ping}ms · Uptime: ${upStr}`;
+    } else throw new Error();
+  } catch {
+    el.className = 'bot-status offline';
+    el.innerHTML = '<div class="bot-status-dot"></div> Bot Offline';
+    meta.textContent = 'Could not reach bot API';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  GUILDS
+// ═══════════════════════════════════════════════════
+let allGuilds = [];
+let selectedGuildId = null;
+const ADMIN_PERM = 0x8n;
+
+function isAdmin(guild) {
+  if (guild.owner) return true;
+  try { return (BigInt(guild.permissions) & ADMIN_PERM) === ADMIN_PERM; } catch { return false; }
+}
+async function checkBotPresence(guildId) {
+  try {
+    const r = await fetch(`${BOT_API}/guilds/${guildId}/member`);
+    if (!r.ok) return false;
+    const d = await r.json();
+    return d.present === true;
+  } catch { return false; }
+}
+function getBotInviteUrl(guildId) {
+  return `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&permissions=8&scope=bot%20applications.commands&guild_id=${guildId}`;
+}
+
+async function loadGuilds(token) {
+  const grid = document.getElementById('guildsGrid');
+  try {
+    const guilds = await fetchGuilds(token);
+    allGuilds = guilds;
+    const adminGuilds = guilds.filter(isAdmin);
+    if (adminGuilds.length === 0) {
+      grid.innerHTML = '<div class="state-box" style="padding:1rem;">You don\'t have admin in any servers.</div>';
+      return;
+    }
+    grid.innerHTML = `<div class="state-box" style="padding:1rem;grid-column:1/-1;"><div class="spinner-ring"></div>Checking bot presence in ${adminGuilds.length} servers...</div>`;
+    const results = await Promise.all(adminGuilds.map(async g => ({ guild:g, botPresent:await checkBotPresence(g.id) })));
+    grid.innerHTML = '';
+    results.sort((a,b) => b.botPresent - a.botPresent);
+    results.forEach(({ guild:g, botPresent }) => {
+      const iconUrl = g.icon ? `https://cdn.discordapp.com/icons/${g.id}/${g.icon}.png?size=64` : null;
+      const iconHtml = iconUrl
+        ? `<img src="${iconUrl}" alt="${g.name}">`
+        : `<div class="guild-card-initial">${g.name.charAt(0).toUpperCase()}</div>`;
+      const card = document.createElement('div');
+      if (botPresent) {
+        card.className = 'guild-card has-bot';
+        card.dataset.guildId = g.id;
+        card.onclick = () => selectGuild(g.id, g.name, card);
+        card.innerHTML = `${iconHtml}<div class="guild-card-name">${g.name}</div><div class="guild-card-badge active-badge">Bot Active</div>`;
+      } else {
+        card.className = 'guild-card invite-bot';
+        card.innerHTML = `${iconHtml}<div class="guild-card-name">${g.name}</div><div class="guild-card-badge invite-badge">Bot Not Added</div><button class="invite-btn" onclick="inviteBot('${g.id}')">+ Invite Bot</button>`;
+      }
+      grid.appendChild(card);
+    });
+  } catch {
+    grid.innerHTML = '<div class="state-box" style="padding:1rem;">Failed to load servers.</div>';
+  }
+}
+
+function inviteBot(guildId) {
+  window.open(getBotInviteUrl(guildId), '_blank');
+  showToast('Invite opened — refresh after adding the bot', 'success');
+}
+
+function selectGuild(guildId, guildName, cardEl) {
+  selectedGuildId = guildId;
+  document.querySelectorAll('.guild-card.has-bot').forEach(c => c.classList.remove('active'));
+  if (cardEl) cardEl.classList.add('active');
+  document.getElementById('commandsArea').style.display = 'block';
+  document.getElementById('commandsTitle').textContent = guildName;
+  document.getElementById('commandsGrid').innerHTML = `<div class="state-box" style="padding:2rem;grid-column:1/-1;"><div class="spinner-ring"></div>Loading commands...</div>`;
+  loadCommands(guildId);
+  document.getElementById('commandsArea').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+// ═══════════════════════════════════════════════════
+//  COMMANDS
+// ═══════════════════════════════════════════════════
+let allCommands = [];
+
+function getGuildConfig(guildId) { return JSON.parse(localStorage.getItem(`lunaris_cfg_${guildId}`) || '{}'); }
+function saveGuildConfig(guildId, cfg) { localStorage.setItem(`lunaris_cfg_${guildId}`, JSON.stringify(cfg)); }
+function getMsgConfig(guildId) { return JSON.parse(localStorage.getItem(`lunaris_msg_${guildId}`) || '{}'); }
+function saveMsgConfigLocal(guildId, cfg) { localStorage.setItem(`lunaris_msg_${guildId}`, JSON.stringify(cfg)); }
+
+async function loadCommands(guildId) {
+  const grid = document.getElementById('commandsGrid');
+  try {
+    const [cmdRes, cfgRes, msgRes] = await Promise.all([
+      fetch(`${BOT_API}/commands`),
+      fetch(`${BOT_API}/guild-config/${guildId}`),
+      fetch(`${BOT_API}/message-config/${guildId}`)
+    ]);
+    if (!cmdRes.ok) throw new Error();
+    allCommands = await cmdRes.json();
+    const botCfg = cfgRes.ok ? await cfgRes.json() : {};
+    saveGuildConfig(guildId, botCfg);
+    
+    // Load message templates from API
+    const msgTemplates = msgRes.ok ? await msgRes.json() : {};
+    if (msgTemplates && Object.keys(msgTemplates).length > 0) {
+      saveMsgConfigLocal(guildId, msgTemplates);
+    }
+    
+    const cfg = botCfg;
+    document.getElementById('commandsMeta').textContent = `${allCommands.length} commands · ${Object.values(cfg).filter(c => c.enabled === false).length} disabled`;
+    renderCommands(guildId, allCommands, cfg);
+  } catch {
+    grid.innerHTML = `<div class="state-box" style="grid-column:1/-1;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Could not reach bot API. Make sure the bot is running on port 3000.</div>`;
+  }
+}
+
+function renderCommands(guildId, commands, cfg) {
+  const grid = document.getElementById('commandsGrid');
+  grid.innerHTML = '';
+  if (commands.length === 0) {
+    grid.innerHTML = '<div class="state-box" style="grid-column:1/-1;">No commands found.</div>';
+    return;
+  }
+  commands.forEach(cmd => {
+    const cmdCfg  = cfg[cmd.id] || {};
+    const enabled = cmdCfg.enabled !== false;
+    const defaults = cmdCfg.defaults || {};
+    const card = document.createElement('div');
+    card.className = `cmd-card${enabled ? '' : ' disabled'}`;
+    card.dataset.cmdId = cmd.id;
+
+    let paramsHtml = '';
+    if (cmd.options && cmd.options.length > 0) {
+      const optionalParams = cmd.options.filter(opt => !opt.required);
+      if (optionalParams.length > 0) {
+        paramsHtml = `<div class="params-label">Default Values</div>`;
+        optionalParams.forEach(opt => {
+          const typeLabel = TYPE_LABELS[opt.type] || `type:${opt.type}`;
+          const defVal = defaults[opt.name] || '';
+          paramsHtml += `
+            <div class="param-row">
+              <div class="param-name-label">${opt.name}<span class="param-type-badge">${typeLabel}</span></div>
+              <input class="param-input" type="text" data-param="${opt.name}" placeholder="${opt.description}" value="${defVal}" ${!enabled ? 'disabled' : ''}>
+            </div>`;
+        });
+        paramsHtml += `<button class="cmd-save-btn" onclick="saveDefaults('${guildId}','${cmd.id}',this)">Save Defaults</button>`;
+      }
+    }
+
+    // Edit Message button — only for MSG_COMMANDS
+    const editMsgHtml = MSG_COMMANDS.includes(cmd.name)
+      ? `<button class="cmd-edit-msg-btn" onclick="openMsgBuilder('${guildId}','${cmd.name}',event)">
+           <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+           Edit Message
+         </button>`
+      : '';
+
+    card.innerHTML = `
+      <div class="cmd-card-header">
+        <div class="cmd-name"><span>/</span>${cmd.name}</div>
+        <div class="toggle-wrap">
+          <span class="toggle-label">${enabled ? 'On' : 'Off'}</span>
+          <div class="toggle ${enabled ? 'on' : ''}" onclick="toggleCommand('${guildId}','${cmd.id}',this)"></div>
+        </div>
+      </div>
+      <div class="cmd-card-body">
+        <div class="cmd-desc">${cmd.description}</div>
+        ${paramsHtml}
+        ${editMsgHtml}
+      </div>`;
+
+    grid.appendChild(card);
+  });
+}
+
+function filterCommands() {
+  if (!selectedGuildId) return;
+  const q = document.getElementById('searchBar').value.toLowerCase();
+  document.querySelectorAll('.cmd-card').forEach(card => {
+    card.style.display = (card.dataset.cmdId || '').includes(q) ? '' : 'none';
+  });
+}
+
+async function syncConfigToBot(guildId, cfg) {
+  try {
+    const r = await fetch(`${BOT_API}/guild-config/${guildId}`, {
+      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(cfg)
+    });
+    if (!r.ok) throw new Error();
+  } catch { showToast('Failed to sync with bot — is it running?', 'error'); }
+}
+
+function toggleCommand(guildId, cmdId, toggleEl) {
+  const cfg    = getGuildConfig(guildId);
+  const cmdCfg = cfg[cmdId] || {};
+  const wasOn  = cmdCfg.enabled !== false;
+  const nowOn  = !wasOn;
+  cmdCfg.enabled = nowOn;
+  cfg[cmdId] = cmdCfg;
+  saveGuildConfig(guildId, cfg);
+  toggleEl.classList.toggle('on', nowOn);
+  toggleEl.previousElementSibling.textContent = nowOn ? 'On' : 'Off';
+  const card = toggleEl.closest('.cmd-card');
+  card.classList.toggle('disabled', !nowOn);
+  card.querySelectorAll('.param-input').forEach(i => i.disabled = !nowOn);
+  const disabledCount = Object.values(cfg).filter(c => c.enabled === false).length;
+  document.getElementById('commandsMeta').textContent = `${allCommands.length} commands · ${disabledCount} disabled`;
+  syncConfigToBot(guildId, cfg);
+  showToast(`/${cmdId} ${nowOn ? 'enabled' : 'disabled'}`, nowOn ? 'success' : '');
+}
+
+function saveDefaults(guildId, cmdId, btn) {
+  const card     = btn.closest('.cmd-card');
+  const cfg      = getGuildConfig(guildId);
+  const cmdCfg   = cfg[cmdId] || {};
+  const defaults = {};
+  card.querySelectorAll('.param-input[data-param]').forEach(input => {
+    if (input.value.trim()) defaults[input.dataset.param] = input.value.trim();
+  });
+  cmdCfg.defaults = defaults;
+  cfg[cmdId] = cmdCfg;
+  saveGuildConfig(guildId, cfg);
+  syncConfigToBot(guildId, cfg);
+  btn.textContent = 'Saved ✓';
+  btn.classList.add('saved');
+  setTimeout(() => { btn.textContent = 'Save Defaults'; btn.classList.remove('saved'); }, 2000);
+  showToast(`Defaults saved for /${cmdId}`, 'success');
+}
+
+// ═══════════════════════════════════════════════════
+//  MESSAGE BUILDER
+// ═══════════════════════════════════════════════════
+let mbState = {
+  guildId: null,
+  cmdName: null,
+  activeTab: null,
+  values: {}   // { tabName: { fieldKey: value } }
+};
+
+function openMsgBuilder(guildId, cmdName, e) {
+  e.stopPropagation();
+  const schema = MSG_SCHEMAS[cmdName];
+  if (!schema) return;
+
+  mbState.guildId  = guildId;
+  mbState.cmdName  = cmdName;
+  mbState.activeTab = schema.tabs[0];
+
+  // Load saved values
+  const saved = getMsgConfig(guildId);
+  mbState.values = saved[cmdName] || {};
+  // Ensure each tab has an object
+  schema.tabs.forEach(t => { if (!mbState.values[t]) mbState.values[t] = {}; });
+
+  // Set header
+  document.getElementById('mbTitle').textContent = `/${cmdName}`;
+  document.getElementById('mbSubtitle').textContent = 'Edit message template';
+
+  // Render tabs
+  renderMbTabs(schema);
+  // Render editor for first tab
+  renderMbEditor(schema, mbState.activeTab);
+  // Update preview
+  updatePreview();
+
+  // Open overlay + panel
+  document.getElementById('msgBuilderOverlay').classList.add('open');
+  document.getElementById('msgBuilderPanel').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeMsgBuilder() {
+  document.getElementById('msgBuilderOverlay').classList.remove('open');
+  document.getElementById('msgBuilderPanel').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function renderMbTabs(schema) {
+  const tabsEl = document.getElementById('mbTabs');
+  tabsEl.innerHTML = '';
+  schema.tabs.forEach(tabName => {
+    const t = document.createElement('div');
+    t.className = `mb-tab${tabName === mbState.activeTab ? ' active' : ''}`;
+    t.textContent = tabName;
+    t.onclick = () => switchMbTab(tabName);
+    tabsEl.appendChild(t);
+  });
+}
+
+function switchMbTab(tabName) {
+  // Save current tab values before switching
+  collectCurrentTabValues();
+  mbState.activeTab = tabName;
+  const schema = MSG_SCHEMAS[mbState.cmdName];
+  // Update tab active states
+  document.querySelectorAll('.mb-tab').forEach(t => {
+    t.classList.toggle('active', t.textContent === tabName);
+  });
+  renderMbEditor(schema, tabName);
+  updatePreview();
+}
+
+function renderMbEditor(schema, tabName) {
+  const editor = document.getElementById('mbEditor');
+  editor.innerHTML = '';
+  const fields = schema.fields[tabName] || [];
+  const tabVals = mbState.values[tabName] || {};
+
+  fields.forEach(field => {
+    const val = tabVals[field.key] || '';
+    const fg = document.createElement('div');
+    fg.className = 'mb-field';
+
+    if (field.type === 'color') {
+      const colorVal = val || '#4f6fbb';
+      fg.innerHTML = `
+        <div class="mb-field-header">
+          <span class="mb-field-label">${field.label}</span>
+          <span class="mb-field-hint">${field.hint}</span>
+        </div>
+        <div class="mb-color-row">
+          <div class="mb-color-swatch" id="swatch_${field.key}" style="background:${colorVal};">
+            <input type="color" value="${colorVal}" data-key="${field.key}" oninput="onColorInput(this)">
+          </div>
+          <input type="text" class="mb-color-hex" id="hex_${field.key}" value="${colorVal}" data-key="${field.key}"
+            placeholder="#4f6fbb" maxlength="7" oninput="onHexInput(this)">
+        </div>`;
+    } else if (field.type === 'textarea') {
+      const chipHtml = field.vars.length
+        ? `<div class="mb-var-chips">${field.vars.map(v => `<div class="mb-var-chip" onclick="insertVar('ta_${field.key}','${v}')">${v}</div>`).join('')}</div>`
+        : '';
+      fg.innerHTML = `
+        <div class="mb-field-header">
+          <span class="mb-field-label">${field.label}</span>
+          <span class="mb-field-hint">${field.hint}</span>
+        </div>
+        ${chipHtml}
+        <textarea class="mb-textarea" id="ta_${field.key}" data-key="${field.key}" rows="3"
+          placeholder="${field.hint}" oninput="updatePreview()">${escHtml(val)}</textarea>`;
+    } else {
+      // input
+      const chipHtml = field.vars.length
+        ? `<div class="mb-var-chips">${field.vars.map(v => `<div class="mb-var-chip" onclick="insertVar('inp_${field.key}','${v}')">${v}</div>`).join('')}</div>`
+        : '';
+      fg.innerHTML = `
+        <div class="mb-field-header">
+          <span class="mb-field-label">${field.label}</span>
+          <span class="mb-field-hint">${field.hint}</span>
+        </div>
+        ${chipHtml}
+        <input type="text" class="mb-input" id="inp_${field.key}" data-key="${field.key}"
+          placeholder="${field.hint}" value="${escHtml(val)}" oninput="updatePreview()">`;
+    }
+    editor.appendChild(fg);
+
+    // Add divider before color and btn fields
+    if (field.key === 'bannerUrl' || field.key === 'accentColor') {
+      const div = document.createElement('div');
+      div.className = 'mb-divider';
+      editor.insertBefore(div, fg);
+    }
+  });
+}
+
+function escHtml(str) {
+  return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function insertVar(inputId, variable) {
+  const el = document.getElementById(inputId);
+  if (!el) return;
+  const start = el.selectionStart;
+  const end   = el.selectionEnd;
+  const text  = el.value;
+  el.value = text.slice(0, start) + variable + text.slice(end);
+  el.selectionStart = el.selectionEnd = start + variable.length;
+  el.focus();
+  updatePreview();
+}
+
+function onColorInput(input) {
+  const key = input.dataset.key;
+  document.getElementById(`hex_${key}`).value = input.value;
+  document.getElementById(`swatch_${key}`).style.background = input.value;
+  updatePreview();
+}
+function onHexInput(input) {
+  const key = input.dataset.key;
+  const val = input.value;
+  if (/^#[0-9a-fA-F]{6}$/.test(val)) {
+    document.getElementById(`swatch_${key}`).style.background = val;
+    document.getElementById(`swatch_${key}`).querySelector('input[type=color]').value = val;
+    updatePreview();
+  }
+}
+
+function collectCurrentTabValues() {
+  if (!mbState.cmdName || !mbState.activeTab) return;
+  const schema = MSG_SCHEMAS[mbState.cmdName];
+  const fields = schema.fields[mbState.activeTab] || [];
+  const vals = {};
+  fields.forEach(field => {
+    if (field.type === 'color') {
+      const hexEl = document.getElementById(`hex_${field.key}`);
+      if (hexEl) vals[field.key] = hexEl.value;
+    } else if (field.type === 'textarea') {
+      const el = document.getElementById(`ta_${field.key}`);
+      if (el) vals[field.key] = el.value;
+    } else {
+      const el = document.getElementById(`inp_${field.key}`);
+      if (el) vals[field.key] = el.value;
+    }
+  });
+  mbState.values[mbState.activeTab] = vals;
+}
+
+function updatePreview() {
+  // Read current editor values (don't commit to state yet)
+  const schema = MSG_SCHEMAS[mbState.cmdName];
+  if (!schema) return;
+  const fields = schema.fields[mbState.activeTab] || [];
+  const vals = {};
+  fields.forEach(field => {
+    if (field.type === 'color') {
+      const hexEl = document.getElementById(`hex_${field.key}`);
+      vals[field.key] = hexEl ? hexEl.value : (mbState.values[mbState.activeTab]?.[field.key] || '#4f6fbb');
+    } else if (field.type === 'textarea') {
+      const el = document.getElementById(`ta_${field.key}`);
+      vals[field.key] = el ? el.value : (mbState.values[mbState.activeTab]?.[field.key] || '');
+    } else {
+      const el = document.getElementById(`inp_${field.key}`);
+      vals[field.key] = el ? el.value : (mbState.values[mbState.activeTab]?.[field.key] || '');
+    }
+  });
+
+  // Update timestamp
+  const now = new Date();
+  document.getElementById('previewTimestamp').textContent = `Today at ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+
+  // Accent color
+  const color = vals.accentColor || '#4f6fbb';
+  document.getElementById('previewEmbed').style.setProperty('--embed-color', color);
+
+  // Banner
+  const banner = document.getElementById('previewBanner');
+  if (vals.bannerUrl && vals.bannerUrl.trim()) {
+    banner.className = 'discord-embed-banner';
+    banner.innerHTML = `<img src="${vals.bannerUrl}" style="width:100%;height:80px;object-fit:cover;display:block;" onerror="this.parentElement.className='discord-embed-banner placeholder';this.parentElement.textContent='INVALID URL';">`;
+  } else {
+    banner.className = 'discord-embed-banner placeholder';
+    banner.textContent = 'NO BANNER';
+  }
+
+  // Title
+  const titleEl = document.getElementById('previewTitle');
+  const titleVal = vals.header || vals.title || '';
+  titleEl.textContent = titleVal || '—';
+
+  // Description / body
+  const descEl = document.getElementById('previewDesc');
+  const descVal = vals.description || '';
+  descEl.textContent = descVal || '';
+
+  // Fields (lines)
+  const fieldsEl = document.getElementById('previewFields');
+  fieldsEl.innerHTML = '';
+  const lineKeys = ['timeLine','linkLine','leaderLine','hostLine','coHostLine','attendLine','passLine','failLine','bonusLine','mapLine','durLine','notes'];
+  lineKeys.forEach(k => {
+    if (vals[k] && vals[k].trim()) {
+      const f = document.createElement('div');
+      f.className = 'discord-embed-field';
+      f.innerHTML = `<div class="discord-embed-field-value">${escHtml(vals[k])}</div>`;
+      fieldsEl.appendChild(f);
+    }
+  });
+
+  // Buttons
+  const btnsEl = document.getElementById('previewBtns');
+  const btnDefs = [
+    { key:'btnAttend',   cls:'green',  fallback:'✅ Attending' },
+    { key:'btnHesitant', cls:'yellow', fallback:'🤔 Hesitant' },
+    { key:'btnUnavail',  cls:'red',    fallback:'❌ Unavailable' },
+  ];
+  const hasBtns = btnDefs.some(b => vals[b.key] !== undefined);
+  if (hasBtns) {
+    btnsEl.innerHTML = btnDefs
+      .map(b => `<div class="discord-btn-mock ${b.cls}">${vals[b.key] || b.fallback}</div>`)
+      .join('');
+  } else {
+    btnsEl.innerHTML = '';
+  }
+}
+
+async function saveMsgConfig() {
+  // Commit current tab
+  collectCurrentTabValues();
+
+  const btn = document.getElementById('mbSaveBtn');
+  btn.classList.add('saving');
+  btn.textContent = 'Saving...';
+
+  // Save to localStorage
+  const guildMsgCfg = getMsgConfig(mbState.guildId);
+  guildMsgCfg[mbState.cmdName] = mbState.values;
+  saveMsgConfigLocal(mbState.guildId, guildMsgCfg);
+
+  // Sync to bot via POST /message-config/:guildId
+  try {
+    const payload = {
+      command: mbState.cmdName,
+      templates: guildMsgCfg
+    };
+    const r = await fetch(`${BOT_API}/message-config/${mbState.guildId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!r.ok) throw new Error();
+    showToast(`/${mbState.cmdName} message template saved`, 'success');
+  } catch {
+    showToast('Saved locally — bot offline, will sync on reconnect', '');
+  }
+
+  btn.classList.remove('saving');
+  btn.textContent = 'Save Template';
+  closeMsgBuilder();
+}
+
+// ═══════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════
+let toastTimer;
+function showToast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = type ? `show ${type}` : 'show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = type; }, 3000);
+}
+
+// ═══════════════════════════════════════════════════
+//  DROPDOWN
+// ═══════════════════════════════════════════════════
+function toggleDropdown() { document.getElementById('dropdown').classList.toggle('open'); }
+document.addEventListener('click', e => {
+  if (!e.target.closest('.nav-avatar-wrap')) document.getElementById('dropdown').classList.remove('open');
+});
+
+// Close builder on Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeMsgBuilder();
+});
+
+// ═══════════════════════════════════════════════════
+//  STARFIELD
+// ═══════════════════════════════════════════════════
+(function(){
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d');
+  let W, H, stars = [], shots = [];
+  function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  function rStar(){ return { x:Math.random()*W, y:Math.random()*H, r:Math.random()*1.3+0.2, a:Math.random()*.7+.2, ts:Math.random()*.008+.002, td:Math.random()>.5?1:-1, vx:(Math.random()-.5)*.04, vy:(Math.random()-.5)*.04 }; }
+  function init(n){ stars=[]; for(let i=0;i<n;i++) stars.push(rStar()); }
+  function spawn(){ shots.push({ x:Math.random()*W*.8, y:Math.random()*H*.4, vx:6+Math.random()*5, vy:2+Math.random()*3, len:80+Math.random()*100, a:1, fade:.018+Math.random()*.012 }); }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(let s of stars){
+      s.a+=s.ts*s.td; if(s.a>=.95||s.a<=.1) s.td*=-1;
+      s.x+=s.vx; s.y+=s.vy;
+      if(s.x<0)s.x=W; if(s.x>W)s.x=0; if(s.y<0)s.y=H; if(s.y>H)s.y=0;
+      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,255,255,${s.a})`; ctx.fill();
+    }
+    for(let i=shots.length-1;i>=0;i--){
+      const ss=shots[i], len=Math.hypot(ss.vx,ss.vy);
+      const g=ctx.createLinearGradient(ss.x,ss.y,ss.x-ss.vx*10,ss.y-ss.vy*10);
+      g.addColorStop(0,`rgba(255,255,255,${ss.a})`); g.addColorStop(1,'rgba(255,255,255,0)');
+      ctx.beginPath(); ctx.moveTo(ss.x,ss.y);
+      ctx.lineTo(ss.x-ss.len*(ss.vx/len),ss.y-ss.len*(ss.vy/len));
+      ctx.strokeStyle=g; ctx.lineWidth=1.5; ctx.stroke();
+      ss.x+=ss.vx; ss.y+=ss.vy; ss.a-=ss.fade;
+      if(ss.a<=0||ss.x>W+100||ss.y>H+100) shots.splice(i,1);
+    }
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize',()=>{resize();init(280);});
+  resize(); init(280); draw();
+  setInterval(()=>{ if(Math.random()<.6) spawn(); },3200);
+})();
+
+// ═══════════════════════════════════════════════════
+//  CUSTOM CURSOR
+// ═══════════════════════════════════════════════════
+(function(){
+  const dot=document.getElementById('cursor-dot'), ring=document.getElementById('cursor-ring');
+  let mx=-100,my=-100,rx=-100,ry=-100;
+  const trail=[]; const TC=12;
+  for(let i=0;i<TC;i++){
+    const p=document.createElement('div');
+    p.style.cssText='position:fixed;pointer-events:none;z-index:99990;border-radius:50%;background:#fff;transform:translate(-50%,-50%);';
+    document.body.appendChild(p); trail.push({el:p,x:-100,y:-100});
+  }
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+  document.querySelectorAll('a,button,.guild-chip,.toggle,.cmd-save-btn,.nav-avatar,.dropdown-item,.mb-var-chip,.mb-tab,.mb-close,.mb-btn').forEach(el=>{
+    el.addEventListener('mouseenter',()=>document.body.classList.add('cursor-hover'));
+    el.addEventListener('mouseleave',()=>document.body.classList.remove('cursor-hover'));
+  });
+  function animate(){
+    dot.style.left=mx+'px'; dot.style.top=my+'px';
+    rx+=(mx-rx)*.12; ry+=(my-ry)*.12;
+    ring.style.left=rx+'px'; ring.style.top=ry+'px';
+    for(let i=TC-1;i>0;i--){trail[i].x=trail[i-1].x;trail[i].y=trail[i-1].y;}
+    trail[0].x=mx; trail[0].y=my;
+    trail.forEach((p,i)=>{
+      const sz=Math.max(1,5-i*.35);
+      p.el.style.left=p.x+'px'; p.el.style.top=p.y+'px';
+      p.el.style.width=sz+'px'; p.el.style.height=sz+'px';
+      p.el.style.opacity=Math.max(0,(1-i/TC)*.55);
+    });
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+</script>
+</body>
+</html>
