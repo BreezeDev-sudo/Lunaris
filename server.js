@@ -5,6 +5,10 @@ const app = express();
 app.use(express.json());
 app.use(express.static(__dirname)); // serves your index.html
 
+app.get('/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dashboard.html'));
+});
+
 // Internal API for the bot
 app.use('/internal', (req, res, next) => {
   if (req.headers['x-internal-secret'] !== process.env.INTERNAL_SECRET) {
