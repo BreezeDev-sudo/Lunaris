@@ -5,8 +5,16 @@ const app = express();
 app.use(express.json());
 app.use(express.static(__dirname)); // serves your index.html
 
+app.get('/index.html', (req, res) => res.redirect(301, '/'));
+app.get('/dashboard.html', (req, res) => res.redirect(301, '/dashboard'));
+app.get('/faq.html', (req, res) => res.redirect(301, '/faq'));
+
 app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'dashboard.html'));
+});
+
+app.get('/faq', (req, res) => {
+  res.sendFile(path.join(__dirname, 'faq.html'));
 });
 
 // Internal API for the bot

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Lunaris FAQ and setup guide for configuring the SEA Military Discord bot dashboard, modules, roles, channels, sticky messages, and event logging.">
+<meta name="keywords" content="Lunaris FAQ, Lunaris setup, SEA Military bot setup, Discord bot help, Roblox military logging bot">
+<meta property="og:title" content="Lunaris FAQ and Setup Help">
+<meta property="og:description" content="Learn how to invite Lunaris, open the dashboard, configure modules, set roles, channels, sticky messages, and event formats.">
+<meta property="og:url" content="https://lunaris.livmellow.com/faq">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://lunaris.livmellow.com/favicon.ico">
+<meta name="theme-color" content="#05050d">
+<link rel="canonical" href="https://lunaris.livmellow.com/faq">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="48x48" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/favicon.ico">
+<link rel="manifest" href="/site.webmanifest">
+<title>Lunaris FAQ - Setup Help</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Share+Tech+Mono&family=Raleway:wght@300;400;500&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Share+Tech+Mono&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet"></noscript>
+<style>
+  :root {
+    --bg:#000;
+    --panel:#060713;
+    --card:#0b0d19;
+    --border:rgba(148,163,210,.14);
+    --border-bright:rgba(148,163,210,.32);
+    --text:#e8ecf7;
+    --muted:#b9c4df;
+    --dim:#8491b5;
+    --accent:#7da0f0;
+    --success:#27ae60;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    min-height:100vh;background:#000;color:var(--text);
+    font-family:'Raleway',sans-serif;line-height:1.6;overflow-x:hidden;
+  }
+  body::before{
+    content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(circle at 20% 12%,rgba(79,111,187,.18),transparent 32%),
+      radial-gradient(circle at 80% 2%,rgba(39,174,96,.08),transparent 28%),
+      linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+    background-size:auto,auto,42px 42px,42px 42px;
+  }
+  nav{
+    position:sticky;top:0;z-index:5;height:64px;padding:0 2rem;
+    display:flex;align-items:center;justify-content:space-between;gap:1rem;
+    background:rgba(0,0,0,.74);border-bottom:1px solid var(--border);
+    backdrop-filter:blur(18px);
+  }
+  .brand,.nav-links{display:flex;align-items:center;gap:.8rem}
+  .brand{text-decoration:none;color:var(--text)}
+  .brand img{width:36px;height:36px;object-fit:contain}
+  .brand span{font-family:'Cinzel',serif;font-weight:700;letter-spacing:.16em}
+  .nav-links a,.btn{
+    color:var(--muted);text-decoration:none;border:1px solid var(--border);
+    padding:.52rem .8rem;border-radius:8px;font-family:'Share Tech Mono',monospace;
+    font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
+    background:rgba(79,111,187,.05);transition:.18s;
+  }
+  .nav-links a:hover,.btn:hover{color:#fff;border-color:var(--accent);background:rgba(79,111,187,.14)}
+  .btn.primary{color:#fff;border-color:rgba(39,174,96,.45);background:rgba(39,174,96,.16)}
+  main{position:relative;z-index:1;width:min(1180px,calc(100% - 2rem));margin:0 auto;padding:3rem 0 4rem}
+  .hero{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:2rem;align-items:center;padding:2rem 0 2.2rem}
+  h1{font-family:'Cinzel',serif;font-size:clamp(2rem,5vw,4rem);line-height:1.05;letter-spacing:.08em;color:#dce4fb}
+  .lead{max-width:760px;margin-top:1rem;color:var(--muted);font-size:1.03rem}
+  .hero-actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.4rem}
+  .hero-logo{width:220px;max-width:100%;filter:drop-shadow(0 0 24px rgba(125,160,240,.22))}
+  .quick-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;margin:1.2rem 0 2.2rem}
+  .card,.section{
+    border:1px solid var(--border);border-radius:10px;background:rgba(6,7,19,.74);
+    box-shadow:0 18px 46px rgba(0,0,0,.34);backdrop-filter:blur(12px);
+  }
+  .card{padding:1.05rem}
+  .card strong{display:block;font-family:'Share Tech Mono',monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:.35rem}
+  .card span{color:var(--muted);font-size:.92rem}
+  .section{padding:1.4rem;margin:1rem 0}
+  h2{font-family:'Cinzel',serif;font-size:1.35rem;letter-spacing:.08em;margin-bottom:.9rem;color:#dce4fb}
+  h3{font-family:'Share Tech Mono',monospace;font-size:.82rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:1.15rem 0 .4rem}
+  p,li{color:var(--muted)}
+  ol,ul{padding-left:1.3rem}
+  li{margin:.38rem 0}
+  code{font-family:'Share Tech Mono',monospace;color:#fff;background:rgba(125,160,240,.1);border:1px solid var(--border);border-radius:5px;padding:.08rem .28rem}
+  .faq-item{border-top:1px solid var(--border);padding:1rem 0}
+  .faq-item:first-of-type{border-top:0}
+  .pill{display:inline-flex;align-items:center;gap:.4rem;margin:.25rem .35rem .25rem 0;padding:.25rem .55rem;border:1px solid var(--border);border-radius:999px;color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:.66rem;text-transform:uppercase;letter-spacing:.08em}
+  .pill::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--success);box-shadow:0 0 8px var(--success)}
+  footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.4rem 2rem;text-align:center;color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:.68rem;letter-spacing:.12em}
+  @media(max-width:760px){
+    nav{height:auto;padding:.9rem 1rem;align-items:flex-start;flex-direction:column}
+    .nav-links{flex-wrap:wrap}
+    .hero{grid-template-columns:1fr}
+    .hero-logo{width:150px}
+  }
+</style>
+</head>
+<body>
+<nav>
+  <a class="brand" href="/">
+    <img src="/favicon.ico" alt="Lunaris">
+    <span>LUNARIS</span>
+  </a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/faq">FAQ</a>
+  </div>
+</nav>
+
+<main>
+  <section class="hero">
+    <div>
+      <h1>FAQ & Setup Help</h1>
+      <p class="lead">Use this page to get Lunaris invited, connected, and configured for SEA Military division logging without digging through every dashboard module.</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="/dashboard">Open Dashboard</a>
+        <a class="btn" href="#tutorial">Tutorial</a>
+        <a class="btn" href="#setup">Quick Setup</a>
+        <a class="btn" href="#modules">Modules</a>
+        <a class="btn" href="#commands">Commands</a>
+      </div>
+    </div>
+    <img class="hero-logo" src="/favicon.ico" alt="Lunaris crescent logo">
+  </section>
+
+  <div class="quick-grid">
+    <div class="card"><strong>Best Place To Setup</strong><span>The website dashboard has the full setup panel. Discord <code>/settings</code> is for quick edits.</span></div>
+    <div class="card"><strong>Admin Bypass</strong><span>Discord administrators can access dashboard controls even when role restrictions are configured.</span></div>
+  </div>
+
+  <section class="section" id="tutorial">
+    <h2>Lunaris Setup Tutorial</h2>
+    <h3>1. Invite Lunaris</h3>
+    <p>Invite Lunaris to your Discord server, then make sure the bot has permission to view channels, send messages, embed links, attach files, read message history, manage messages, and use application commands.</p>
+    <h3>2. Open The Dashboard</h3>
+    <p>Go to the dashboard, log in with Discord, and select the server you want to configure. The dashboard is the main setup area because it has larger editors, previews, role search, channel search, and module pages.</p>
+    <h3>3. Configure Channels</h3>
+    <p>Open <strong>Channels</strong>. Set where scheduled events, live events, raid alerts, moderation logs, and logger output should post. If a command says a channel is missing, this is the first module to check.</p>
+    <h3>4. Configure Roles</h3>
+    <p>Open <strong>Roles</strong> for global permission roles, logger roles, moderation roles, admin roles, and auto roles. Administrators bypass normal role restrictions.</p>
+    <h3>5. Configure Events</h3>
+    <p>Open <strong>Events</strong>. Edit Schedule Event, Start Event, End Event, and Cancel Event. Event ping roles are in this module so you do not have to search through the global Roles page.</p>
+    <h3>6. Configure Training</h3>
+    <p>Open <strong>Training</strong>. Training has its own schedule, start, and end formats. In Discord, use <code>/schedule-event type: Training</code> or <code>/start event type: Training</code> when you want the training format.</p>
+    <h3>7. Configure Raids</h3>
+    <p>Open <strong>Raids</strong>. Raid commands are separate from Event and Training commands, so raids do not use the Event or Training type option.</p>
+    <h3>8. Save And Test</h3>
+    <p>Click <strong>Save Settings</strong> after changing channels or roles. After editing message formats, click <strong>Save Template</strong>. Test with one schedule command before using it in a real event.</p>
+  </section>
+
+  <section class="section" id="setup">
+    <h2>Quick Setup Steps</h2>
+    <ol>
+      <li>Invite Lunaris to your Discord server.</li>
+      <li>Go to <a class="btn" href="/dashboard">Dashboard</a> and log in with Discord.</li>
+      <li>Select the server you want to configure.</li>
+      <li>Open <strong>Channels</strong> and choose where schedules, raids, events, logs, and logger output should post.</li>
+      <li>Open <strong>Roles</strong> and choose who can use logging, moderation, event, raid, and admin tools.</li>
+      <li>Open <strong>Events</strong> and edit event schedule/start/end/cancel formats.</li>
+      <li>Open <strong>Training</strong> and edit training formats separately.</li>
+      <li>Open <strong>Sticky</strong> if you want one or more channels to keep a pinned-style message near the bottom.</li>
+      <li>Click <strong>Save Settings</strong> after changing a module.</li>
+    </ol>
+  </section>
+
+  <section class="section" id="modules">
+    <h2>Dashboard Modules</h2>
+    <div>
+      <span class="pill">Overview</span>
+      <span class="pill">Events</span>
+      <span class="pill">Training</span>
+      <span class="pill">Raids</span>
+      <span class="pill">Moderation</span>
+      <span class="pill">Welcome</span>
+      <span class="pill">Sticky</span>
+      <span class="pill">Roles</span>
+      <span class="pill">Channels</span>
+    </div>
+    <h3>Events</h3>
+    <p>Configure event channels, event ping roles, Schedule Event, Start Event, End Event, Cancel Event, popup questions, buttons, banners, and post formats.</p>
+    <h3>Training</h3>
+    <p>Configure training-specific schedule, start, and end formats. Training uses the Event command with the Training type option.</p>
+    <h3>Raids</h3>
+    <p>Raid commands are available and use separate raid formats. Raids do not use Event or Training type options.</p>
+    <h3>Moderation</h3>
+    <p>Configure moderation permissions, moderation output, and mass-ban tools.</p>
+    <h3>Roles</h3>
+    <p>Set logger roles, event ping roles, raid ping roles, moderation roles, admin roles, ending ping roles, and auto roles.</p>
+    <h3>Channels</h3>
+    <p>Set the channels used for scheduled posts, raid alerts, event posts, moderation logs, and logger output.</p>
+    <h3>Sticky</h3>
+    <p>Create named sticky messages per channel. Lunaris keeps the latest copy near the bottom and removes old copies when new messages arrive.</p>
+  </section>
+
+  <section class="section" id="commands">
+    <h2>Command Reference</h2>
+    <h3>Setup</h3>
+    <ul>
+      <li><code>/settings</code> opens the Discord setup panel for quick channel, role, format, banner, welcome, and division-name changes.</li>
+      <li><code>/rules</code> posts the SEA Military rules panel. You can attach a custom banner when running it.</li>
+      <li><code>/help</code> shows this command overview inside Discord.</li>
+      <li><code>/status</code> checks whether Lunaris is online and responding.</li>
+      <li><code>/support</code> gives the support server/help link.</li>
+    </ul>
+    <h3>Events & Training</h3>
+    <ul>
+      <li><code>/schedule-event</code> creates a scheduled event post with attendance buttons. Use the <code>type</code> option for Event or Training.</li>
+      <li><code>/start event</code> starts a scheduled event by ID, or starts an immediate Event/Training if no ID is selected.</li>
+      <li><code>/end event</code> posts an ending announcement for an active Event or Training record.</li>
+      <li><code>/cancel</code> cancels an active scheduled post by ID. It does not ping event or raid roles.</li>
+      <li><code>/log</code> sends event or training log output to the configured logger channel.</li>
+    </ul>
+    <h3>Raids</h3>
+    <ul>
+      <li><code>/schedule raid</code> creates a scheduled raid post with attendance buttons.</li>
+      <li><code>/start raid</code> starts a scheduled raid by ID, or posts an immediate raid start if no ID is selected.</li>
+      <li><code>/end raid</code> posts a raid ending announcement for an active raid record.</li>
+      <li><code>/cancel</code> can cancel an active raid by ID. Cancel messages do not ping raid roles.</li>
+    </ul>
+    <h3>Moderation</h3>
+    <ul>
+      <li><code>/warn</code> warns a user and stores the warning record.</li>
+      <li><code>/warns</code> views or clears warning records for a user.</li>
+      <li><code>/mute</code> mutes a user when the bot has permission to manage the target member.</li>
+      <li><code>/kick</code> kicks a user from the server.</li>
+      <li><code>/ban</code> bans a user from the server.</li>
+      <li><code>/unban</code> removes a server ban.</li>
+      <li><code>/moderation-panel</code> posts a button panel for common moderation actions.</li>
+      <li><code>/mod-logs</code> views stored moderation logs.</li>
+    </ul>
+    <h3>Mass Ban</h3>
+    <ul>
+      <li><code>/massban</code> runs a protected batch-ban flow.</li>
+      <li><code>/massban-add</code> adds a user to the mass-ban list.</li>
+      <li><code>/massban-remove</code> removes a user from the mass-ban list.</li>
+      <li><code>/massban-list</code> shows entries on the mass-ban list.</li>
+    </ul>
+  </section>
+
+  <section class="section" id="faq">
+    <h2>FAQ</h2>
+    <div class="faq-item">
+      <h3>Why do I need the website if there is a Discord /settings command?</h3>
+      <p>The website has the full setup panel, larger editors, search boxes, module navigation, and preview tools. The Discord panel is kept smaller for quick changes.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Why is a command missing from a module?</h3>
+      <p>Each module only shows commands it actually changes. Use Overview search if you need to find a command quickly.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Where do I set who can use /log?</h3>
+      <p>Open the <strong>Roles</strong> module and edit <strong>Logger Roles</strong>. Administrators bypass role restrictions.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Where do event logs post?</h3>
+      <p>Open the <strong>Channels</strong> module and set <strong>Logger Output</strong>.</p>
+    </div>
+  </section>
+</main>
+
+<footer>Lunaris &copy; 2026</footer>
+</body>
+</html>

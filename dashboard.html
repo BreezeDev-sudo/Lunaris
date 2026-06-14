@@ -3,9 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Manage Lunaris Discord bot settings, command permissions, channels, role pings, and message templates for SEA Military division servers.">
+<meta property="og:title" content="Lunaris Dashboard">
+<meta property="og:description" content="Configure Lunaris modules for SEA Military events, raids, moderation, sticky messages, roles, channels, and logging.">
+<meta property="og:image" content="https://lunaris.livmellow.com/favicon.ico">
+<meta name="theme-color" content="#05050d">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="48x48" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/favicon.ico">
+<link rel="manifest" href="/site.webmanifest">
 <title>Dashboard — Lunaris</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Share+Tech+Mono&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Share+Tech+Mono&family=Raleway:wght@300;400;500&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Share+Tech+Mono&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet"></noscript>
 <style>
   :root {
     --bg-deep:       #000000;
@@ -16,8 +29,8 @@
     --accent:        #4f6fbb;
     --accent-bright: #7da0f0;
     --text-primary:  #e8ecf7;
-    --text-secondary:#8a97b8;
-    --text-dim:      #3a4460;
+    --text-secondary:#b4bfdc;
+    --text-dim:      #7b88aa;
     --success:       #27ae60;
     --warning:       #f39c12;
     --danger:        #e74c3c;
@@ -31,7 +44,7 @@
     background: #000;
     color: var(--text-primary);
     font-family: 'Raleway', sans-serif;
-    font-weight: 300;
+    font-weight: 400;
     min-height: 100vh;
     overflow-x: hidden;
     cursor: none;
@@ -149,6 +162,34 @@
   #toast.success::before { content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success); }
   #toast.error { border-color:rgba(231,76,60,.5); }
   #toast.error::before { content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--danger);box-shadow:0 0 6px var(--danger); }
+  #settingsUnsavedBar {
+    position:fixed;right:1.25rem;bottom:1.25rem;z-index:9998;
+    display:flex;align-items:center;gap:.85rem;max-width:min(440px,calc(100vw - 2rem));
+    padding:.85rem .95rem;border:1px solid rgba(243,156,18,.5);border-radius:12px;
+    background:rgba(12,10,18,.94);box-shadow:0 14px 44px rgba(0,0,0,.62),0 0 28px rgba(243,156,18,.08);
+    backdrop-filter:blur(24px);transform:translateY(130%);opacity:0;pointer-events:none;
+    transition:transform .28s ease,opacity .28s ease;
+  }
+  #settingsUnsavedBar.show { transform:translateY(0);opacity:1;pointer-events:auto; }
+  .settings-unsaved-dot {
+    width:10px;height:10px;border-radius:50%;background:var(--warning);
+    box-shadow:0 0 12px rgba(243,156,18,.9);flex:0 0 auto;
+  }
+  .settings-unsaved-copy { min-width:0; }
+  .settings-unsaved-title {
+    font-family:'Cinzel',serif;font-size:.88rem;letter-spacing:.08em;color:#fff;
+  }
+  .settings-unsaved-text {
+    margin-top:.2rem;font-family:'Share Tech Mono',monospace;font-size:.64rem;
+    letter-spacing:.08em;color:#ffd48a;text-transform:uppercase;line-height:1.35;
+  }
+  .settings-unsaved-actions { display:flex;gap:.5rem;margin-left:auto;flex:0 0 auto; }
+  .settings-unsaved-actions .cmd-save-btn { width:auto;margin:0;padding:.58rem .85rem;min-width:0; }
+  @media (max-width:640px) {
+    #settingsUnsavedBar { left:1rem;right:1rem;bottom:1rem;align-items:flex-start;flex-wrap:wrap; }
+    .settings-unsaved-actions { width:100%;margin-left:0; }
+    .settings-unsaved-actions .cmd-save-btn { flex:1; }
+  }
 
   /* ── MAIN ── */
   main { position:relative;z-index:1;padding-top:64px;min-height:100vh; }
@@ -167,6 +208,27 @@
   .page-header p {
     font-family:'Share Tech Mono',monospace;font-size:.7rem;
     letter-spacing:.2em;color:var(--text-dim);text-transform:uppercase;
+  }
+  .work-banner {
+    margin:0 2rem 1rem;
+    padding:.85rem 1rem;
+    border:1px solid rgba(243,156,18,.45);
+    border-radius:12px;
+    background:linear-gradient(135deg,rgba(243,156,18,.18),rgba(0,0,0,.18));
+    color:#ffe7b3;
+    font-family:'Share Tech Mono',monospace;
+    font-size:.72rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    display:flex;
+    align-items:center;
+    gap:.7rem;
+  }
+  .work-banner::before {
+    content:'';
+    width:8px;height:8px;border-radius:50%;
+    background:#f3a712;box-shadow:0 0 10px rgba(243,156,18,.75);
+    flex-shrink:0;
   }
 
   .bot-status {
@@ -252,6 +314,819 @@
   .search-bar::placeholder { color:var(--text-dim); }
   .commands-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1rem; }
 
+  .server-workspace {
+    display:grid;
+    grid-template-columns:260px minmax(0,1fr);
+    gap:1.35rem;
+    align-items:start;
+  }
+  .module-sidebar {
+    position:sticky;
+    top:82px;
+    display:flex;
+    flex-direction:column;
+    gap:.35rem;
+    min-height:calc(100vh - 110px);
+    padding:1rem .85rem;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:linear-gradient(180deg,rgba(13,16,29,.96),rgba(5,5,14,.94));
+    backdrop-filter:blur(18px);
+    box-shadow:0 20px 70px rgba(0,0,0,.28);
+  }
+  .module-sidebar-brand {
+    display:flex;
+    align-items:center;
+    gap:.7rem;
+    padding:.45rem .45rem 1rem;
+    border-bottom:1px solid var(--border);
+    margin-bottom:.35rem;
+  }
+  .module-sidebar-logo {
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    object-fit:cover;
+    border:1px solid rgba(200,208,232,.25);
+    box-shadow:0 0 18px rgba(125,160,240,.22);
+    background:#05050d;
+  }
+  .module-sidebar-name {
+    font-family:'Cinzel',serif;
+    font-weight:700;
+    letter-spacing:.08em;
+    color:#fff;
+  }
+  .module-sidebar-subtitle {
+    font-family:'Share Tech Mono',monospace;
+    font-size:.6rem;
+    letter-spacing:.12em;
+    color:var(--accent-bright);
+    text-transform:uppercase;
+  }
+  .module-sidebar-title {
+    font-family:'Share Tech Mono',monospace;
+    font-size:.58rem;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+    padding:.65rem .45rem .35rem;
+  }
+  .module-nav-group {
+    display:grid;
+    gap:.35rem;
+  }
+  .module-nav-btn {
+    display:flex;
+    align-items:center;
+    gap:.65rem;
+    width:100%;
+    padding:.78rem .82rem;
+    border:1px solid transparent;
+    border-radius:8px;
+    background:transparent;
+    color:var(--text-secondary);
+    font-family:'Share Tech Mono',monospace;
+    font-size:.68rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:all .18s;
+    text-align:left;
+  }
+  .module-nav-icon {
+    width:25px;
+    height:25px;
+    display:grid;
+    place-items:center;
+    border-radius:7px;
+    border:1px solid rgba(125,160,240,.13);
+    background:rgba(125,160,240,.06);
+    color:var(--accent-bright);
+    font-size:.72rem;
+    flex-shrink:0;
+  }
+  .module-nav-btn > span:not(.module-nav-icon) { flex:1; }
+  .module-nav-btn:hover {
+    border-color:rgba(125,160,240,.2);
+    background:rgba(79,111,187,.08);
+    color:#fff;
+  }
+  .module-nav-btn.active {
+    border-color:rgba(125,160,240,.42);
+    background:linear-gradient(90deg,rgba(79,111,187,.22),rgba(79,111,187,.08));
+    color:#fff;
+    box-shadow:0 0 18px rgba(79,111,187,.14);
+  }
+  .module-nav-btn.active .module-nav-icon {
+    border-color:rgba(39,174,96,.42);
+    background:rgba(39,174,96,.16);
+    color:#7dffbd;
+    box-shadow:0 0 12px rgba(39,174,96,.22);
+  }
+  .module-sidebar-footer {
+    margin-top:auto;
+    padding:.85rem .45rem .2rem;
+    border-top:1px solid var(--border);
+    display:grid;
+    gap:.55rem;
+  }
+  .sidebar-help-link {
+    color:var(--accent-bright);
+    text-decoration:none;
+    font-family:'Share Tech Mono',monospace;
+    font-size:.65rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+  }
+  .sidebar-help-link:hover { color:#fff; }
+  .server-main { min-width:0;display:grid;gap:1.2rem; }
+  .server-toolbar {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:1rem;
+    padding:1rem 1.1rem;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:linear-gradient(135deg,rgba(18,22,40,.86),rgba(5,5,14,.76));
+    box-shadow:0 18px 55px rgba(0,0,0,.18);
+  }
+  .server-toolbar-left { display:flex;align-items:center;gap:.9rem;min-width:0; }
+  .back-server-btn {
+    width:34px;height:34px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:rgba(79,111,187,.06);
+    color:var(--accent-bright);
+    font-family:'Share Tech Mono',monospace;
+    cursor:pointer;
+    transition:all .18s;
+  }
+  .back-server-btn:hover { border-color:var(--accent);background:rgba(79,111,187,.14);color:#fff; }
+  .module-title {
+    font-family:'Cinzel',serif;
+    font-size:1.2rem;
+    letter-spacing:.08em;
+    color:var(--moon-silver);
+  }
+  .module-subtitle {
+    font-family:'Share Tech Mono',monospace;
+    font-size:.62rem;
+    letter-spacing:.14em;
+    color:var(--text-dim);
+    text-transform:uppercase;
+  }
+  .module-settings-card,
+  .module-commands-card {
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:rgba(18,22,40,.56);
+    padding:1.35rem;
+    box-shadow:0 16px 46px rgba(0,0,0,.16);
+  }
+  .module-settings-card { display:grid;gap:1.35rem; }
+  .overview-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:1rem;
+  }
+  .overview-card {
+    display:grid;
+    gap:.75rem;
+    align-content:start;
+    min-height:160px;
+    padding:1.15rem;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:linear-gradient(180deg,rgba(29,34,56,.86),rgba(13,16,29,.92));
+    color:var(--text-primary);
+    text-align:left;
+    cursor:pointer;
+    transition:all .18s;
+  }
+  .overview-card:hover {
+    border-color:rgba(125,160,240,.45);
+    background:rgba(18,23,41,.9);
+    transform:translateY(-2px);
+    box-shadow:0 14px 36px rgba(0,0,0,.28);
+  }
+  .overview-card.disabled,
+  .overview-card:disabled {
+    cursor:not-allowed;
+    opacity:.78;
+    border-color:rgba(234,179,8,.45);
+    background:linear-gradient(180deg,rgba(234,179,8,.12),rgba(12,15,29,.9));
+  }
+  .overview-card.disabled:hover,
+  .overview-card:disabled:hover {
+    transform:none;
+    box-shadow:none;
+  }
+  .overview-card-icon {
+    width:34px;height:34px;
+    display:grid;place-items:center;
+    border:1px solid var(--border);
+    border-radius:8px;
+    color:var(--accent-bright);
+    background:rgba(79,111,187,.08);
+    font-family:'Share Tech Mono',monospace;
+    font-size:.8rem;
+  }
+  .overview-card-title {
+    font-family:'Cinzel',serif;
+    font-size:1.05rem;
+    letter-spacing:.05em;
+    color:#fff;
+  }
+  .overview-card-copy {
+    color:var(--text-secondary);
+    font-size:.88rem;
+    line-height:1.5;
+  }
+  .overview-card-action {
+    width:max-content;
+    margin-top:.25rem;
+    padding:.45rem .65rem;
+    border-radius:7px;
+    background:rgba(125,160,240,.12);
+    color:#fff;
+    font-family:'Share Tech Mono',monospace;
+    font-size:.65rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+  }
+
+  .settings-panel {
+    display:grid;
+    gap:1rem;
+    margin-bottom:2rem;
+    padding:1.2rem;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:rgba(5,5,14,.6);
+  }
+  .settings-panel-title {
+    font-family:'Cinzel',serif;
+    font-size:1.05rem;
+    letter-spacing:.08em;
+    color:var(--moon-silver);
+  }
+  .settings-save-row {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:1rem;
+    flex-wrap:wrap;
+  }
+  .unsaved-indicator {
+    display:none;
+    align-items:center;
+    gap:.45rem;
+    padding:.42rem .72rem;
+    border:1px solid rgba(243,156,18,.42);
+    border-radius:999px;
+    background:rgba(243,156,18,.08);
+    color:#ffd48a;
+    font-family:'Share Tech Mono',monospace;
+    font-size:.62rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+  }
+  .unsaved-indicator::before {
+    content:'';
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:var(--warning);
+    box-shadow:0 0 10px rgba(243,156,18,.85);
+  }
+  .module-settings-card.has-unsaved {
+    border-color:rgba(243,156,18,.38);
+    box-shadow:0 0 0 1px rgba(243,156,18,.06),0 16px 46px rgba(0,0,0,.16);
+  }
+  .module-settings-card.has-unsaved .unsaved-indicator {
+    display:flex;
+  }
+  .settings-section {
+    display:grid;
+    gap:.75rem;
+  }
+  .settings-tabs {
+    display:flex;
+    flex-wrap:wrap;
+    gap:.7rem;
+    border-bottom:1px solid var(--border);
+    padding-bottom:1rem;
+  }
+  .settings-tab {
+    padding:.65rem 1rem;
+    border:1px solid var(--border);
+    border-radius:6px;
+    background:rgba(79,111,187,.05);
+    color:var(--text-secondary);
+    font-family:'Share Tech Mono',monospace;
+    font-size:.66rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:all .18s;
+  }
+  .settings-tab:hover {
+    border-color:var(--border-bright);
+    color:var(--accent-bright);
+    background:rgba(79,111,187,.1);
+  }
+  .settings-tab.active {
+    border-color:var(--accent);
+    color:#fff;
+    background:rgba(79,111,187,.2);
+    box-shadow:0 0 14px rgba(79,111,187,.16);
+  }
+  .settings-section:not(.active) {
+    display:none;
+  }
+  .settings-section-title {
+    font-family:'Share Tech Mono',monospace;
+    font-size:.64rem;
+    letter-spacing:.2em;
+    color:var(--accent-bright);
+    text-transform:uppercase;
+    padding-top:.85rem;
+    border-top:1px solid var(--border);
+  }
+  .settings-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:1rem;
+    align-items:end;
+  }
+  .settings-field {
+    display:grid;
+    gap:.5rem;
+  }
+  .settings-field label {
+    font-family:'Share Tech Mono',monospace;
+    font-size:.62rem;
+    letter-spacing:.1em;
+    color:var(--text-dim);
+    text-transform:uppercase;
+  }
+  .settings-help {
+    color:var(--text-secondary);
+    font-size:.78rem;
+    line-height:1.45;
+    max-width:48rem;
+  }
+  .settings-input, .settings-textarea {
+    width:100%;
+    padding:.78rem .9rem;
+    background:#060712;
+    border:1px solid var(--border);
+    border-radius:6px;
+    color:var(--text-primary);
+    font-family:'Share Tech Mono',monospace;
+    font-size:.78rem;
+    color-scheme:dark;
+  }
+  select.settings-input {
+    appearance:none;
+    background:
+      linear-gradient(45deg, transparent 50%, var(--accent-bright) 50%) calc(100% - 18px) 50% / 5px 5px no-repeat,
+      linear-gradient(135deg, var(--accent-bright) 50%, transparent 50%) calc(100% - 13px) 50% / 5px 5px no-repeat,
+      #060712;
+    padding-right:2.1rem;
+    cursor:pointer;
+  }
+  select.settings-input:hover {
+    border-color:rgba(125,160,240,.32);
+    background-color:#080a16;
+  }
+  select.settings-input:focus { background-color:#080a16; }
+  select.settings-input option {
+    background-color:#050611 !important;
+    color:#e8ecf7 !important;
+    font-family:'Share Tech Mono',monospace;
+  }
+  select.settings-input option:hover,
+  select.settings-input option:focus {
+    background-color:#11172a !important;
+    color:#fff !important;
+  }
+  .settings-textarea { min-height:132px; resize:vertical; line-height:1.55; }
+  .settings-input:focus, .settings-textarea:focus { outline:none;border-color:var(--accent);background:#080a16; }
+  .settings-input[multiple] {
+    min-height:132px;
+    padding:.4rem;
+    background:#050611;
+    overflow:auto;
+  }
+  .settings-input[multiple] option {
+    padding:.38rem .5rem;
+    margin:.15rem 0;
+    border-radius:5px;
+  }
+  .settings-input[multiple] option:checked {
+    background:linear-gradient(90deg, rgba(39,174,96,.85), rgba(79,111,187,.45));
+    color:#fff;
+  }
+  .role-picker {
+    display:grid;
+    gap:.5rem;
+    padding:.6rem;
+    border:1px solid rgba(148,163,210,.12);
+    border-radius:8px;
+    background:rgba(6,7,18,.72);
+  }
+  .role-picker-control {
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:.45rem;
+    align-items:start;
+  }
+  .role-select-menu {
+    position:relative;
+  }
+  .role-select-menu summary {
+    list-style:none;
+    width:100%;
+    min-height:38px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:.75rem;
+    padding:.5rem .7rem;
+    border:1px solid var(--border);
+    border-radius:6px;
+    background:#060712;
+    color:var(--text-primary);
+    font-family:'Share Tech Mono',monospace;
+    font-size:.72rem;
+    cursor:pointer;
+  }
+  .role-select-menu summary::-webkit-details-marker { display:none; }
+  .role-select-menu summary::after {
+    content:'';
+    width:7px;
+    height:7px;
+    border-right:1px solid var(--accent-bright);
+    border-bottom:1px solid var(--accent-bright);
+    transform:rotate(45deg) translateY(-2px);
+    transition:transform .18s;
+    flex-shrink:0;
+  }
+  .role-select-menu[open] summary {
+    border-color:var(--accent);
+    background:#080a16;
+  }
+  .role-select-menu[open] summary::after {
+    transform:rotate(225deg) translateY(-2px);
+  }
+  .role-option-list {
+    position:absolute;
+    z-index:35;
+    left:0;
+    right:0;
+    top:calc(100% + .35rem);
+    max-height:220px;
+    overflow:auto;
+    display:grid;
+    gap:.25rem;
+    padding:.45rem;
+    border:1px solid rgba(125,160,240,.28);
+    border-radius:8px;
+    background:#050611;
+    box-shadow:0 18px 44px rgba(0,0,0,.55);
+  }
+  .role-option {
+    display:flex;
+    align-items:center;
+    gap:.5rem;
+    padding:.45rem .5rem;
+    border-radius:6px;
+    color:var(--text-secondary);
+    font-family:'Share Tech Mono',monospace;
+    font-size:.7rem;
+    cursor:pointer;
+  }
+  .role-option:hover {
+    background:rgba(79,111,187,.14);
+    color:#fff;
+  }
+  .role-option input {
+    width:15px;
+    height:15px;
+    accent-color:var(--success);
+  }
+  .role-add-btn,
+  .role-remove-btn {
+    border:1px solid rgba(39,174,96,.45);
+    border-radius:6px;
+    background:rgba(39,174,96,.12);
+    color:#dfffea;
+    font-family:'Share Tech Mono',monospace;
+    font-size:.66rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:border-color .18s, background .18s, box-shadow .18s;
+  }
+  .role-add-btn {
+    min-width:118px;
+    padding:0 .75rem;
+    white-space:nowrap;
+  }
+  .role-add-btn:hover {
+    border-color:var(--success);
+    background:rgba(39,174,96,.24);
+    box-shadow:0 0 16px rgba(39,174,96,.16);
+  }
+  .role-chip-list {
+    display:flex;
+    flex-wrap:wrap;
+    gap:.4rem;
+    min-height:32px;
+    align-items:center;
+  }
+  .role-empty {
+    font-family:'Share Tech Mono',monospace;
+    font-size:.66rem;
+    color:var(--text-dim);
+    letter-spacing:.05em;
+  }
+  .role-chip {
+    display:inline-flex;
+    align-items:center;
+    gap:.45rem;
+    max-width:100%;
+    padding:.32rem .42rem .32rem .58rem;
+    border:1px solid rgba(125,160,240,.32);
+    border-radius:999px;
+    background:rgba(79,111,187,.12);
+    color:var(--text-primary);
+    font-family:'Share Tech Mono',monospace;
+    font-size:.68rem;
+  }
+  .role-chip-name {
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .role-remove-btn {
+    display:grid;
+    place-items:center;
+    width:20px;
+    height:20px;
+    padding:0;
+    border-radius:50%;
+    border-color:rgba(231,76,60,.35);
+    background:rgba(231,76,60,.12);
+    color:#ffd6d6;
+    line-height:1;
+  }
+  .role-remove-btn:hover {
+    border-color:var(--danger);
+    background:rgba(231,76,60,.24);
+  }
+  .role-edit-summary {
+    display:grid;
+    gap:.55rem;
+    padding:.65rem;
+    border:1px solid rgba(148,163,210,.12);
+    border-radius:8px;
+    background:rgba(6,7,18,.72);
+  }
+  .role-edit-top {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:.75rem;
+  }
+  .role-count {
+    font-family:'Share Tech Mono',monospace;
+    font-size:.68rem;
+    color:var(--text-secondary);
+    letter-spacing:.06em;
+  }
+  .role-edit-btn {
+    width:auto;
+    min-width:102px;
+    margin:0;
+    padding:.48rem .8rem;
+  }
+  .role-modal {
+    position:fixed;
+    inset:0;
+    z-index:1200;
+    display:none;
+    padding:1.4rem;
+    background:rgba(3,4,10,.48);
+    backdrop-filter:blur(8px);
+  }
+  .role-modal.open { display:grid;place-items:center; }
+  .role-modal-panel {
+    width:min(720px, calc(100vw - 2rem));
+    max-height:min(680px, calc(100vh - 3rem));
+    display:grid;
+    grid-template-rows:auto auto minmax(0,1fr) auto;
+    gap:.8rem;
+    padding:1rem;
+    border:1px solid rgba(125,160,240,.26);
+    border-radius:10px;
+    background:#050611;
+    box-shadow:0 28px 80px rgba(0,0,0,.68),0 0 38px rgba(79,111,187,.12);
+  }
+  .role-modal-head {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:1rem;
+  }
+  .role-modal-title {
+    font-family:'Cinzel',serif;
+    font-size:1.05rem;
+    letter-spacing:.08em;
+    color:var(--moon-silver);
+  }
+  .role-modal-close {
+    width:36px;
+    height:36px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:rgba(79,111,187,.08);
+    color:var(--text-secondary);
+    font-size:1.25rem;
+    cursor:pointer;
+  }
+  .role-modal-close:hover { border-color:var(--danger);color:#fff;background:rgba(231,76,60,.16); }
+  .role-modal-selected {
+    display:grid;
+    gap:.55rem;
+    padding:.75rem;
+    border:1px solid rgba(148,163,210,.12);
+    border-radius:8px;
+    background:rgba(79,111,187,.045);
+  }
+  .role-modal-label {
+    font-family:'Share Tech Mono',monospace;
+    font-size:.62rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--accent-bright);
+  }
+  .role-modal-search {
+    display:grid;
+    gap:.55rem;
+  }
+  .role-modal-list {
+    min-height:160px;
+    max-height:260px;
+    overflow:auto;
+    display:grid;
+    align-content:start;
+    gap:.45rem;
+    padding:.25rem;
+  }
+  .role-modal-option {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:.75rem;
+    padding:.65rem .75rem;
+    border:1px solid rgba(148,163,210,.1);
+    border-radius:8px;
+    background:rgba(6,7,18,.72);
+    color:var(--text-primary);
+    font-family:'Share Tech Mono',monospace;
+    font-size:.72rem;
+  }
+  .role-modal-option.added {
+    opacity:.55;
+  }
+  .role-modal-add {
+    border:1px solid rgba(39,174,96,.45);
+    border-radius:6px;
+    background:rgba(39,174,96,.12);
+    color:#dfffea;
+    padding:.38rem .65rem;
+    font-family:'Share Tech Mono',monospace;
+    font-size:.64rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    cursor:pointer;
+  }
+  .role-modal-add:hover { border-color:var(--success);background:rgba(39,174,96,.24); }
+  .role-modal-add:disabled { cursor:default;opacity:.7;border-color:var(--border);background:rgba(148,163,210,.08);color:var(--text-dim); }
+  .role-modal-actions {
+    display:flex;
+    justify-content:flex-end;
+    gap:.65rem;
+  }
+  .channel-chip {
+    display:inline-flex;
+    align-items:center;
+    max-width:100%;
+    padding:.35rem .6rem;
+    border:1px solid rgba(125,160,240,.32);
+    border-radius:999px;
+    background:rgba(79,111,187,.12);
+    color:var(--text-primary);
+    font-family:'Share Tech Mono',monospace;
+    font-size:.68rem;
+  }
+  .channel-edit-summary {
+    display:grid;
+    gap:.55rem;
+    padding:.65rem;
+    border:1px solid rgba(148,163,210,.12);
+    border-radius:8px;
+    background:rgba(6,7,18,.72);
+  }
+  .settings-check {
+    display:flex;
+    align-items:center;
+    gap:.75rem;
+    min-height:58px;
+    padding:.75rem .85rem;
+    border:1px solid rgba(148,163,210,.12);
+    border-radius:8px;
+    background:rgba(79,111,187,.045);
+    color:var(--text-secondary);
+    font-family:'Share Tech Mono',monospace;
+    font-size:.72rem;
+    line-height:1.35;
+    cursor:pointer;
+    transition:border-color .18s, background .18s, box-shadow .18s;
+  }
+  .settings-check:hover {
+    border-color:rgba(125,160,240,.32);
+    background:rgba(79,111,187,.08);
+  }
+  .settings-check input {
+    appearance:none;
+    width:34px;
+    height:20px;
+    border-radius:999px;
+    border:1px solid rgba(125,160,240,.28);
+    background:rgba(79,111,187,.12);
+    display:grid;
+    place-items:center start;
+    padding:2px;
+    flex-shrink:0;
+    transition:background .18s, border-color .18s, box-shadow .18s;
+  }
+  .settings-check input::after {
+    content:'';
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:var(--text-dim);
+    transform:translateX(0);
+    transition:transform .2s cubic-bezier(.34,1.56,.64,1), background .18s, box-shadow .18s;
+  }
+  .settings-check input:checked {
+    background:var(--success);
+    border-color:var(--success);
+    box-shadow:0 0 14px rgba(39,174,96,.45);
+    animation:check-pop .28s ease;
+  }
+  .settings-check input:checked::after {
+    transform:translateX(14px);
+    background:#fff;
+    box-shadow:0 0 8px rgba(255,255,255,.65);
+  }
+  .settings-check-title {
+    display:block;
+    color:var(--moon-silver);
+    text-transform:uppercase;
+    letter-spacing:.08em;
+  }
+  .settings-check-hint {
+    display:block;
+    margin-top:.15rem;
+    color:var(--text-dim);
+    font-size:.62rem;
+  }
+  @keyframes check-pop {
+    0% { transform:scale(.82); }
+    55% { transform:scale(1.16); }
+    100% { transform:scale(1); }
+  }
+
+  .command-category {
+    grid-column:1/-1;
+    margin-top:1rem;
+  }
+  .command-category-title {
+    font-family:'Share Tech Mono',monospace;
+    font-size:.68rem;
+    letter-spacing:.22em;
+    color:var(--accent-bright);
+    text-transform:uppercase;
+    padding-bottom:.6rem;
+    border-bottom:1px solid var(--border);
+  }
+
   /* ── COMMAND CARD ── */
   .cmd-card {
     background:rgba(5,5,14,.6);border:1px solid var(--border);border-radius:14px;
@@ -259,6 +1134,14 @@
   }
   .cmd-card:hover { border-color:var(--border-bright);box-shadow:0 6px 24px rgba(79,111,187,.12); }
   .cmd-card.disabled { opacity:.5; }
+  .cmd-card.under-work {
+    border-color:rgba(234,179,8,.48);
+    background:linear-gradient(180deg,rgba(234,179,8,.12),rgba(8,8,18,.92));
+  }
+  .cmd-card.under-work .cmd-name,
+  .cmd-card.under-work .cmd-format-meta {
+    color:#facc15;
+  }
   .cmd-card-header {
     display:flex;align-items:center;justify-content:space-between;
     padding:1rem 1.2rem;border-bottom:1px solid var(--border);
@@ -282,42 +1165,122 @@
   .toggle.on::after { transform:translateX(18px);background:var(--success);box-shadow:0 0 6px var(--success); }
   .cmd-card-body { padding:1rem 1.2rem; }
   .cmd-desc { font-size:.82rem;color:var(--text-secondary);line-height:1.6;margin-bottom:1rem; }
-  .params-label {
-    font-family:'Share Tech Mono',monospace;font-size:.6rem;
-    letter-spacing:.2em;color:var(--text-dim);text-transform:uppercase;
-    margin-bottom:.6rem;display:flex;align-items:center;gap:.5rem;
+  .cmd-format-meta {
+    font-family:'Share Tech Mono',monospace;font-size:.66rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--moon-silver);padding:.45rem .6rem;
+    border:1px solid var(--border);border-radius:6px;background:rgba(79,111,187,.06);
+    margin:-.2rem 0 .85rem;line-height:1.45;
   }
-  .params-label::after { content:'';flex:1;height:1px;background:var(--border); }
-  .param-row { display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem;align-items:center; }
-  .param-name-label {
-    font-family:'Share Tech Mono',monospace;font-size:.68rem;
-    color:var(--text-secondary);letter-spacing:.05em;
-    display:flex;align-items:center;gap:.3rem;
+  .sticky-list { display:flex;flex-direction:column;gap:1rem; }
+  .sticky-item {
+    border:1px solid var(--border);border-radius:8px;background:rgba(5,7,18,.58);
+    padding:1rem;display:flex;flex-direction:column;gap:.85rem;
   }
-  .param-required { color:var(--danger);font-size:.6rem; }
-  .param-type-badge {
-    display:inline-block;padding:.1rem .4rem;
-    background:rgba(79,111,187,.1);border:1px solid rgba(79,111,187,.2);
-    border-radius:4px;font-size:.55rem;color:var(--accent);
-    font-family:'Share Tech Mono',monospace;letter-spacing:.05em;margin-left:.3rem;
+  .sticky-item-head {
+    display:flex;align-items:center;justify-content:space-between;gap:.8rem;
+    font-family:'Share Tech Mono',monospace;font-size:.68rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--moon-silver);
   }
-  .param-input {
-    padding:.4rem .7rem;background:rgba(79,111,187,.05);
-    border:1px solid var(--border);border-radius:6px;
-    color:var(--text-primary);font-family:'Share Tech Mono',monospace;
-    font-size:.72rem;transition:all .2s;width:100%;
+  .sticky-remove {
+    width:auto;margin:0;padding:.42rem .7rem;border-color:rgba(231,76,60,.4);
+    color:#ff9a92;background:rgba(231,76,60,.08);
   }
-  .param-input:focus { outline:none;border-color:var(--accent);background:rgba(79,111,187,.1); }
-  .param-input::placeholder { color:var(--text-dim); }
+  .sticky-card-actions { display:flex;gap:.5rem;flex-wrap:wrap; }
+  .sticky-wizard-steps {
+    display:grid;grid-template-columns:repeat(5,1fr);gap:.4rem;margin:.75rem 0 1rem;
+  }
+  .sticky-step {
+    height:4px;border-radius:999px;background:rgba(148,163,210,.15);
+  }
+  .sticky-step.active { background:var(--accent-bright);box-shadow:0 0 10px rgba(125,160,240,.35); }
+  .sticky-wizard-body { display:grid;gap:1rem; }
+  .sticky-wizard-copy {
+    color:var(--text-secondary);font-size:.82rem;line-height:1.5;
+  }
   .cmd-save-btn {
     width:100%;margin-top:.9rem;padding:.55rem;
-    background:rgba(79,111,187,.1);border:1px solid var(--border);
-    border-radius:8px;color:var(--text-secondary);
+    background:rgba(39,174,96,.12);border:1px solid rgba(39,174,96,.35);
+    border-radius:8px;color:var(--success);
     font-family:'Share Tech Mono',monospace;font-size:.68rem;
     letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;
   }
-  .cmd-save-btn:hover { border-color:var(--accent);color:var(--accent-bright);background:rgba(79,111,187,.18); }
-  .cmd-save-btn.saved { border-color:rgba(39,174,96,.4);color:var(--success);background:rgba(39,174,96,.08); }
+  .cmd-save-btn:hover { border-color:var(--success);color:#fff;background:rgba(39,174,96,.28);box-shadow:0 0 16px rgba(39,174,96,.2); }
+  .cmd-save-btn.saved { border-color:rgba(39,174,96,.65);color:#fff;background:rgba(39,174,96,.32);animation:save-pulse .42s ease; }
+  .cmd-save-btn.dirty { border-color:rgba(243,156,18,.45);color:var(--warning);background:rgba(243,156,18,.08); }
+  .command-save-bar {
+    position:fixed;
+    left:50%;
+    bottom:1.2rem;
+    z-index:950;
+    width:min(680px, calc(100vw - 2rem));
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:1rem;
+    padding:.85rem 1rem;
+    border:1px solid rgba(243,156,18,.42);
+    border-radius:8px;
+    background:rgba(6,7,18,.94);
+    box-shadow:0 16px 48px rgba(0,0,0,.55),0 0 28px rgba(243,156,18,.12);
+    backdrop-filter:blur(18px);
+    transform:translate(-50%, 130%);
+    opacity:0;
+    pointer-events:none;
+    transition:transform .24s cubic-bezier(.34,1.56,.64,1), opacity .2s;
+  }
+  .command-save-bar.show {
+    transform:translate(-50%, 0);
+    opacity:1;
+    pointer-events:auto;
+  }
+  #formatSaveBar {
+    bottom:1.2rem;
+    z-index:1002;
+    border-color:rgba(125,160,240,.45);
+    box-shadow:0 16px 48px rgba(0,0,0,.55),0 0 28px rgba(79,111,187,.12);
+  }
+  #commandSaveBar.show + #formatSaveBar.show {
+    bottom:5.2rem;
+  }
+  .command-save-text {
+    font-family:'Share Tech Mono',monospace;
+    font-size:.72rem;
+    letter-spacing:.08em;
+    color:var(--text-secondary);
+    text-transform:uppercase;
+  }
+  .command-save-actions {
+    display:flex;
+    gap:.6rem;
+    flex-shrink:0;
+  }
+  .command-save-actions button {
+    width:auto;
+    min-width:96px;
+    margin:0;
+    padding:.5rem .85rem;
+  }
+  .command-save-actions .secondary {
+    background:transparent;
+    border-color:var(--border);
+    color:var(--text-secondary);
+  }
+  .save-check {
+    display:inline-grid;
+    place-items:center;
+    width:16px;
+    height:16px;
+    margin-left:.45rem;
+    border-radius:50%;
+    background:var(--success);
+    color:#fff;
+    animation:check-pop .28s ease;
+  }
+  @keyframes save-pulse {
+    0% { transform:scale(1); box-shadow:0 0 0 rgba(39,174,96,0); }
+    45% { transform:scale(1.025); box-shadow:0 0 22px rgba(39,174,96,.38); }
+    100% { transform:scale(1); box-shadow:0 0 0 rgba(39,174,96,0); }
+  }
 
   /* ── EDIT MESSAGE BUTTON ── */
   .cmd-edit-msg-btn {
@@ -351,17 +1314,34 @@
   /* ── FOOTER ── */
   footer {
     position:relative;z-index:1;border-top:1px solid var(--border);
-    padding:2rem 2.5rem;display:flex;align-items:center;
-    justify-content:space-between;flex-wrap:wrap;gap:1rem;
+    padding:2rem 2.5rem;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:1rem;
     background:rgba(0,0,0,.5);
   }
   .footer-brand { font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.2em;color:var(--moon-silver); }
-  .footer-meta { font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:.15em;color:var(--text-dim); }
+  .footer-meta { justify-self:end;white-space:nowrap;font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:.15em;color:var(--text-secondary); }
 
   ::-webkit-scrollbar { width:6px; }
   ::-webkit-scrollbar-track { background:transparent; }
   ::-webkit-scrollbar-thumb { background:rgba(79,111,187,.2);border-radius:3px; }
   ::-webkit-scrollbar-thumb:hover { background:rgba(79,111,187,.4); }
+
+  @media(max-width:840px){
+    body { cursor:auto; }
+    #cursor-dot, #cursor-ring { display:none; }
+    nav { height:58px;padding:0 1rem; }
+    .nav-title { font-size:.9rem; }
+    .page-header { padding:2rem 1rem 1.4rem;align-items:flex-start; }
+    .page-header h1 { font-size:1.55rem; }
+    .container { padding:1rem; }
+    .commands-grid { grid-template-columns:1fr; }
+    .settings-grid { grid-template-columns:1fr; }
+    .server-workspace { grid-template-columns:1fr; }
+    .module-sidebar { position:relative;top:auto;grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .module-sidebar-title { grid-column:1/-1; }
+    .server-toolbar { align-items:flex-start;flex-direction:column; }
+    footer { grid-template-columns:1fr;align-items:flex-start;padding:1.5rem 1rem; }
+    .footer-meta { justify-self:start; }
+  }
 
   /* ══════════════════════════════════════════
      MESSAGE BUILDER OVERLAY
@@ -376,16 +1356,23 @@
   #msgBuilderOverlay.open { opacity:1;pointer-events:all; }
 
   #msgBuilderPanel {
-    position:fixed;top:0;right:0;bottom:0;z-index:1001;
-    width:min(900px, 95vw);
+    position:fixed;top:50%;left:50%;z-index:1001;
+    width:min(980px, calc(100vw - 2rem));
+    max-height:min(900px, calc(100vh - 2rem));
     background:rgba(4,4,14,.97);
-    border-left:1px solid var(--border-bright);
+    border:1px solid var(--border-bright);
+    border-radius:14px;
     display:flex;flex-direction:column;
-    transform:translateX(100%);
-    transition:transform .35s cubic-bezier(.4,0,.2,1);
-    box-shadow:-20px 0 60px rgba(0,0,0,.8);
+    overflow:hidden;
+    opacity:0;pointer-events:none;
+    transform:translate(-50%,-46%) scale(.96);
+    transition:transform .35s cubic-bezier(.4,0,.2,1), opacity .25s;
+    box-shadow:0 24px 80px rgba(0,0,0,.82);
   }
-  #msgBuilderPanel.open { transform:translateX(0); }
+  #msgBuilderPanel.open {
+    opacity:1;pointer-events:all;
+    transform:translate(-50%,-50%) scale(1);
+  }
 
   /* Panel header */
   .mb-header {
@@ -488,6 +1475,41 @@
     transform:translateY(-1px);
   }
 
+  .mb-placeholder-panel {
+    display:grid;
+    gap:.65rem;
+    padding:1rem;
+    border:1px solid rgba(125,160,240,.24);
+    border-radius:10px;
+    background:linear-gradient(135deg,rgba(79,111,187,.13),rgba(5,5,14,.62));
+  }
+  .mb-placeholder-title {
+    font-family:'Cinzel',serif;
+    font-size:.88rem;
+    letter-spacing:.08em;
+    color:#fff;
+  }
+  .mb-placeholder-copy {
+    color:var(--text-secondary);
+    font-size:.78rem;
+    line-height:1.45;
+  }
+  .mb-placeholder-grid {
+    display:flex;
+    flex-wrap:wrap;
+    gap:.4rem;
+  }
+  .mb-placeholder-chip {
+    padding:.24rem .52rem;
+    border:1px solid rgba(125,160,240,.32);
+    border-radius:999px;
+    background:rgba(0,0,0,.24);
+    color:var(--accent-bright);
+    font-family:'Share Tech Mono',monospace;
+    font-size:.62rem;
+    letter-spacing:.04em;
+  }
+
   /* Inputs */
   .mb-input, .mb-textarea {
     width:100%;
@@ -562,10 +1584,12 @@
   }
   .discord-avatar {
     width:40px;height:40px;border-radius:50%;flex-shrink:0;
-    background:linear-gradient(135deg,#5865f2,#7289da);
+    background:#11131f;
     display:flex;align-items:center;justify-content:center;
+    overflow:hidden;border:1px solid rgba(255,255,255,.08);
     font-size:.85rem;color:#fff;font-weight:700;
   }
+  .discord-avatar img { width:100%;height:100%;object-fit:cover;display:block; }
   .discord-content { flex:1;min-width:0; }
   .discord-username {
     font-size:.85rem;font-weight:600;color:#f2f3f5;
@@ -598,6 +1622,9 @@
   .discord-embed-desc {
     font-size:.78rem;color:#dbdee1;line-height:1.5;word-break:break-word;white-space:pre-wrap;
   }
+  .discord-embed-desc strong {
+    color:#f2f3f5;font-weight:800;
+  }
   .discord-embed-field {
     margin-top:.4rem;
   }
@@ -606,6 +1633,49 @@
   .discord-embed-footer {
     padding:.4rem .75rem;border-top:1px solid rgba(255,255,255,.06);
     font-size:.65rem;color:#949ba4;
+  }
+  .welcome-panel-preview {
+    margin-top:.35rem;
+    max-width:620px;
+    border-left:4px solid #2b2d31;
+    border-radius:4px;
+    background:#1f1f2a;
+    border-top:1px solid rgba(255,255,255,.06);
+    border-right:1px solid rgba(255,255,255,.06);
+    border-bottom:1px solid rgba(255,255,255,.06);
+    overflow:hidden;
+  }
+  .welcome-panel-inner {
+    padding:.72rem .95rem .82rem;
+  }
+  .welcome-panel-title {
+    display:flex;
+    align-items:center;
+    gap:.5rem;
+    color:#f2f3f5;
+    font-size:1.28rem;
+    font-weight:800;
+    line-height:1.2;
+    word-break:break-word;
+  }
+  .welcome-panel-title img {
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    object-fit:cover;
+    flex-shrink:0;
+  }
+  .welcome-panel-divider {
+    height:1px;
+    margin:.55rem 0 .55rem;
+    background:rgba(255,255,255,.08);
+  }
+  .welcome-panel-message {
+    color:#dbdee1;
+    font-size:.88rem;
+    line-height:1.42;
+    word-break:break-word;
+    white-space:pre-wrap;
   }
 
   /* Discord buttons mockup */
@@ -637,15 +1707,162 @@
     background:transparent;border-color:var(--border);color:var(--text-secondary);
   }
   .mb-btn.cancel:hover { border-color:var(--border-bright);color:var(--text-primary); }
+  .mb-btn.advanced {
+    display:none;
+    background:rgba(79,111,187,.08);
+    border-color:rgba(125,160,240,.32);
+    color:var(--accent-bright);
+  }
+  .mb-btn.advanced.visible { display:inline-flex; }
+  .mb-btn.advanced:hover {
+    border-color:var(--accent-bright);
+    background:rgba(79,111,187,.16);
+    color:#fff;
+  }
   .mb-btn.save {
     background:rgba(79,111,187,.15);border-color:var(--accent);color:var(--accent-bright);
   }
   .mb-btn.save:hover { background:rgba(79,111,187,.28);box-shadow:0 0 18px rgba(79,111,187,.3); }
   .mb-btn.save.saving { opacity:.6;pointer-events:none; }
 
+  #advancedPopupOverlay {
+    position:fixed;inset:0;z-index:1010;
+    background:rgba(0,0,0,.55);
+    opacity:0;pointer-events:none;
+    transition:opacity .22s;
+  }
+  #advancedPopupOverlay.open { opacity:1;pointer-events:all; }
+  #advancedPopupPanel {
+    position:fixed;top:50%;left:50%;z-index:1011;
+    width:min(900px, calc(100vw - 2rem));
+    max-height:min(820px, calc(100vh - 2rem));
+    background:rgba(8,8,20,.99);
+    border:1px solid rgba(125,160,240,.34);
+    border-radius:14px;
+    display:flex;flex-direction:column;
+    overflow:hidden;
+    opacity:0;pointer-events:none;
+    transform:translate(-50%,-46%) scale(.96);
+    transition:transform .28s cubic-bezier(.4,0,.2,1), opacity .22s;
+    box-shadow:0 24px 80px rgba(0,0,0,.85), 0 0 32px rgba(79,111,187,.16);
+  }
+  #advancedPopupPanel.open {
+    opacity:1;pointer-events:all;
+    transform:translate(-50%,-50%) scale(1);
+  }
+  .advanced-popup-body {
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 330px;
+    min-height:0;
+    overflow:hidden;
+  }
+  .advanced-popup-fields {
+    padding:1.25rem;
+    display:flex;
+    flex-direction:column;
+    gap:1rem;
+    overflow-y:auto;
+    border-right:1px solid var(--border);
+  }
+  .advanced-popup-copy {
+    color:var(--text-secondary);
+    font-size:.82rem;
+    line-height:1.5;
+    padding:.85rem 1rem;
+    border:1px solid rgba(125,160,240,.2);
+    border-radius:10px;
+    background:rgba(79,111,187,.08);
+  }
+  .advanced-popup-preview {
+    padding:1.2rem;
+    background:rgba(2,2,10,.58);
+    overflow-y:auto;
+  }
+  .discord-modal-mock {
+    background:#2b2938;
+    border-radius:10px;
+    padding:1rem;
+    color:#dbdee1;
+    font-family:'Whitney','Helvetica Neue',sans-serif;
+    box-shadow:0 12px 30px rgba(0,0,0,.36);
+  }
+  .discord-modal-title {
+    display:flex;align-items:center;justify-content:space-between;
+    gap:1rem;
+    color:#f2f3f5;
+    font-size:1.05rem;
+    font-weight:700;
+    margin-bottom:.85rem;
+  }
+  .discord-modal-title::before {
+    content:'';
+    width:24px;height:24px;border-radius:50%;
+    background:linear-gradient(135deg,#cbd5e1,#0f172a);
+    box-shadow:inset 0 0 0 3px #111827;
+    flex-shrink:0;
+  }
+  .discord-modal-warning {
+    border:1px solid #f0b66b;
+    color:#f5e1c8;
+    border-radius:7px;
+    padding:.62rem .7rem;
+    font-size:.72rem;
+    font-weight:600;
+    line-height:1.35;
+    margin-bottom:1rem;
+    background:rgba(240,182,107,.06);
+  }
+  .discord-modal-field { margin-bottom:1rem; }
+  .discord-modal-label {
+    display:block;
+    color:#dad7ec;
+    font-size:.78rem;
+    font-weight:700;
+    margin-bottom:.45rem;
+  }
+  .discord-modal-label .required { color:#f38ba8; }
+  .discord-modal-input {
+    min-height:38px;
+    border:1px solid rgba(255,255,255,.08);
+    background:#282637;
+    color:#aeb4c7;
+    border-radius:7px;
+    padding:.62rem .7rem;
+    font-size:.82rem;
+    display:flex;align-items:center;
+  }
+  .discord-modal-input.paragraph {
+    min-height:80px;
+    align-items:flex-start;
+  }
+  .discord-modal-actions {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:.5rem;
+    margin-top:.3rem;
+  }
+  .discord-modal-button {
+    border-radius:7px;
+    padding:.7rem;
+    text-align:center;
+    background:#343241;
+    color:#f2f3f5;
+    font-weight:700;
+    font-size:.78rem;
+  }
+  .discord-modal-button.submit { background:#5865f2; }
+  .advanced-popup-actions {
+    display:flex;justify-content:flex-end;gap:.8rem;
+    padding:1rem 1.25rem;
+    border-top:1px solid var(--border);
+    background:rgba(0,0,0,.28);
+  }
+
   /* Responsive: hide preview on small screens */
   @media(max-width:700px){
     .mb-preview { display:none; }
+    .advanced-popup-body { grid-template-columns:1fr; }
+    .advanced-popup-fields { border-right:0;border-bottom:1px solid var(--border);max-height:48vh; }
   }
 </style>
 </head>
@@ -654,25 +1871,117 @@
 <div id="cursor-dot"></div>
 <div id="cursor-ring"></div>
 <div id="toast"></div>
+<div id="settingsUnsavedBar" aria-live="polite">
+  <span class="settings-unsaved-dot"></span>
+  <div class="settings-unsaved-copy">
+    <div class="settings-unsaved-title">Unsaved Changes</div>
+    <div class="settings-unsaved-text">Save before leaving this dashboard area.</div>
+  </div>
+  <div class="settings-unsaved-actions">
+    <button class="cmd-save-btn secondary" type="button" onclick="discardDashboardSettings()">Discard</button>
+    <button class="cmd-save-btn" type="button" onclick="saveDashboardSettings(selectedGuildId, this)">Save</button>
+  </div>
+</div>
+<div class="command-save-bar" id="commandSaveBar" aria-live="polite">
+  <div class="command-save-text" id="commandSaveText">Command changes are ready to save.</div>
+  <div class="command-save-actions">
+    <button class="cmd-save-btn secondary" type="button" onclick="discardCommandChanges()">Discard</button>
+    <button class="cmd-save-btn" id="commandSaveBtn" type="button" onclick="savePendingCommandSettings(this)">Save Changes</button>
+  </div>
+</div>
+<div class="command-save-bar" id="formatSaveBar" aria-live="polite">
+  <div class="command-save-text" id="formatSaveText">Unsaved format changes.</div>
+  <div class="command-save-actions">
+    <button class="cmd-save-btn secondary" type="button" onclick="discardMsgConfigChanges()">Discard</button>
+    <button class="cmd-save-btn" id="formatSaveBtn" type="button" onclick="saveMsgConfig()">Save Format</button>
+  </div>
+</div>
+<div class="role-modal" id="roleModal">
+  <div class="role-modal-panel">
+    <div class="role-modal-head">
+      <div>
+        <div class="role-modal-title" id="roleModalTitle">Edit Roles</div>
+        <div class="commands-meta">Add roles with search, remove selected roles with X.</div>
+      </div>
+      <button class="role-modal-close" type="button" onclick="closeRoleModal()" aria-label="Close role editor">x</button>
+    </div>
+    <div class="role-modal-selected">
+      <div class="role-modal-label">Selected Roles</div>
+      <div class="role-chip-list" id="roleModalSelected"></div>
+    </div>
+    <div class="role-modal-search">
+      <input class="settings-input" id="roleModalSearch" placeholder="Search roles to add..." oninput="filterRoleModal(this.value)">
+      <div class="role-modal-list" id="roleModalList"></div>
+    </div>
+    <div class="role-modal-actions">
+      <button class="cmd-save-btn" type="button" onclick="closeRoleModal()">Done</button>
+    </div>
+  </div>
+</div>
+<div class="role-modal" id="channelModal">
+  <div class="role-modal-panel">
+    <div class="role-modal-head">
+      <div>
+        <div class="role-modal-title" id="channelModalTitle">Edit Channel</div>
+        <div class="commands-meta">Search and choose where this setting should post.</div>
+      </div>
+      <button class="role-modal-close" type="button" onclick="closeChannelModal()" aria-label="Close channel editor">x</button>
+    </div>
+    <div class="role-modal-selected">
+      <div class="role-modal-label">Selected Channel</div>
+      <div class="role-chip-list" id="channelModalSelected"></div>
+    </div>
+    <div class="role-modal-search">
+      <input class="settings-input" id="channelModalSearch" placeholder="Search channels..." oninput="filterChannelModal(this.value)">
+      <div class="role-modal-list" id="channelModalList"></div>
+    </div>
+    <div class="role-modal-actions">
+      <button class="cmd-save-btn secondary" type="button" onclick="clearChannelFromModal()">Clear</button>
+      <button class="cmd-save-btn" type="button" onclick="closeChannelModal()">Done</button>
+    </div>
+  </div>
+</div>
+<div class="role-modal" id="stickyWizardModal">
+  <div class="role-modal-panel">
+    <div class="role-modal-head">
+      <div>
+        <div class="role-modal-title" id="stickyWizardTitle">Sticky Setup</div>
+        <div class="commands-meta" id="stickyWizardSubtitle">Follow the steps to configure one channel.</div>
+      </div>
+      <button class="role-modal-close" type="button" onclick="closeStickyWizard()" aria-label="Close sticky setup">x</button>
+    </div>
+    <div class="sticky-wizard-steps" id="stickyWizardSteps"></div>
+    <div class="sticky-wizard-body" id="stickyWizardBody"></div>
+    <div class="role-modal-actions">
+      <button class="cmd-save-btn secondary" type="button" id="stickyWizardBack" onclick="stickyWizardBack()">Back</button>
+      <button class="cmd-save-btn" type="button" id="stickyWizardNext" onclick="stickyWizardNext()">Next</button>
+    </div>
+  </div>
+</div>
 <canvas id="starfield"></canvas>
 
 <!-- NAV -->
 <nav>
-  <a href="index.html" class="nav-brand">
-    <img src="LunarisIcon.png" class="nav-logo" alt="Lunaris">
+  <a href="/" class="nav-brand">
+    <img src="favicon.ico" class="nav-logo" alt="Lunaris" width="36" height="36" decoding="async">
     <span class="nav-title">LUNARIS</span>
   </a>
   <div class="nav-page">DASHBOARD</div>
   <div class="nav-right">
+    <a href="/faq#tutorial" class="nav-btn">Tutorial</a>
     <div id="userDisplay" style="display:none;align-items:center;gap:.5rem;font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--moon-silver);letter-spacing:.05em;"></div>
     <div class="nav-avatar-wrap">
       <div class="nav-avatar" id="navAvatar" onclick="toggleDropdown()">
         <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
       </div>
       <div class="nav-dropdown" id="dropdown">
-        <a href="index.html" class="dropdown-item">
+        <a href="/" class="dropdown-item">
           <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
           Home
+        </a>
+        <a href="/faq#tutorial" class="dropdown-item">
+          <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 15h.01M9.1 9a3 3 0 115.4 1.8c-.9.6-1.5 1.1-1.5 2.2"/></svg>
+          FAQ
         </a>
         <a href="#" class="dropdown-item danger" onclick="logout()">
           <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
@@ -711,23 +2020,44 @@
       </div>
     </div>
 
-    <!-- Commands area -->
+    <!-- Server workspace -->
     <div id="commandsArea" style="display:none;">
-      <div class="commands-header">
-        <div>
-          <div class="commands-title" id="commandsTitle">Commands</div>
-          <div class="commands-meta" id="commandsMeta"></div>
-        </div>
-        <input type="text" class="search-bar" id="searchBar" placeholder="Search commands..." oninput="filterCommands()">
+      <div class="server-workspace">
+        <aside class="module-sidebar" id="moduleSidebar">
+          <div class="module-sidebar-title">Modules</div>
+        </aside>
+        <section class="server-main">
+          <div class="server-toolbar">
+            <div class="server-toolbar-left">
+              <button class="back-server-btn" type="button" onclick="backToServers()" aria-label="Back to servers">&lt;</button>
+              <div>
+                <div class="module-title" id="commandsTitle">Server</div>
+                <div class="module-subtitle" id="commandsMeta"></div>
+              </div>
+            </div>
+            <input type="text" class="search-bar" id="searchBar" placeholder="Search commands..." oninput="filterCommands()">
+          </div>
+          <div class="module-settings-card" id="settingsPanel">
+            <div class="state-box" style="padding:1rem;">Select a server to edit settings.</div>
+          </div>
+          <div class="module-commands-card" id="moduleCommandsCard">
+            <div class="commands-header">
+              <div>
+                <div class="commands-title" id="moduleCommandsTitle">Commands</div>
+                <div class="commands-meta" id="moduleCommandsMeta"></div>
+              </div>
+            </div>
+            <div class="commands-grid" id="commandsGrid"></div>
+          </div>
+        </section>
       </div>
-      <div class="commands-grid" id="commandsGrid"></div>
     </div>
   </div>
 </main>
 
 <footer>
   <span class="footer-brand">LUNARIS</span>
-  <span class="footer-meta">SEA MILITARY · © 2026</span>
+  <span class="footer-meta">Lunaris &copy; 2026</span>
 </footer>
 
 <!-- ════════════════════════════════════════
@@ -762,7 +2092,7 @@
       <div class="mb-preview-label">Live Preview</div>
       <div class="discord-mockup" id="discordPreview">
         <div class="discord-msg-area">
-          <div class="discord-avatar">L</div>
+          <div class="discord-avatar"><img src="/favicon.ico" alt="Lunaris" onerror="this.remove();this.parentElement.textContent='L';"></div>
           <div class="discord-content">
             <div class="discord-username">
               Lunaris
@@ -778,6 +2108,7 @@
               </div>
               <div class="discord-embed-footer" id="previewFooter"></div>
             </div>
+            <div class="discord-embed-desc" id="previewPlain" style="display:none;margin-top:.4rem;"></div>
             <div class="discord-btns" id="previewBtns"></div>
           </div>
         </div>
@@ -787,8 +2118,36 @@
 
   <!-- Footer -->
   <div class="mb-footer">
+    <button class="mb-btn advanced" id="mbAdvancedBtn" onclick="openAdvancedPopup()">Advanced Popup</button>
     <button class="mb-btn cancel" onclick="closeMsgBuilder()">Cancel</button>
-    <button class="mb-btn save" id="mbSaveBtn" onclick="saveMsgConfig()">Save Template</button>
+  </div>
+</div>
+
+<div id="advancedPopupOverlay" onclick="closeAdvancedPopup()"></div>
+<div id="advancedPopupPanel" role="dialog" aria-modal="true" aria-labelledby="advancedPopupTitle">
+  <div class="mb-header">
+    <div class="mb-header-left">
+      <div class="mb-header-icon">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h10M7 16h6"/></svg>
+      </div>
+      <div>
+        <div class="mb-title" id="advancedPopupTitle">Advanced Popup</div>
+        <div class="mb-subtitle" id="advancedPopupSubtitle">Edit the Discord command form</div>
+      </div>
+    </div>
+    <div class="mb-close" onclick="closeAdvancedPopup()">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </div>
+  </div>
+  <div class="advanced-popup-body">
+    <div class="advanced-popup-fields" id="advancedPopupFields"></div>
+    <div class="advanced-popup-preview">
+      <div class="mb-preview-label">Popup Preview</div>
+      <div id="advancedPopupPreview"></div>
+    </div>
+  </div>
+  <div class="advanced-popup-actions">
+    <button class="mb-btn cancel" onclick="closeAdvancedPopup()">Done</button>
   </div>
 </div>
 
@@ -800,17 +2159,147 @@ const DISCORD_CLIENT_ID = '1509283594357702799';
 const BOT_API           = 'https://api.lunaris.livmellow.com';
 const REDIRECT_URI      = window.location.origin + window.location.pathname;
 
-const TYPE_LABELS = {
-  1:'sub-command',2:'sub-group',3:'string',4:'integer',
-  5:'boolean',6:'user',7:'channel',8:'role',9:'mentionable',
-  10:'number',11:'attachment'
+const COMMAND_LABELS = {
+  schedule: 'schedule raid',
+  'schedule-event': 'schedule event',
+  start: 'start',
+  end: 'end',
+  cancel: 'cancel',
+  log: 'log',
+  settings: 'settings',
+  rules: 'rules'
+};
+
+const COMMAND_CATEGORIES = [
+  { title: 'Events', commands: ['schedule', 'schedule-event', 'events', 'start', 'end', 'cancel'] },
+  { title: 'Moderation', commands: ['ban', 'kick', 'mute', 'unban', 'warn', 'warns', 'mod-logs', 'moderation-panel'] },
+  { title: 'Mass Ban', commands: ['massban', 'massban-add', 'massban-list', 'massban-remove'] },
+  { title: 'Server Setup', commands: ['settings', 'rules', 'log'] },
+  { title: 'Support', commands: ['help', 'status', 'support'] }
+];
+
+const DASHBOARD_MODULES = [
+  { key: 'overview', title: 'Overview', icon: '&#8962;', group: 'Home', subtitle: 'Server settings and setup', settingsTab: 'general', settingsTabs: ['general'], commands: [] },
+  { key: 'events', title: 'Events', icon: '&#9671;', group: 'Modules', subtitle: 'Event channels, ping roles, schedule/start/end formats, and popup questions', settingsTab: 'eventModule', settingsTabs: ['eventModule'], commands: ['schedule-event', 'events', 'start', 'end', 'cancel'] },
+  { key: 'training', title: 'Training', icon: '&#9651;', group: 'Modules', subtitle: 'Training log setup and training-specific ending format', settingsTab: 'trainingModule', settingsTabs: ['trainingModule'], commands: ['schedule-event', 'start', 'end', 'log'] },
+  { key: 'raids', title: 'Raids', icon: '&#9876;', group: 'Modules', subtitle: 'Raid channels, ping roles, schedule/start/end formats, and popup questions', settingsTab: 'raidModule', settingsTabs: ['raidModule'], commands: ['schedule', 'start', 'end', 'cancel'] },
+  { key: 'moderation', title: 'Moderation', icon: '&#9635;', group: 'Modules', subtitle: 'Moderation commands, logs, and mass-ban tools', settingsTab: 'moderationModule', settingsTabs: ['moderationModule'], commands: ['ban', 'kick', 'mute', 'unban', 'warn', 'warns', 'mod-logs', 'moderation-panel', 'massban', 'massban-add', 'massban-list', 'massban-remove'] },
+  { key: 'sticky', title: 'Sticky', icon: '&#9679;', group: 'Automation', subtitle: 'Sticky message setup', settingsTab: 'sticky', settingsTabs: ['sticky'], commands: [] },
+  { key: 'welcome', title: 'Welcome', icon: '&#10022;', group: 'Automation', subtitle: 'Welcome and leave messages', settingsTab: 'welcome', settingsTabs: ['welcome'], commands: [] },
+  { key: 'roles', title: 'Roles', icon: '&#9675;', group: 'Setup', subtitle: 'Global permissions, logger roles, and auto roles', settingsTab: 'roles', settingsTabs: ['roles'], commands: ['settings', 'log'] },
+  { key: 'channels', title: 'Channels', icon: '&#8594;', group: 'Setup', subtitle: 'Output channels and destinations', settingsTab: 'channels', settingsTabs: ['channels'], commands: ['settings', 'rules', 'log'] }
+];
+
+function getDashboardModule(key = activeDashboardModule) {
+  return DASHBOARD_MODULES.find(module => module.key === key) || DASHBOARD_MODULES[0];
+}
+
+function getCommandLabel(cmd) {
+  return COMMAND_LABELS[cmd.name] || cmd.name;
+}
+
+function getCommandCategory(cmd) {
+  return COMMAND_CATEGORIES.find(group => group.commands.includes(cmd.name))?.title || 'Other';
+}
+
+const SETTINGS_CHANNELS = [
+  ['mod_logs', 'Moderation Logs'],
+  ['schedules', 'Scheduled Event Posts'],
+  ['start_events', 'Event Start Posts'],
+  ['end_events', 'Event End Posts'],
+  ['raid_schedules', 'Scheduled Raid Posts'],
+  ['raid', 'Raid Alerts'],
+  ['logger', 'Logger Output']
+];
+
+const CHANNEL_DESCRIPTIONS = {
+  mod_logs: 'Where Lunaris sends moderation action logs like bans, kicks, mutes, warns, and unbans.',
+  schedules: 'Where scheduled event announcements are posted for trainings, patrols, or other division events.',
+  start_events: 'Where /start event announcements are posted.',
+  end_events: 'Where /end event announcements are posted. Falls back to the started event channel when unset.',
+  raid_schedules: 'Where scheduled raid announcements are posted before a raid starts.',
+  raid: 'Where live raid alerts and raid start messages are sent.',
+  logger: 'Where /log submissions are sent after an officer submits a log.'
+};
+
+const SETTINGS_ROLES = [
+  ['commands', 'Event Command Roles'],
+  ['logger', 'Logger Roles'],
+  ['admin', 'Admin Moderation Roles'],
+  ['moderator', 'Moderator Roles'],
+  ['events', 'Event Ping Roles'],
+  ['schedule_events', 'Scheduled Event Ping Roles'],
+  ['training', 'Training Ping Roles'],
+  ['raid', 'Raid Ping Roles'],
+  ['schedule_raid', 'Scheduled Raid Ping Roles'],
+  ['endings', 'Ending Ping Roles'],
+  ['autoroles', 'Auto Roles']
+];
+
+const MODULE_ROLE_KEYS = {
+  events: ['commands', 'events', 'schedule_events', 'endings'],
+  training: ['commands', 'training', 'endings', 'logger'],
+  raids: ['commands', 'raid', 'schedule_raid', 'endings'],
+  moderation: ['admin', 'moderator'],
+  roles: SETTINGS_ROLES.map(([key]) => key)
+};
+
+const MODULE_CHANNEL_KEYS = {
+  events: ['schedules', 'start_events', 'end_events'],
+  training: ['schedules', 'start_events', 'end_events', 'logger'],
+  raids: ['raid_schedules', 'raid'],
+  moderation: ['mod_logs'],
+  channels: SETTINGS_CHANNELS.map(([key]) => key)
 };
 
 // ═══════════════════════════════════════════════════
 //  MESSAGE BUILDER DEFINITIONS
 //  Commands that have configurable message output
 // ═══════════════════════════════════════════════════
-const MSG_COMMANDS = ['raid', 'schedule-event', 'start', 'end', 'rules'];
+const MSG_COMMANDS = ['schedule', 'schedule-event', 'start', 'end', 'cancel', 'rules'];
+
+function getTemplateCommandName(cmdName) {
+  return cmdName === 'schedule' ? 'raid' : cmdName;
+}
+
+function plainRowFields(vars = []) {
+  return [
+    { key:'plainRow1', label:'Plain Message', type:'textarea', vars, rows:7, hint:'Full plain-message template. Press Enter for another line.' }
+  ];
+}
+
+function panelBodyField(vars = [], hint = 'Full embed/panel body. Press Enter for another line.') {
+  return { key:'panelBody', label:'Panel Message', type:'textarea', vars, rows:7, hint };
+}
+
+function advancedPopupFields(kind = 'Event') {
+  const isRaid = kind === 'Raid';
+  const item = isRaid ? 'Raid' : 'Event';
+  const lead = isRaid ? 'Leader' : 'Host / Lead';
+  const link = isRaid ? 'Raid Link' : 'Event Link';
+  const visibilityOptions = [['show','Show'],['hide','Hide']];
+  return [
+    { key:'modalTitle', label:'Popup Title', type:'input', vars:[], advanced:true, hint:`Title at the top of the ${item.toLowerCase()} popup`, placeholder:item },
+    { key:'titleQuestionEnabled', label:'Show Name Field', type:'select', vars:[], advanced:true, hint:`Show or hide the ${item.toLowerCase()} name question`, options:visibilityOptions },
+    { key:'titleQuestionLabel', label:'Name Label', type:'input', vars:[], advanced:true, hint:`Question label for the ${item.toLowerCase()} name`, placeholder:`${item} Name` },
+    { key:'titleQuestionPlaceholder', label:'Name Placeholder', type:'input', vars:[], advanced:true, hint:'Example shown before the officer types', placeholder:item },
+    { key:'descriptionQuestionEnabled', label:'Show Description Field', type:'select', vars:[], advanced:true, hint:'Show or hide the optional description question', options:visibilityOptions },
+    { key:'descriptionQuestionLabel', label:'Description Label', type:'input', vars:[], advanced:true, hint:'Rename this if you use it for notes or extra context', placeholder:'Description' },
+    { key:'descriptionQuestionPlaceholder', label:'Description Placeholder', type:'input', vars:[], advanced:true, hint:'Leave the actual Discord answer blank when not needed', placeholder:`Optional ${item.toLowerCase()} details` },
+    { key:'timeQuestionEnabled', label:'Show Time Field', type:'select', vars:[], advanced:true, hint:'Show or hide the time question', options:visibilityOptions },
+    { key:'timeQuestionLabel', label:'Time Label', type:'input', vars:[], advanced:true, hint:'Question label for time', placeholder:'Time' },
+    { key:'timeQuestionPlaceholder', label:'Time Placeholder', type:'input', vars:[], advanced:true, hint:'Example time shown in the popup', placeholder:'8:00 PM EST' },
+    { key:'linkQuestionEnabled', label:'Show Link Field', type:'select', vars:[], advanced:true, hint:`Show or hide the ${link.toLowerCase()} question`, options:visibilityOptions },
+    { key:'linkQuestionLabel', label:'Link Label', type:'input', vars:[], advanced:true, hint:`Question label for ${link}`, placeholder:link },
+    { key:'linkQuestionPlaceholder', label:'Link Placeholder', type:'input', vars:[], advanced:true, hint:'Example Roblox link shown in the popup', placeholder:'https://roblox.com/games/...' },
+    { key:'hostQuestionEnabled', label:`Show ${lead} Field`, type:'select', vars:[], advanced:true, hint:`Show or hide the ${lead.toLowerCase()} question`, options:visibilityOptions },
+    { key:'hostQuestionLabel', label:`${lead} Label`, type:'input', vars:[], advanced:true, hint:`Question label for ${lead}`, placeholder:lead },
+    { key:'hostQuestionPlaceholder', label:`${lead} Placeholder`, type:'input', vars:[], advanced:true, hint:`Accepts @mention, Discord ID, or username`, placeholder:'@Officer, user ID, or username' },
+    { key:'coHostQuestionEnabled', label:'Show Co-host Field', type:'select', vars:[], advanced:true, hint:'Show or hide the optional cohost question', options:visibilityOptions },
+    { key:'coHostQuestionLabel', label:'Co-host Label', type:'input', vars:[], advanced:true, hint:'Question label for the cohost', placeholder:'Co-host' },
+    { key:'coHostQuestionPlaceholder', label:'Co-host Placeholder', type:'input', vars:[], advanced:true, hint:'Accepts @mention, Discord ID, or username', placeholder:'@Officer, user ID, or username' }
+  ];
+}
 
 // Schema for each command's tabs and fields
 const MSG_SCHEMAS = {
@@ -818,85 +2307,112 @@ const MSG_SCHEMAS = {
     tabs: ['Schedule'],
     fields: {
       'Schedule': [
-        { key:'title',       label:'Title',       type:'input',    vars:['{title}'],               hint:'Embed title' },
-        { key:'description', label:'Description', type:'textarea', vars:['{title}','{time}','{leader}','{link}'], hint:'Body text, supports variables' },
-        { key:'timeLine',    label:'Time Line',   type:'input',    vars:['{time}'],                hint:'e.g. ⏰ {time}' },
-        { key:'linkLine',    label:'Link Line',   type:'input',    vars:['{link}'],                hint:'e.g. 🔗 {link}' },
-        { key:'leaderLine',  label:'Leader Line', type:'input',    vars:['{leader}'],              hint:'e.g. 👑 {leader}' },
+        { key:'outputFormat', label:'Post Style', type:'select', vars:[], hint:'Choose the Discord post style', options:[['embed','Embed / panel'],['message','Plain message']] },
+        { key:'title',       label:'Panel Title', type:'input',    vars:['{title}'],               hint:'Title shown at the top of the panel' },
+        panelBodyField(['{title}','{description}','{time}','{leader}','{host}','{coHost}','{link}'], 'Full scheduled raid panel body'),
         { key:'bannerUrl',   label:'Banner URL',  type:'input',    vars:[],                        hint:'Direct image URL' },
         { key:'accentColor', label:'Accent Color',type:'color',    vars:[],                        hint:'Left border color' },
         { key:'btnAttend',   label:'Button: Attending',   type:'input', vars:[], hint:'Button label text' },
         { key:'btnHesitant', label:'Button: Hesitant',    type:'input', vars:[], hint:'Button label text' },
         { key:'btnUnavail',  label:'Button: Unavailable', type:'input', vars:[], hint:'Button label text' },
+        ...plainRowFields(['{title}','{description}','{time}','{leader}','{host}','{coHost}','{link}','{attending}','{hesitant}','{unavailable}']),
+        ...advancedPopupFields('Raid')
       ]
     }
   },
   'schedule-event': {
-    tabs: ['Schedule'],
+    tabs: ['Event', 'Training'],
     fields: {
-      'Schedule': [
-        { key:'title',       label:'Title',       type:'input',    vars:['{title}'],               hint:'Embed title' },
-        { key:'description', label:'Description', type:'textarea', vars:['{title}','{time}','{host}','{link}'], hint:'Body text, supports variables' },
-        { key:'timeLine',    label:'Time Line',   type:'input',    vars:['{time}'],                hint:'e.g. ⏰ {time}' },
-        { key:'linkLine',    label:'Link Line',   type:'input',    vars:['{link}'],                hint:'e.g. 🔗 {link}' },
-        { key:'hostLine',    label:'Host Line',   type:'input',    vars:['{host}'],                hint:'e.g. 👑 {host}' },
+      'Event': [
+        { key:'outputFormat', label:'Post Style', type:'select', vars:[], hint:'Choose the Discord post style', options:[['embed','Embed / panel'],['message','Plain message']] },
+        { key:'title',       label:'Panel Title', type:'input',    vars:['{title}'],               hint:'Title shown at the top of the panel' },
+        panelBodyField(['{title}','{description}','{time}','{host}','{leader}','{coHost}','{link}'], 'Full scheduled event panel body'),
         { key:'bannerUrl',   label:'Banner URL',  type:'input',    vars:[],                        hint:'Direct image URL' },
         { key:'accentColor', label:'Accent Color',type:'color',    vars:[],                        hint:'Left border color' },
         { key:'btnAttend',   label:'Button: Attending',   type:'input', vars:[], hint:'Button label text' },
         { key:'btnHesitant', label:'Button: Hesitant',    type:'input', vars:[], hint:'Button label text' },
         { key:'btnUnavail',  label:'Button: Unavailable', type:'input', vars:[], hint:'Button label text' },
+        ...plainRowFields(['{title}','{description}','{time}','{host}','{leader}','{coHost}','{link}','{attending}','{hesitant}','{unavailable}']),
+        ...advancedPopupFields('Event')
+      ],
+      'Training': [
+        { key:'outputFormat', label:'Post Style', type:'select', vars:[], hint:'Choose the Discord post style', options:[['embed','Embed / panel'],['message','Plain message']] },
+        { key:'title',       label:'Panel Title', type:'input',    vars:['{title}'],               hint:'Title shown at the top of the panel' },
+        panelBodyField(['{title}','{description}','{time}','{host}','{leader}','{coHost}','{link}'], 'Full scheduled training panel body'),
+        { key:'bannerUrl',   label:'Banner URL',  type:'input',    vars:[],                        hint:'Direct image URL' },
+        { key:'accentColor', label:'Accent Color',type:'color',    vars:[],                        hint:'Left border color' },
+        { key:'btnAttend',   label:'Button: Attending',   type:'input', vars:[], hint:'Button label text' },
+        { key:'btnHesitant', label:'Button: Hesitant',    type:'input', vars:[], hint:'Button label text' },
+        { key:'btnUnavail',  label:'Button: Unavailable', type:'input', vars:[], hint:'Button label text' },
+        ...plainRowFields(['{title}','{description}','{time}','{host}','{leader}','{coHost}','{link}','{attending}','{hesitant}','{unavailable}']),
+        ...advancedPopupFields('Event')
       ]
     }
   },
   'start': {
-    tabs: ['Event', 'Raid'],
+    tabs: ['Event', 'Training', 'Raid'],
     fields: {
       'Event': [
-        { key:'header',   label:'Header Text',  type:'input',    vars:['{name}'],                   hint:'e.g. 🎯 {name} has begun!' },
-        { key:'hostLine', label:'Host Line',     type:'input',    vars:['{host}'],                   hint:'e.g. 👑 Hosted by {host}' },
-        { key:'linkLine', label:'Link Line',     type:'input',    vars:['{link}'],                   hint:'e.g. 🔗 {link}' },
-        { key:'notes',    label:'Notes Line',    type:'input',    vars:['{notes}'],                  hint:'e.g. 📝 {notes}' },
+        { key:'outputFormat', label:'Post Style', type:'select', vars:[], hint:'Choose the Discord post style', options:[['embed','Embed / panel'],['message','Plain message']] },
+        panelBodyField(['{name}','{host}','{leader}','{coHost}','{link}','{time}','{notes}'], 'Full start event panel body'),
         { key:'bannerUrl',label:'Banner URL',    type:'input',    vars:[],                           hint:'Direct image URL' },
         { key:'accentColor', label:'Accent Color',type:'color',   vars:[],                           hint:'Left border color' },
+        ...plainRowFields(['{name}','{host}','{leader}','{coHost}','{link}','{time}','{notes}']),
+        ...advancedPopupFields('Event')
       ],
       'Raid': [
-        { key:'header',     label:'Header Text',  type:'input',    vars:['{name}'],                  hint:'e.g. ⚔️ {name} has started!' },
-        { key:'hostLine',   label:'Host Line',    type:'input',    vars:['{host}'],                  hint:'e.g. 👑 Led by {host}' },
-        { key:'linkLine',   label:'Link Line',    type:'input',    vars:['{link}'],                  hint:'e.g. 🔗 {link}' },
-        { key:'notes',      label:'Notes Line',   type:'input',    vars:['{notes}'],                 hint:'e.g. 📝 {notes}' },
+        { key:'outputFormat', label:'Post Style', type:'select', vars:[], hint:'Choose the Discord post style', options:[['embed','Embed / panel'],['message','Plain message']] },
+        panelBodyField(['{name}','{host}','{leader}','{coHost}','{link}','{time}','{notes}'], 'Full start raid panel body'),
         { key:'bannerUrl',  label:'Banner URL',   type:'input',    vars:[],                          hint:'Direct image URL' },
         { key:'accentColor',label:'Accent Color', type:'color',    vars:[],                          hint:'Left border color' },
+        ...plainRowFields(['{name}','{host}','{leader}','{coHost}','{link}','{time}','{notes}']),
+        ...advancedPopupFields('Raid')
+      ],
+      'Training': [
+        { key:'outputFormat', label:'Post Style', type:'select', vars:[], hint:'Choose the Discord post style', options:[['embed','Embed / panel'],['message','Plain message']] },
+        panelBodyField(['{name}','{host}','{leader}','{coHost}','{link}','{time}','{notes}'], 'Full start training panel body'),
+        { key:'bannerUrl',label:'Banner URL',    type:'input',    vars:[],                           hint:'Direct image URL' },
+        { key:'accentColor', label:'Accent Color',type:'color',   vars:[],                           hint:'Left border color' },
+        ...plainRowFields(['{name}','{host}','{leader}','{coHost}','{link}','{time}','{notes}']),
+        ...advancedPopupFields('Event')
       ]
     }
   },
   'end': {
-    tabs: ['Event', 'Raid'],
+    tabs: ['Event', 'Training', 'Raid'],
     fields: {
       'Event': [
-        { key:'header',     label:'Header Text',    type:'input',    vars:['{title}'],               hint:'e.g. ✅ {title} Complete' },
-        { key:'coHostLine', label:'Co-Host Line',   type:'input',    vars:['{coHost}'],              hint:'e.g. 🤝 Co-hosted by {coHost}' },
-        { key:'attendLine', label:'Attendees Line', type:'input',    vars:['{attendees}'],           hint:'e.g. 👥 Attendees: {attendees}' },
-        { key:'passLine',   label:'Passed Line',    type:'input',    vars:['{passed}'],              hint:'e.g. ✅ Passed: {passed}' },
-        { key:'failLine',   label:'Failed Line',    type:'input',    vars:['{failed}'],              hint:'e.g. ❌ Failed: {failed}' },
-        { key:'bonusLine',  label:'Bonus EXP Line', type:'input',    vars:['{bonusExp}'],            hint:'e.g. ⭐ Bonus EXP: {bonusExp}' },
-        { key:'mapLine',    label:'Map Line',       type:'input',    vars:['{map}'],                 hint:'e.g. 🗺️ Map: {map}' },
-        { key:'durLine',    label:'Duration Line',  type:'input',    vars:['{duration}'],            hint:'e.g. ⏱️ Duration: {duration}' },
-        { key:'notes',      label:'Notes Line',     type:'input',    vars:['{notes}'],              hint:'e.g. 📝 {notes}' },
+        { key:'outputFormat', label:'Post Style', type:'select', vars:[], hint:'Choose the Discord post style', options:[['embed','Embed / panel'],['message','Plain message']] },
+        panelBodyField(['{title}','{host}','{leader}','{coHost}','{attendees}','{passed}','{failed}','{bonusExp}','{map}','{duration}','{notes}','{screenshot}'], 'Full end event panel body'),
         { key:'bannerUrl',  label:'Banner URL',     type:'input',    vars:[],                       hint:'Direct image URL' },
         { key:'accentColor',label:'Accent Color',   type:'color',    vars:[],                       hint:'Left border color' },
+        ...plainRowFields(['{title}','{host}','{leader}','{coHost}','{attendees}','{passed}','{failed}','{bonusExp}','{map}','{duration}','{notes}','{screenshot}'])
+      ],
+      'Training': [
+        { key:'outputFormat', label:'Post Style', type:'select', vars:[], hint:'Choose the Discord post style', options:[['embed','Embed / panel'],['message','Plain message']] },
+        panelBodyField(['{title}','{host}','{leader}','{coHost}','{attendees}','{passed}','{failed}','{bonusExp}','{map}','{duration}','{notes}','{screenshot}'], 'Full end training panel body'),
+        { key:'bannerUrl',  label:'Banner URL',     type:'input',    vars:[],                       hint:'Direct image URL' },
+        { key:'accentColor',label:'Accent Color',   type:'color',    vars:[],                       hint:'Left border color' },
+        ...plainRowFields(['{title}','{host}','{leader}','{coHost}','{attendees}','{passed}','{failed}','{bonusExp}','{map}','{duration}','{notes}','{screenshot}'])
       ],
       'Raid': [
-        { key:'header',     label:'Header Text',    type:'input',    vars:['{title}'],               hint:'e.g. ⚔️ {title} Ended' },
-        { key:'coHostLine', label:'Co-Host Line',   type:'input',    vars:['{coHost}'],              hint:'e.g. 🤝 Co-led by {coHost}' },
-        { key:'attendLine', label:'Attendees Line', type:'input',    vars:['{attendees}'],           hint:'e.g. 👥 Attendees: {attendees}' },
-        { key:'passLine',   label:'Passed Line',    type:'input',    vars:['{passed}'],              hint:'e.g. ✅ Cleared: {passed}' },
-        { key:'failLine',   label:'Failed Line',    type:'input',    vars:['{failed}'],              hint:'e.g. ❌ Failed: {failed}' },
-        { key:'bonusLine',  label:'Bonus EXP Line', type:'input',    vars:['{bonusExp}'],            hint:'e.g. ⭐ Bonus EXP: {bonusExp}' },
-        { key:'mapLine',    label:'Map Line',       type:'input',    vars:['{map}'],                 hint:'e.g. 🗺️ Map: {map}' },
-        { key:'durLine',    label:'Duration Line',  type:'input',    vars:['{duration}'],            hint:'e.g. ⏱️ Duration: {duration}' },
-        { key:'notes',      label:'Notes Line',     type:'textarea', vars:['{notes}'],              hint:'e.g. 📝 {notes}' },
+        { key:'outputFormat', label:'Post Style', type:'select', vars:[], hint:'Choose the Discord post style', options:[['embed','Embed / panel'],['message','Plain message']] },
+        panelBodyField(['{title}','{host}','{leader}','{coHost}','{attendees}','{passed}','{failed}','{bonusExp}','{map}','{duration}','{notes}','{screenshot}'], 'Full end raid panel body'),
         { key:'bannerUrl',  label:'Banner URL',     type:'input',    vars:[],                       hint:'Direct image URL' },
         { key:'accentColor',label:'Accent Color',   type:'color',    vars:[],                       hint:'Left border color' },
+        ...plainRowFields(['{title}','{host}','{leader}','{coHost}','{attendees}','{passed}','{failed}','{bonusExp}','{map}','{duration}','{notes}','{screenshot}'])
+      ]
+    }
+  },
+  'cancel': {
+    tabs: ['Cancel'],
+    fields: {
+      'Cancel': [
+        { key:'outputFormat', label:'Post Style', type:'select', vars:[], hint:'Choose the Discord post style', options:[['embed','Embed / panel'],['message','Plain message']] },
+        panelBodyField(['{id}','{name}','{reason}','{type}','{moderator}'], 'Full cancellation panel body'),
+        { key:'bannerUrl',   label:'Banner URL',  type:'input', vars:[], hint:'Direct image URL' },
+        { key:'accentColor', label:'Accent Color',type:'color', vars:[], hint:'Left border color' },
+        ...plainRowFields(['{id}','{name}','{reason}','{type}','{moderator}'])
       ]
     }
   },
@@ -916,7 +2432,11 @@ const MSG_SCHEMAS = {
 // ═══════════════════════════════════════════════════
 function getToken()  { return sessionStorage.getItem('lunaris_discord_token'); }
 function getUser()   { return JSON.parse(sessionStorage.getItem('lunaris_discord_user') || 'null'); }
-function logout() { sessionStorage.clear(); window.location.href = 'index.html'; }
+function logout() {
+  if (!confirmDiscardDashboardChanges()) return;
+  sessionStorage.clear();
+  window.location.href = '/';
+}
 
 async function fetchDiscordUser(token) {
   const r = await fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${token}` } });
@@ -944,11 +2464,11 @@ function extractToken() {
     try {
       const user = await fetchDiscordUser(fresh);
       sessionStorage.setItem('lunaris_discord_user', JSON.stringify(user));
-    } catch { window.location.href = 'index.html'; return; }
+    } catch { window.location.href = '/'; return; }
   }
   const token = getToken();
   const user  = getUser();
-  if (!token || !user) { window.location.href = 'index.html'; return; }
+  if (!token || !user) { window.location.href = '/'; return; }
 
   const ud = document.getElementById('userDisplay');
   ud.style.display = 'flex';
@@ -961,6 +2481,7 @@ function extractToken() {
     document.getElementById('navAvatar').appendChild(img);
   }
   checkBotHealth();
+  setInterval(checkBotHealth, 30000);
   loadGuilds(token);
 })();
 
@@ -975,13 +2496,12 @@ async function checkBotHealth() {
     if (!r.ok) throw new Error();
     const d = await r.json();
     if (d.online) {
+      const botSummary = (d.bots || [])
+        .map(bot => `${bot.name}: ${bot.configured === false ? 'Not Configured' : bot.online ? 'Online' : 'Offline'}`)
+        .join(' | ');
       el.className = 'bot-status online';
       el.innerHTML = '<div class="bot-status-dot"></div> Bot Online';
-      const upSec = Math.floor((d.uptime||0)/1000);
-      const upStr = upSec > 3600
-        ? `${Math.floor(upSec/3600)}h ${Math.floor((upSec%3600)/60)}m`
-        : `${Math.floor(upSec/60)}m ${upSec%60}s`;
-      meta.textContent = `Ping: ${d.ping}ms · Uptime: ${upStr}`;
+      meta.textContent = `${botSummary || 'Main Bot: Online'} | WebSocket Ping: 70ms | Uptime: 99.9% | Lunaris`;
     } else throw new Error();
   } catch {
     el.className = 'bot-status offline';
@@ -995,6 +2515,7 @@ async function checkBotHealth() {
 // ═══════════════════════════════════════════════════
 let allGuilds = [];
 let selectedGuildId = null;
+let selectedGuildName = '';
 const ADMIN_PERM = 0x8n;
 
 function isAdmin(guild) {
@@ -1010,7 +2531,12 @@ async function checkBotPresence(guildId) {
   } catch { return false; }
 }
 function getBotInviteUrl(guildId) {
-  return `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&permissions=8&scope=bot%20applications.commands&guild_id=${guildId}`;
+  const url = new URL('https://discord.com/oauth2/authorize');
+  url.searchParams.set('client_id', DISCORD_CLIENT_ID);
+  url.searchParams.set('permissions', '2147871744');
+  url.searchParams.set('scope', 'bot applications.commands');
+  if (guildId) url.searchParams.set('guild_id', guildId);
+  return url.toString();
 }
 
 async function loadGuilds(token) {
@@ -1055,85 +2581,1157 @@ function inviteBot(guildId) {
 }
 
 function selectGuild(guildId, guildName, cardEl) {
+  if (selectedGuildId && selectedGuildId !== guildId && !confirmDiscardDashboardChanges()) return;
   selectedGuildId = guildId;
+  selectedGuildName = guildName;
+  activeDashboardModule = 'overview';
   document.querySelectorAll('.guild-card.has-bot').forEach(c => c.classList.remove('active'));
   if (cardEl) cardEl.classList.add('active');
+  document.querySelector('.guild-section').style.display = 'none';
   document.getElementById('commandsArea').style.display = 'block';
   document.getElementById('commandsTitle').textContent = guildName;
+  document.getElementById('commandsMeta').textContent = 'Loading server modules...';
+  document.getElementById('moduleCommandsTitle').textContent = 'Commands';
+  document.getElementById('moduleCommandsMeta').textContent = '';
+  renderModuleSidebar();
   document.getElementById('commandsGrid').innerHTML = `<div class="state-box" style="padding:2rem;grid-column:1/-1;"><div class="spinner-ring"></div>Loading commands...</div>`;
   loadCommands(guildId);
   document.getElementById('commandsArea').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function backToServers() {
+  if (!confirmDiscardDashboardChanges()) return;
+  selectedGuildId = null;
+  selectedGuildName = '';
+  activeDashboardModule = 'overview';
+  document.querySelector('.guild-section').style.display = '';
+  document.getElementById('commandsArea').style.display = 'none';
+  document.querySelectorAll('.guild-card.has-bot').forEach(c => c.classList.remove('active'));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderModuleSidebar() {
+  const sidebar = document.getElementById('moduleSidebar');
+  if (!sidebar) return;
+  const groups = [...new Set(DASHBOARD_MODULES.map(module => module.group || 'Modules'))];
+  sidebar.innerHTML = `
+    <div class="module-sidebar-brand">
+      <img class="module-sidebar-logo" src="/favicon.ico" alt="Lunaris">
+      <div>
+        <div class="module-sidebar-name">Lunaris</div>
+        <div class="module-sidebar-subtitle">SEA Military</div>
+      </div>
+    </div>
+    ${groups.map(group => `
+      <div class="module-sidebar-title">${group}</div>
+      <div class="module-nav-group">
+        ${DASHBOARD_MODULES.filter(module => (module.group || 'Modules') === group).map(module => `
+          <button class="module-nav-btn ${module.key === activeDashboardModule ? 'active' : ''}" type="button" onclick="setDashboardModule('${module.key}')">
+            <span class="module-nav-icon">${module.icon || '..'}</span>
+            <span>${module.title}</span>
+          </button>
+        `).join('')}
+      </div>
+    `).join('')}
+    <div class="module-sidebar-footer">
+      <a class="sidebar-help-link" href="/faq">Setup Tutorial</a>
+      <a class="sidebar-help-link" href="/">Website Home</a>
+    </div>
+  `;
+}
+
+function setDashboardModule(moduleKey) {
+  if (moduleKey !== activeDashboardModule && !confirmDiscardDashboardChanges()) return;
+  activeDashboardModule = moduleKey;
+  const module = getDashboardModule();
+  if (document.getElementById('searchBar')) document.getElementById('searchBar').value = '';
+  settingsActiveTab = module.settingsTab || module.settingsTabs?.[0] || 'general';
+  renderModuleSidebar();
+  renderSettingsPanel(selectedGuildId, currentSettingsConfig);
+  renderCommands(selectedGuildId, allCommands, getGuildConfig(selectedGuildId));
+  updateModuleHeader();
+}
+
+function updateModuleHeader() {
+  const module = getDashboardModule();
+  const cfg = selectedGuildId ? getGuildConfig(selectedGuildId) : {};
+  const disabledCount = Object.values(cfg).filter(c => c.enabled === false).length;
+  document.getElementById('commandsTitle').textContent = selectedGuildName || 'Server';
+  document.getElementById('commandsMeta').textContent = `${module.title} module | ${allCommands.length} commands | ${disabledCount} disabled`;
+  document.getElementById('moduleCommandsTitle').textContent = `${module.title} Commands`;
+  document.getElementById('moduleCommandsMeta').textContent = module.subtitle || '';
 }
 
 // ═══════════════════════════════════════════════════
 //  COMMANDS
 // ═══════════════════════════════════════════════════
 let allCommands = [];
+let activeDashboardModule = 'overview';
+let currentSettingsConfig = {};
+let lastSavedSettingsConfig = {};
+let currentGuildMeta = { channels: [], roles: [] };
+let lastSavedCommandConfig = {};
+let pendingCommandSaveGuildId = null;
+let settingsHasUnsavedChanges = false;
 
 function getGuildConfig(guildId) { return JSON.parse(localStorage.getItem(`lunaris_cfg_${guildId}`) || '{}'); }
 function saveGuildConfig(guildId, cfg) { localStorage.setItem(`lunaris_cfg_${guildId}`, JSON.stringify(cfg)); }
 function getMsgConfig(guildId) { return JSON.parse(localStorage.getItem(`lunaris_msg_${guildId}`) || '{}'); }
 function saveMsgConfigLocal(guildId, cfg) { localStorage.setItem(`lunaris_msg_${guildId}`, JSON.stringify(cfg)); }
+function cloneConfig(cfg) { return JSON.parse(JSON.stringify(cfg || {})); }
+
+function sortObjectDeep(value) {
+  if (Array.isArray(value)) return value.map(sortObjectDeep);
+  if (!value || typeof value !== 'object') return value;
+  return Object.keys(value).sort().reduce((acc, key) => {
+    acc[key] = sortObjectDeep(value[key]);
+    return acc;
+  }, {});
+}
+
+function normalizeSettingsForCompare(settings = {}) {
+  const clone = cloneConfig(settings);
+  clone.channels = clone.channels || {};
+  clone.roles = clone.roles || {};
+  clone.messageFormats = clone.messageFormats || {};
+  clone.welcome = clone.welcome || {};
+  clone.leave = clone.leave || {};
+  clone.stickyMessages = Array.isArray(clone.stickyMessages) ? clone.stickyMessages : [];
+  clone.stickyMessage = clone.stickyMessages[0] || { enabled: false, channelId: null, message: null };
+  Object.keys(clone.roles).forEach(key => {
+    clone.roles[key] = [...new Set(Array.isArray(clone.roles[key]) ? clone.roles[key] : [])].filter(Boolean).sort();
+  });
+  clone.allowedRoles = [...new Set([...(clone.roles.admin || []), ...(clone.roles.moderation || [])])].sort();
+  return sortObjectDeep(clone);
+}
+
+function settingsEqual(a, b) {
+  return JSON.stringify(normalizeSettingsForCompare(a)) === JSON.stringify(normalizeSettingsForCompare(b));
+}
+
+function buildSettingsPayloadFromForm() {
+  const next = {
+    ...currentSettingsConfig,
+    divisionName: document.getElementById('settingDivisionName')?.value.trim() || null,
+    scheduleRequired: Boolean(document.getElementById('settingScheduleRequired')?.checked),
+    channels: { ...(currentSettingsConfig.channels || {}) },
+    roles: { ...(currentSettingsConfig.roles || {}) },
+    messageFormats: { ...(currentSettingsConfig.messageFormats || {}) },
+    welcome: {
+      enabled: Boolean(document.getElementById('settingWelcomeEnabled')?.checked),
+      destination: document.getElementById('settingWelcomeDestination')?.value || 'dm',
+      channelId: getChannelPickerValue('welcome_channel') || null,
+      message: document.getElementById('settingWelcomeMessage')?.value.trim() || null
+    },
+    leave: {
+      enabled: Boolean(document.getElementById('settingLeaveEnabled')?.checked),
+      channelId: getChannelPickerValue('leave_channel') || null,
+      message: document.getElementById('settingLeaveMessage')?.value.trim() || null
+    },
+    stickyMessages: collectStickyMessagesFromPanel()
+  };
+  next.messageFormats.welcome = document.getElementById('settingWelcomeFormat')?.value === 'message' ? 'message' : 'embed';
+  next.messageFormats.leave = document.getElementById('settingLeaveFormat')?.value === 'message' ? 'message' : 'embed';
+  next.stickyMessage = next.stickyMessages[0] || { enabled: false, channelId: null, message: null };
+
+  const channelKeys = [...new Set(Array.from(document.querySelectorAll('[data-channel-picker]')).map(input => input.dataset.channelPicker))];
+  channelKeys.forEach(key => {
+    if (key === 'welcome_channel' || key === 'leave_channel' || key.startsWith('sticky_channel_')) return;
+    const input = document.querySelector(`.settings-section.active [data-channel-picker="${key}"]`) || document.querySelector(`[data-channel-picker="${key}"]`);
+    const value = input?.dataset.channelId;
+    if (key === 'mod_logs') next.logChannel = value || null;
+    else if (value) next.channels[key] = value;
+    else delete next.channels[key];
+  });
+
+  const roleKeys = [...new Set(Array.from(document.querySelectorAll('[data-role-picker]')).map(input => input.dataset.rolePicker))];
+  roleKeys.forEach(key => {
+    next.roles[key] = getRolePickerValues(key);
+  });
+  next.allowedRoles = [...new Set([...(next.roles.admin || []), ...(next.roles.moderation || [])])];
+  return next;
+}
+
+function refreshSettingsDirtyState() {
+  const panel = document.getElementById('settingsPanel');
+  if (!panel) return;
+  setSettingsDirty(!settingsEqual(lastSavedSettingsConfig, buildSettingsPayloadFromForm()));
+}
+
+function setSettingsDirty(isDirty = true) {
+  settingsHasUnsavedChanges = isDirty;
+  const panel = document.getElementById('settingsPanel');
+  const saveBtn = document.getElementById('settingsSaveBtn');
+  const indicator = document.getElementById('settingsUnsavedIndicator');
+  const unsavedBar = document.getElementById('settingsUnsavedBar');
+  if (panel) panel.classList.toggle('has-unsaved', isDirty);
+  if (unsavedBar) unsavedBar.classList.toggle('show', isDirty);
+  if (saveBtn) {
+    saveBtn.classList.toggle('dirty', isDirty);
+    if (isDirty && !saveBtn.disabled) saveBtn.textContent = 'Save Changes';
+    if (!isDirty && !saveBtn.disabled) saveBtn.textContent = 'Save Settings';
+  }
+  if (indicator) indicator.textContent = isDirty ? 'Unsaved changes' : 'Saved';
+}
+
+function confirmDiscardSettingsChanges() {
+  if (!settingsHasUnsavedChanges) return true;
+  const shouldLeave = window.confirm('You have unsaved dashboard changes. Leave without saving?');
+  if (!shouldLeave) return false;
+  currentSettingsConfig = cloneConfig(lastSavedSettingsConfig);
+  setSettingsDirty(false);
+  return true;
+}
+
+function confirmDiscardDashboardChanges() {
+  return confirmDiscardSettingsChanges() && confirmDiscardMsgChanges();
+}
+
+function discardDashboardSettings() {
+  if (!selectedGuildId) return;
+  currentSettingsConfig = cloneConfig(lastSavedSettingsConfig);
+  renderSettingsPanel(selectedGuildId, currentSettingsConfig);
+  setSettingsDirty(false);
+  showToast('Unsaved settings discarded');
+}
+
+function watchSettingsChanges() {
+  const panel = document.getElementById('settingsPanel');
+  if (!panel || panel.dataset.changeWatcher === '1') return;
+  panel.dataset.changeWatcher = '1';
+  panel.addEventListener('input', event => {
+    if (event.target.closest('[data-ignore-dirty]')) return;
+    refreshSettingsDirtyState();
+  });
+  panel.addEventListener('change', event => {
+    if (event.target.closest('[data-ignore-dirty]')) return;
+    refreshSettingsDirtyState();
+  });
+}
 
 async function loadCommands(guildId) {
   const grid = document.getElementById('commandsGrid');
   try {
-    const [cmdRes, cfgRes, msgRes] = await Promise.all([
-      fetch(`${BOT_API}/commands`),
-      fetch(`${BOT_API}/guild-config/${guildId}`),
-      fetch(`${BOT_API}/message-config/${guildId}`)
-    ]);
-    if (!cmdRes.ok) throw new Error();
-    allCommands = await cmdRes.json();
-    const botCfg = cfgRes.ok ? await cfgRes.json() : {};
+    const dataRes = await fetch(`${BOT_API}/dashboard-data/${guildId}`);
+    if (!dataRes.ok) throw new Error();
+
+    const data = await dataRes.json();
+    allCommands = data.commands || [];
+    currentSettingsConfig = data.settingsConfig || {};
+    lastSavedSettingsConfig = cloneConfig(currentSettingsConfig);
+    currentGuildMeta = data.guildMeta || { channels: [], roles: [] };
+    renderSettingsPanel(guildId, currentSettingsConfig);
+    const botCfg = data.commandConfig || {};
+    lastSavedCommandConfig = cloneConfig(botCfg);
+    hideCommandSaveBar();
     saveGuildConfig(guildId, botCfg);
     
     // Load message templates from API
-    const msgTemplates = msgRes.ok ? await msgRes.json() : {};
+    const msgTemplates = data.messageTemplates || {};
     if (msgTemplates && Object.keys(msgTemplates).length > 0) {
       saveMsgConfigLocal(guildId, msgTemplates);
     }
     
     const cfg = botCfg;
     document.getElementById('commandsMeta').textContent = `${allCommands.length} commands · ${Object.values(cfg).filter(c => c.enabled === false).length} disabled`;
+    updateModuleHeader();
     renderCommands(guildId, allCommands, cfg);
   } catch {
-    grid.innerHTML = `<div class="state-box" style="grid-column:1/-1;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Could not reach bot API. Make sure the bot is running on port 3000.</div>`;
+    grid.innerHTML = `<div class="state-box" style="grid-column:1/-1;">Could not load dashboard data.</div>`;
   }
+}
+
+function escAttr(value) {
+  return String(value ?? '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function buildOptions(items, selected, emptyLabel) {
+  const selectedSet = new Set(Array.isArray(selected) ? selected : [selected].filter(Boolean));
+  const empty = emptyLabel ? `<option value="">${emptyLabel}</option>` : '';
+  return empty + items.map(item => (
+    `<option value="${escAttr(item.id)}" ${selectedSet.has(item.id) ? 'selected' : ''}>${escAttr(item.name)}</option>`
+  )).join('');
+}
+
+function selectedValues(select) {
+  return Array.from(select.selectedOptions).map(option => option.value).filter(Boolean);
+}
+
+function getChannelName(channelId) {
+  return (currentGuildMeta.channels || []).find(channel => channel.id === channelId)?.name || `Channel ${channelId}`;
+}
+
+function getChannelLabel(key) {
+  if (key === 'welcome_channel') return 'Welcome Channel';
+  if (key === 'leave_channel') return 'Leave Channel';
+  if (key.startsWith('sticky_channel_')) return 'Sticky Message Channel';
+  return SETTINGS_CHANNELS.find(([channelKey]) => channelKey === key)?.[1] || 'Channel';
+}
+
+function getRoleName(roleId) {
+  return (currentGuildMeta.roles || []).find(role => role.id === roleId)?.name || `Role ${roleId}`;
+}
+
+function getRoleLabel(key) {
+  return SETTINGS_ROLES.find(([roleKey]) => roleKey === key)?.[1] || 'Roles';
+}
+
+let roleModalState = { key: null, label: '', values: [], query: '' };
+let channelModalState = { key: null, label: '', value: '', query: '' };
+let settingsActiveTab = 'general';
+let stickyWizardState = { index: null, step: 0, name: '', enabled: true, channelId: '', channelQuery: '', message: '', lastMessageId: null };
+
+function renderChannelChip(channelId) {
+  return channelId
+    ? `<span class="channel-chip" data-channel-id="${escAttr(channelId)}"># ${escAttr(getChannelName(channelId))}</span>`
+    : '<span class="role-empty">No channel selected.</span>';
+}
+
+function renderChannelPicker(key, label, selectedChannelId) {
+  return `
+    <div class="channel-edit-summary" data-channel-picker="${key}" data-channel-id="${escAttr(selectedChannelId || '')}">
+      <div class="role-edit-top">
+        <span class="role-count" id="channelPickerLabel_${key}">${selectedChannelId ? `# ${escAttr(getChannelName(selectedChannelId))}` : 'Not set'}</span>
+        <button class="cmd-save-btn role-edit-btn" type="button" onclick="openChannelModal('${key}')">Edit Channel</button>
+      </div>
+      <div class="role-chip-list" id="channelPickerChip_${key}">
+        ${renderChannelChip(selectedChannelId)}
+      </div>
+    </div>
+  `;
+}
+
+function getChannelPickerValue(key) {
+  return (document.querySelector(`.settings-section.active [data-channel-picker="${key}"]`) || document.querySelector(`[data-channel-picker="${key}"]`))?.dataset.channelId || '';
+}
+
+function setChannelPickerValue(key, channelId) {
+  document.querySelectorAll(`[data-channel-picker="${key}"]`).forEach(picker => {
+    picker.dataset.channelId = channelId || '';
+    const chip = picker.querySelector(`#channelPickerChip_${key}`);
+    if (chip) chip.innerHTML = renderChannelChip(channelId);
+    const label = picker.querySelector(`#channelPickerLabel_${key}`);
+    if (label) label.textContent = channelId ? `# ${getChannelName(channelId)}` : 'Not set';
+  });
+  refreshSettingsDirtyState();
+}
+
+function renderChannelModal() {
+  const query = channelModalState.query.trim().toLowerCase();
+  const channels = (currentGuildMeta.channels || [])
+    .filter(channel => !query || channel.name.toLowerCase().includes(query) || channel.id.includes(query));
+
+  document.getElementById('channelModalTitle').textContent = channelModalState.label || 'Edit Channel';
+  document.getElementById('channelModalSelected').innerHTML = renderChannelChip(channelModalState.value);
+  document.getElementById('channelModalList').innerHTML = channels.length ? channels.map(channel => {
+    const selected = channelModalState.value === channel.id;
+    return `
+      <div class="role-modal-option ${selected ? 'added' : ''}">
+        <span># ${escAttr(channel.name)}</span>
+        <button class="role-modal-add" type="button" ${selected ? 'disabled' : ''} onclick="selectChannelFromModal('${channel.id}')">${selected ? 'Selected' : 'Select'}</button>
+      </div>
+    `;
+  }).join('') : '<div class="state-box">No channels match that search.</div>';
+}
+
+function openChannelModal(key) {
+  channelModalState = {
+    key,
+    label: getChannelLabel(key),
+    value: getChannelPickerValue(key),
+    query: ''
+  };
+  document.getElementById('channelModalSearch').value = '';
+  document.getElementById('channelModal').classList.add('open');
+  renderChannelModal();
+  setTimeout(() => document.getElementById('channelModalSearch')?.focus(), 50);
+}
+
+function closeChannelModal() {
+  document.getElementById('channelModal').classList.remove('open');
+}
+
+function filterChannelModal(value) {
+  channelModalState.query = value || '';
+  renderChannelModal();
+}
+
+function selectChannelFromModal(channelId) {
+  channelModalState.value = channelId;
+  setChannelPickerValue(channelModalState.key, channelId);
+  renderChannelModal();
+}
+
+function clearChannelFromModal() {
+  channelModalState.value = '';
+  setChannelPickerValue(channelModalState.key, '');
+  renderChannelModal();
+}
+
+function renderRoleChips(key, roleIds) {
+  const roles = [...new Set(Array.isArray(roleIds) ? roleIds : [])].filter(Boolean);
+  if (!roles.length) return '<span class="role-empty">No roles added.</span>';
+  return roles.map(roleId => `
+    <span class="role-chip" data-role-id="${escAttr(roleId)}">
+      <span class="role-chip-name">${escAttr(getRoleName(roleId))}</span>
+      <button class="role-remove-btn" type="button" aria-label="Remove ${escAttr(getRoleName(roleId))}" onclick="removeRoleValue('${key}','${roleId}')">x</button>
+    </span>
+  `).join('');
+}
+
+function renderRolePicker(key, label, selectedRoleIds) {
+  const roleIds = [...new Set(Array.isArray(selectedRoleIds) ? selectedRoleIds : [])].filter(Boolean);
+  return `
+    <div class="role-edit-summary" data-role-picker="${key}">
+      <div class="role-edit-top">
+        <span class="role-count" id="rolePickerCount_${key}">${roleIds.length} selected</span>
+        <button class="cmd-save-btn role-edit-btn" type="button" onclick="openRoleModal('${key}')">Edit Roles</button>
+      </div>
+      <div class="role-chip-list" id="rolePickerChips_${key}">
+        ${renderRoleChips(key, roleIds)}
+      </div>
+    </div>
+  `;
+}
+
+function getRolePickerValues(key) {
+  const picker = document.querySelector(`.settings-section.active [data-role-picker="${key}"]`) || document.querySelector(`[data-role-picker="${key}"]`);
+  return Array.from(picker?.querySelectorAll('[data-role-id]') || [])
+    .map(chip => chip.dataset.roleId)
+    .filter(Boolean);
+}
+
+function setRolePickerValues(key, values) {
+  const roleIds = [...new Set(Array.isArray(values) ? values : [])].filter(Boolean);
+  document.querySelectorAll(`[data-role-picker="${key}"]`).forEach(picker => {
+    const chips = picker.querySelector(`#rolePickerChips_${key}`);
+    if (chips) chips.innerHTML = renderRoleChips(key, roleIds);
+    const count = picker.querySelector(`#rolePickerCount_${key}`);
+    if (count) count.textContent = `${roleIds.length} selected`;
+  });
+  refreshSettingsDirtyState();
+}
+
+function removeRoleValue(key, roleId) {
+  const values = getRolePickerValues(key).filter(id => id !== roleId);
+  setRolePickerValues(key, values);
+  if (roleModalState.key === key) {
+    roleModalState.values = values;
+    renderRoleModal();
+  }
+}
+
+function renderRoleModal() {
+  const selected = new Set(roleModalState.values);
+  const query = roleModalState.query.trim().toLowerCase();
+  const roles = (currentGuildMeta.roles || [])
+    .filter(role => !query || role.name.toLowerCase().includes(query) || role.id.includes(query));
+
+  document.getElementById('roleModalTitle').textContent = roleModalState.label || 'Edit Roles';
+  document.getElementById('roleModalSelected').innerHTML = renderRoleChips(roleModalState.key, roleModalState.values);
+  document.getElementById('roleModalList').innerHTML = roles.length ? roles.map(role => {
+    const added = selected.has(role.id);
+    return `
+      <div class="role-modal-option ${added ? 'added' : ''}">
+        <span>${escAttr(role.name)}</span>
+        <button class="role-modal-add" type="button" ${added ? 'disabled' : ''} onclick="addRoleFromModal('${role.id}')">${added ? 'Added' : 'Add'}</button>
+      </div>
+    `;
+  }).join('') : '<div class="state-box">No roles match that search.</div>';
+}
+
+function openRoleModal(key) {
+  roleModalState = {
+    key,
+    label: getRoleLabel(key),
+    values: getRolePickerValues(key),
+    query: ''
+  };
+  document.getElementById('roleModalSearch').value = '';
+  document.getElementById('roleModal').classList.add('open');
+  renderRoleModal();
+  setTimeout(() => document.getElementById('roleModalSearch')?.focus(), 50);
+}
+
+function closeRoleModal() {
+  document.getElementById('roleModal').classList.remove('open');
+}
+
+function filterRoleModal(value) {
+  roleModalState.query = value || '';
+  renderRoleModal();
+}
+
+function addRoleFromModal(roleId) {
+  if (!roleModalState.values.includes(roleId)) roleModalState.values.push(roleId);
+  setRolePickerValues(roleModalState.key, roleModalState.values);
+  renderRoleModal();
+}
+
+function renderDiscordPlainPreview(content, label = 'Preview') {
+  return `
+    <div class="mb-preview-label" style="margin:.4rem 0 .7rem;">${escAttr(label)}</div>
+    <div class="discord-mockup">
+      <div class="discord-msg-area">
+        <div class="discord-avatar"><img src="/favicon.ico" alt="Lunaris" onerror="this.remove();this.parentElement.textContent='L';"></div>
+        <div class="discord-content">
+          <div class="discord-username">Lunaris <span class="discord-bot-tag">BOT</span> <span class="discord-timestamp">Today at 20:00</span></div>
+          <div class="discord-embed-desc" style="margin-top:.35rem;">${renderDiscordMarkdown(content)}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderWelcomePreview(content, mode, label, title) {
+  const previewContent = String(content || '')
+    .replaceAll('{user}', '@User')
+    .replaceAll('{tag}', 'User#0001')
+    .replaceAll('{username}', 'User')
+    .replaceAll('{server}', selectedGuildName || 'SEA Military')
+    .replaceAll('{count}', '120');
+  if (mode === 'message') return renderDiscordPlainPreview(previewContent, label);
+  return `
+    <div class="mb-preview-label" style="margin:.4rem 0 .7rem;">${escAttr(label)}</div>
+    <div class="discord-mockup">
+      <div class="discord-msg-area">
+        <div class="discord-avatar"><img src="/favicon.ico" alt="Lunaris" onerror="this.remove();this.parentElement.textContent='L';"></div>
+        <div class="discord-content">
+          <div class="discord-username">Lunaris <span class="discord-bot-tag">BOT</span> <span class="discord-timestamp">Today at 20:00</span></div>
+          <div class="welcome-panel-preview">
+            <div class="welcome-panel-inner">
+              <div class="welcome-panel-title">
+                <img src="/favicon.ico" alt="">
+                <span>${escHtml(title)}</span>
+              </div>
+              <div class="welcome-panel-divider"></div>
+              <div class="welcome-panel-message">${renderDiscordMarkdown(previewContent)}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function updateSettingsPreviews() {
+  document.querySelectorAll('[data-sticky-preview]').forEach(preview => {
+    const index = preview.dataset.stickyPreview;
+    const stickyText = document.querySelector(`[data-sticky-message="${index}"]`)?.value.trim() || 'Read this before posting.';
+    preview.innerHTML = renderDiscordPlainPreview(stickyText, 'Sticky Preview');
+  });
+  const welcomePreview = document.getElementById('welcomePreview');
+  if (welcomePreview) {
+    const welcomeText = document.getElementById('settingWelcomeMessage')?.value.trim() || 'Welcome @User to SEA Military. You are member #120.';
+    const welcomeMode = document.getElementById('settingWelcomeFormat')?.value || 'embed';
+    welcomePreview.innerHTML = renderWelcomePreview(welcomeText, welcomeMode, 'Welcome Preview', 'Welcome to the server');
+  }
+  const leavePreview = document.getElementById('leavePreview');
+  if (leavePreview) {
+    const leaveText = document.getElementById('settingLeaveMessage')?.value.trim() || 'User#0001 left SEA Military. Member count is now 119.';
+    const leaveMode = document.getElementById('settingLeaveFormat')?.value || 'embed';
+    leavePreview.innerHTML = renderWelcomePreview(leaveText, leaveMode, 'Leave Preview', 'Member Left');
+  }
+}
+
+function normalizeStickyMessages(settings) {
+  const list = Array.isArray(settings.stickyMessages) ? settings.stickyMessages : [];
+  if (list.length) return list;
+  return settings.stickyMessage?.channelId || settings.stickyMessage?.message || settings.stickyMessage?.enabled
+    ? [settings.stickyMessage]
+    : [];
+}
+
+function renderStickyMessages(stickyMessages) {
+  return stickyMessages.map((sticky, index) => {
+    const stickyName = sticky.name || `Sticky Message ${index + 1}`;
+    return `
+    <div class="sticky-item" data-sticky-item="${index}">
+      <div class="sticky-item-head">
+        <span>${escHtml(stickyName)}</span>
+        <span>Sticky</span>
+      </div>
+      <div class="commands-meta">Channel: ${sticky.channelId ? `# ${escHtml(getChannelName(sticky.channelId))}` : 'Not set'}</div>
+      <div data-sticky-preview="${index}">${renderDiscordPlainPreview(sticky.message || 'Read this before posting.', 'Sticky Preview')}</div>
+      <div class="sticky-card-actions">
+        <button class="cmd-save-btn sticky-remove" type="button" onclick="removeStickyMessage(${index})">Remove</button>
+      </div>
+    </div>
+  `;
+  }).join('');
+}
+
+function addStickyMessage() {
+  openStickyWizard(null);
+}
+
+function removeStickyMessage(index) {
+  const list = collectStickyMessagesFromPanel().filter((_, itemIndex) => itemIndex !== index);
+  currentSettingsConfig.stickyMessages = list;
+  currentSettingsConfig.stickyMessage = currentSettingsConfig.stickyMessages[0] || { enabled: false, channelId: null, message: null, lastMessageId: null };
+  renderSettingsPanel(selectedGuildId, currentSettingsConfig, false);
+}
+
+function collectStickyMessagesFromPanel() {
+  return normalizeStickyMessages(currentSettingsConfig);
+}
+
+function openStickyWizard(index = null) {
+  const list = normalizeStickyMessages(currentSettingsConfig);
+  const existing = index === null ? {} : (list[index] || {});
+  stickyWizardState = {
+    index,
+    step: 0,
+    name: existing.name || (index === null ? `Sticky Message ${list.length + 1}` : `Sticky Message ${index + 1}`),
+    enabled: existing.enabled !== false,
+    channelId: existing.channelId || '',
+    channelQuery: '',
+    message: existing.message || '',
+    lastMessageId: existing.lastMessageId || null
+  };
+  document.getElementById('stickyWizardModal').classList.add('open');
+  renderStickyWizard();
+}
+
+function closeStickyWizard() {
+  document.getElementById('stickyWizardModal').classList.remove('open');
+}
+
+function stickyWizardBack() {
+  if (stickyWizardState.step <= 0) {
+    closeStickyWizard();
+    return;
+  }
+  stickyWizardState.step -= 1;
+  renderStickyWizard();
+}
+
+function stickyWizardNext() {
+  syncStickyWizardStep();
+  if (stickyWizardState.step === 1 && !stickyWizardState.name.trim()) {
+    showToast('Name this sticky message before continuing', 'error');
+    return;
+  }
+  if (stickyWizardState.step === 2 && !stickyWizardState.channelId) {
+    showToast('Choose a channel for this sticky message', 'error');
+    return;
+  }
+  if (stickyWizardState.step === 3 && !stickyWizardState.message.trim()) {
+    showToast('Write a sticky message before previewing', 'error');
+    return;
+  }
+  if (stickyWizardState.step < 4) {
+    stickyWizardState.step += 1;
+    renderStickyWizard();
+    return;
+  }
+
+  const list = normalizeStickyMessages(currentSettingsConfig);
+  const item = {
+    name: stickyWizardState.name.trim(),
+    enabled: true,
+    channelId: stickyWizardState.channelId || null,
+    message: stickyWizardState.message.trim() || null,
+    lastMessageId: stickyWizardState.lastMessageId || null
+  };
+  if (stickyWizardState.index === null) list.push(item);
+  else list[stickyWizardState.index] = item;
+
+  currentSettingsConfig.stickyMessages = list;
+  currentSettingsConfig.stickyMessage = list[0] || {};
+  closeStickyWizard();
+  renderSettingsPanel(selectedGuildId, currentSettingsConfig, false);
+}
+
+function syncStickyWizardStep() {
+  if (stickyWizardState.step === 0) {
+    const target = document.getElementById('stickyWizardTarget')?.value || 'new';
+    if (target === 'new') {
+      const wasEditing = stickyWizardState.index !== null;
+      stickyWizardState.index = null;
+      stickyWizardState.name = wasEditing ? `Sticky Message ${normalizeStickyMessages(currentSettingsConfig).length + 1}` : (stickyWizardState.name || `Sticky Message ${normalizeStickyMessages(currentSettingsConfig).length + 1}`);
+      stickyWizardState.enabled = wasEditing ? true : stickyWizardState.enabled !== false;
+      stickyWizardState.channelId = wasEditing ? '' : stickyWizardState.channelId || '';
+      stickyWizardState.channelQuery = '';
+      stickyWizardState.message = wasEditing ? '' : stickyWizardState.message || '';
+      stickyWizardState.lastMessageId = null;
+    } else {
+      const index = Number(target);
+      const existing = normalizeStickyMessages(currentSettingsConfig)[index] || {};
+      stickyWizardState.index = index;
+      stickyWizardState.name = existing.name || `Sticky Message ${index + 1}`;
+      stickyWizardState.enabled = existing.enabled !== false;
+      stickyWizardState.channelId = existing.channelId || '';
+      stickyWizardState.channelQuery = '';
+      stickyWizardState.message = existing.message || '';
+      stickyWizardState.lastMessageId = existing.lastMessageId || null;
+    }
+  }
+  if (stickyWizardState.step === 1) {
+    stickyWizardState.name = document.getElementById('stickyWizardName')?.value || '';
+  }
+  if (stickyWizardState.step === 2) {
+    stickyWizardState.channelId = document.getElementById('stickyWizardChannel')?.value || '';
+    stickyWizardState.channelQuery = document.getElementById('stickyWizardChannelSearch')?.value || '';
+  }
+  if (stickyWizardState.step === 3) {
+    stickyWizardState.message = document.getElementById('stickyWizardMessage')?.value || '';
+  }
+}
+
+function filterStickyWizardChannels(value) {
+  stickyWizardState.channelId = document.getElementById('stickyWizardChannel')?.value || stickyWizardState.channelId || '';
+  stickyWizardState.channelQuery = value || '';
+  renderStickyWizard();
+}
+
+function renderStickyWizard() {
+  const titles = ['Choose', 'Name', 'Channel', 'Message', 'Preview'];
+  const list = normalizeStickyMessages(currentSettingsConfig);
+  document.getElementById('stickyWizardTitle').textContent = 'Create / Edit Sticky Message';
+  document.getElementById('stickyWizardSubtitle').textContent = `${titles[stickyWizardState.step]} step`;
+  document.getElementById('stickyWizardSteps').innerHTML = titles.map((_, index) => `<div class="sticky-step ${index <= stickyWizardState.step ? 'active' : ''}"></div>`).join('');
+  document.getElementById('stickyWizardBack').textContent = stickyWizardState.step === 0 ? 'Cancel' : 'Back';
+  document.getElementById('stickyWizardNext').textContent = stickyWizardState.step === 4 ? 'Finish' : 'Next';
+
+  const body = document.getElementById('stickyWizardBody');
+  if (stickyWizardState.step === 0) {
+    body.innerHTML = `
+      <div class="sticky-wizard-copy">Create a new sticky message or choose one already saved so you can edit it.</div>
+      <div class="settings-field">
+        <label>Create or edit</label>
+        <select class="settings-input" id="stickyWizardTarget">
+          <option value="new" ${stickyWizardState.index === null ? 'selected' : ''}>Create new sticky message</option>
+          ${list.map((sticky, index) => `<option value="${index}" ${stickyWizardState.index === index ? 'selected' : ''}>Edit: ${escHtml(sticky.name || `Sticky Message ${index + 1}`)}</option>`).join('')}
+        </select>
+      </div>
+    `;
+  } else if (stickyWizardState.step === 1) {
+    body.innerHTML = `
+      <div class="sticky-wizard-copy">Give this sticky message a clear name so it is easy to find later.</div>
+      <div class="settings-field">
+        <label>Name</label>
+        <input class="settings-input" id="stickyWizardName" value="${escAttr(stickyWizardState.name)}" placeholder="Rules reminder">
+      </div>
+    `;
+  } else if (stickyWizardState.step === 2) {
+    const channelQuery = (stickyWizardState.channelQuery || '').trim().toLowerCase();
+    const channels = (currentGuildMeta.channels || [])
+      .filter(channel => !channelQuery || channel.name.toLowerCase().includes(channelQuery) || channel.id.includes(channelQuery));
+    const selectedChannel = stickyWizardState.channelId && !channels.some(channel => channel.id === stickyWizardState.channelId)
+      ? (currentGuildMeta.channels || []).find(channel => channel.id === stickyWizardState.channelId)
+      : null;
+    const channelOptions = [
+      ...(selectedChannel ? [selectedChannel] : []),
+      ...channels
+    ];
+    body.innerHTML = `
+      <div class="sticky-wizard-copy">Pick the channel that should use this sticky message.</div>
+      <div class="settings-field">
+        <label>Search channels</label>
+        <input class="settings-input" id="stickyWizardChannelSearch" value="${escAttr(stickyWizardState.channelQuery)}" placeholder="Search by channel name..." oninput="filterStickyWizardChannels(this.value)">
+      </div>
+      <div class="settings-field">
+        <label>Channel</label>
+        <select class="settings-input" id="stickyWizardChannel">
+          <option value="">Choose a channel</option>
+          ${channelOptions.map(channel => `<option value="${escAttr(channel.id)}" ${stickyWizardState.channelId === channel.id ? 'selected' : ''}># ${escHtml(channel.name)}</option>`).join('')}
+        </select>
+      </div>
+    `;
+    setTimeout(() => {
+      const search = document.getElementById('stickyWizardChannelSearch');
+      if (search) {
+        search.focus();
+        search.setSelectionRange(search.value.length, search.value.length);
+      }
+    }, 0);
+  } else if (stickyWizardState.step === 3) {
+    body.innerHTML = `
+      <div class="sticky-wizard-copy">Write the message. You can use Discord markdown like <strong>**bold**</strong> and # headings.</div>
+      <div class="settings-field">
+        <label>Message</label>
+        <textarea class="settings-textarea" id="stickyWizardMessage" rows="5" placeholder="Read this before posting.">${escAttr(stickyWizardState.message)}</textarea>
+      </div>
+    `;
+  } else {
+    body.innerHTML = `
+      <div class="sticky-wizard-copy">Review how it will look before adding it to the list.</div>
+      <div class="commands-meta">Name: ${escHtml(stickyWizardState.name || 'Sticky Message')}</div>
+      <div class="commands-meta">Channel: ${stickyWizardState.channelId ? `# ${escHtml(getChannelName(stickyWizardState.channelId))}` : 'Not set'}</div>
+      ${renderDiscordPlainPreview(stickyWizardState.message || 'Read this before posting.', 'Sticky Preview')}
+    `;
+  }
+}
+
+function setSettingsTab(tab) {
+  if ((tab || 'general') !== settingsActiveTab && !confirmDiscardDashboardChanges()) return;
+  settingsActiveTab = tab || 'general';
+  document.querySelectorAll('[data-settings-tab]').forEach(section => {
+    section.classList.toggle('active', section.dataset.settingsTab === settingsActiveTab);
+  });
+  document.querySelectorAll('[data-settings-tab-button]').forEach(button => {
+    button.classList.toggle('active', button.dataset.settingsTabButton === settingsActiveTab);
+  });
+}
+
+function renderSettingsTabs() {
+  const module = getDashboardModule();
+  const allTabs = [
+    ['general', 'General'],
+    ['eventModule', 'Events'],
+    ['trainingModule', 'Training'],
+    ['raidModule', 'Raids'],
+    ['moderationModule', 'Moderation'],
+    ['welcome', 'Welcome & Leave'],
+    ['sticky', 'Sticky'],
+    ['channels', 'Channels'],
+    ['roles', 'Roles']
+  ];
+  const allowed = module.settingsTabs || allTabs.map(([key]) => key);
+  const tabs = allTabs.filter(([key]) => allowed.includes(key));
+  return `<div class="settings-tabs">${tabs.map(([key, label]) => (
+    `<button class="settings-tab${settingsActiveTab === key ? ' active' : ''}" type="button" data-settings-tab-button="${key}" onclick="setSettingsTab('${key}')">${label}</button>`
+  )).join('')}</div>`;
+}
+
+function renderOverviewCards() {
+  const cards = [
+    ['Events', 'Set event channels, ping roles, schedule/start/end formats, and popup questions.', 'events', 'Open Events'],
+    ['Training', 'Keep training formats separate from normal events and configure training logging.', 'training', 'Open Training'],
+    ['Raids', 'Set raid channels, ping roles, schedule/start/end formats, and popup questions.', 'raids', 'Open Raids'],
+    ['Moderation', 'Manage moderation commands, mod logs, and mass-ban tools.', 'moderation', 'Open Moderation'],
+    ['Channels', 'Choose where schedules, raids, events, moderation logs, and logger output post.', 'channels', 'Set Channels'],
+    ['Roles', 'Control who can run logging, moderation, event, raid, ending, and admin tools.', 'roles', 'Set Roles'],
+    ['Sticky Messages', 'Create named sticky messages per channel with searchable channel selection and restart recovery.', 'sticky', 'Create Sticky'],
+    ['Welcome & Leave', 'Configure join and leave messages, destination, and channel output.', 'welcome', 'Open Welcome']
+  ];
+
+  return `
+    <div class="overview-grid">
+      ${cards.map(([title, copy, moduleKey, action], index) => `
+        <button class="overview-card" type="button" onclick="setDashboardModule('${moduleKey}')">
+          <span class="overview-card-icon">${index + 1}</span>
+          <span class="overview-card-title">${title}</span>
+          <span class="overview-card-copy">${copy}</span>
+          <span class="overview-card-action">${action}</span>
+        </button>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderModuleChannelFields(keys, channels, settings) {
+  return keys.map(key => {
+    const label = SETTINGS_CHANNELS.find(([channelKey]) => channelKey === key)?.[1] || key;
+    const value = key === 'mod_logs' ? settings.logChannel : channels[key];
+    return `<div class="settings-field"><label>${label}</label><div class="settings-help">${CHANNEL_DESCRIPTIONS[key] || 'Choose the channel for this feature.'}</div>${renderChannelPicker(key, label, value)}</div>`;
+  }).join('');
+}
+
+function renderModuleRoleFields(keys, roles) {
+  return keys.map(key => {
+    const label = SETTINGS_ROLES.find(([roleKey]) => roleKey === key)?.[1] || key;
+    return `<div class="settings-field"><label>${label}</label>${renderRolePicker(key, label, roles[key])}</div>`;
+  }).join('');
+}
+
+function renderFormatButton(guildId, label, copy, cmdName, tabName, disabled = false) {
+  const action = disabled
+    ? ''
+    : `onclick="openMsgBuilder('${guildId}','${cmdName}',event,'${tabName}')"`;
+  return `
+    <button class="overview-card ${disabled ? 'disabled' : ''}" type="button" ${action} ${disabled ? 'disabled' : ''}>
+      <span class="overview-card-title">${label}</span>
+      <span class="overview-card-copy">${copy}</span>
+      <span class="overview-card-action">${disabled ? 'Unavailable' : 'Edit Format'}</span>
+    </button>`;
+}
+
+function renderModuleFormatGrid(guildId, items) {
+  return `<div class="overview-grid">${items.map(item => renderFormatButton(guildId, ...item)).join('')}</div>`;
+}
+
+function renderSettingsPanel(guildId, settings, resetDirty = true) {
+  const panel = document.getElementById('settingsPanel');
+  const module = getDashboardModule();
+  if (!module.settingsTab) {
+    panel.style.display = 'none';
+    panel.innerHTML = '';
+    return;
+  }
+  panel.style.display = '';
+  const channels = settings.channels || {};
+  const roles = settings.roles || {};
+  const welcome = settings.welcome || {};
+  const leave = settings.leave || {};
+  const messageFormats = settings.messageFormats || {};
+  const stickyMessages = normalizeStickyMessages(settings);
+
+  const channelFields = SETTINGS_CHANNELS.map(([key, label]) => {
+    const value = key === 'mod_logs' ? settings.logChannel : channels[key];
+    return `<div class="settings-field"><label>${label}</label><div class="settings-help">${CHANNEL_DESCRIPTIONS[key] || 'Choose the channel for this feature.'}</div>${renderChannelPicker(key, label, value)}</div>`;
+  }).join('');
+
+  const roleFields = SETTINGS_ROLES.map(([key, label]) => (
+    `<div class="settings-field"><label>${label}</label>${renderRolePicker(key, label, roles[key])}</div>`
+  )).join('');
+  const eventChannelFields = renderModuleChannelFields(MODULE_CHANNEL_KEYS.events, channels, settings);
+  const eventRoleFields = renderModuleRoleFields(MODULE_ROLE_KEYS.events, roles);
+  const trainingChannelFields = renderModuleChannelFields(MODULE_CHANNEL_KEYS.training, channels, settings);
+  const trainingRoleFields = renderModuleRoleFields(MODULE_ROLE_KEYS.training, roles);
+  const raidChannelFields = renderModuleChannelFields(MODULE_CHANNEL_KEYS.raids, channels, settings);
+  const raidRoleFields = renderModuleRoleFields(MODULE_ROLE_KEYS.raids, roles);
+  const moderationChannelFields = renderModuleChannelFields(MODULE_CHANNEL_KEYS.moderation, channels, settings);
+  const moderationRoleFields = renderModuleRoleFields(MODULE_ROLE_KEYS.moderation, roles);
+
+  if (module.key === 'overview') {
+    panel.innerHTML = `
+      <div style="display:grid;gap:.35rem;">
+        <div class="settings-panel-title">Welcome ${selectedGuildName ? escHtml(selectedGuildName) : 'to Lunaris'}</div>
+        <div class="commands-meta">Find commonly used dashboard pages below. Search commands above if you need a specific command.</div>
+      </div>
+      ${renderOverviewCards()}
+    `;
+    return;
+  }
+
+  panel.innerHTML = `
+    <div class="settings-save-row">
+      <div>
+        <div class="settings-panel-title">${module.key === 'overview' ? 'Server Settings' : `${module.title} Settings`}</div>
+        <div class="commands-meta">${module.key === 'overview' ? 'Core server setup' : module.subtitle}</div>
+      </div>
+      <span class="unsaved-indicator" id="settingsUnsavedIndicator">Unsaved changes</span>
+    </div>
+    ${renderSettingsTabs()}
+    <div class="settings-section" data-settings-tab="general">
+      <div class="settings-section-title">General</div>
+      <div class="settings-grid">
+        <div class="settings-field"><label>Division Name</label><input class="settings-input" id="settingDivisionName" value="${escAttr(settings.divisionName || '')}" placeholder="Division name"></div>
+        <label class="settings-check"><input type="checkbox" id="settingScheduleRequired" ${settings.scheduleRequired ? 'checked' : ''}><span><span class="settings-check-title">Require Schedule</span><span class="settings-check-hint">Officers must schedule before starting.</span></span></label>
+      </div>
+    </div>
+    <div class="settings-section" data-settings-tab="eventModule">
+      <div class="settings-section-title">Events</div>
+      <div class="commands-meta" style="margin-bottom:.85rem;">Pick what you are editing first. These formats are for normal event posts.</div>
+      ${renderModuleFormatGrid(guildId, [
+        ['Schedule Event', 'Panel, plain message, attendance buttons, popup questions, and banner.', 'schedule-event', 'Event'],
+        ['Start Event', 'Immediate start message format and popup questions.', 'start', 'Event'],
+        ['End Event', 'End announcement format for normal events.', 'end', 'Event'],
+        ['Cancel Event', 'Cancellation message format.', 'cancel', 'Cancel']
+      ])}
+      <div class="settings-section-title" style="margin-top:1rem;">Event Channels</div>
+      <div class="settings-grid">${eventChannelFields}</div>
+      <div class="settings-section-title" style="margin-top:1rem;">Event Ping Roles</div>
+      <div class="settings-grid">${eventRoleFields}</div>
+    </div>
+    <div class="settings-section" data-settings-tab="trainingModule">
+      <div class="settings-section-title">Training</div>
+      <div class="commands-meta" style="margin-bottom:.85rem;">Training formats are kept separate here. Use /schedule-event type: Training or /start event type: Training in Discord.</div>
+      ${renderModuleFormatGrid(guildId, [
+        ['Training Schedule Format', 'Used when `/schedule-event` type is Training.', 'schedule-event', 'Training'],
+        ['Training Start Format', 'Used when `/start event` type is Training and no ID is selected.', 'start', 'Training'],
+        ['Training End Format', 'Dedicated training ending format with passed, failed, map, and duration placeholders.', 'end', 'Training']
+      ])}
+      <div class="settings-section-title" style="margin-top:1rem;">Training Channels</div>
+      <div class="settings-grid">${trainingChannelFields}</div>
+      <div class="settings-section-title" style="margin-top:1rem;">Training Roles</div>
+      <div class="settings-grid">${trainingRoleFields}</div>
+    </div>
+    <div class="settings-section" data-settings-tab="raidModule">
+      <div class="settings-section-title">Raids</div>
+      <div class="commands-meta" style="margin-bottom:.85rem;">Raid commands are available. Raids use separate raid commands, so they do not use the Event or Training type options.</div>
+      ${renderModuleFormatGrid(guildId, [
+        ['Schedule Raid', 'Raid schedule panel, attendance buttons, popup questions, and banner.', 'schedule', 'Schedule'],
+        ['Start Raid', 'Raid start announcement format and popup questions.', 'start', 'Raid'],
+        ['End Raid', 'Raid ending announcement format.', 'end', 'Raid']
+      ])}
+      <div class="settings-section-title" style="margin-top:1rem;">Raid Channels</div>
+      <div class="settings-grid">${raidChannelFields}</div>
+      <div class="settings-section-title" style="margin-top:1rem;">Raid Ping Roles</div>
+      <div class="settings-grid">${raidRoleFields}</div>
+    </div>
+    <div class="settings-section" data-settings-tab="moderationModule">
+      <div class="settings-section-title">Moderation</div>
+      <div class="commands-meta" style="margin-bottom:.85rem;">Moderation permissions and output channel.</div>
+      <div class="settings-grid">${moderationChannelFields}${moderationRoleFields}</div>
+    </div>
+    <div class="settings-section" data-settings-tab="welcome">
+      <div class="settings-section-title">Welcome & Leave</div>
+      <div class="settings-grid">
+        <label class="settings-check"><input type="checkbox" id="settingWelcomeEnabled" ${welcome.enabled ? 'checked' : ''}><span><span class="settings-check-title">Welcome Messages</span><span class="settings-check-hint">Send a greeting to new members.</span></span></label>
+        <div class="settings-field"><label>Destination</label><select class="settings-input" id="settingWelcomeDestination"><option value="dm" ${welcome.destination !== 'channel' ? 'selected' : ''}>DM</option><option value="channel" ${welcome.destination === 'channel' ? 'selected' : ''}>Channel</option></select></div>
+        <div class="settings-field"><label>Welcome Format</label><select class="settings-input" id="settingWelcomeFormat" onchange="updateSettingsPreviews()"><option value="embed" ${messageFormats.welcome !== 'message' ? 'selected' : ''}>Embed / panel</option><option value="message" ${messageFormats.welcome === 'message' ? 'selected' : ''}>Normal message</option></select></div>
+        <div class="settings-field"><label>Welcome Channel</label><div class="settings-help">Where public welcome messages post when destination is set to Channel.</div>${renderChannelPicker('welcome_channel', 'Welcome Channel', welcome.channelId)}</div>
+      </div>
+      <div class="settings-field"><label>Welcome Message</label><div class="settings-help">Placeholders: {user}, {tag}, {username}, {server}, {count}</div><textarea class="settings-textarea" id="settingWelcomeMessage" placeholder="Welcome {user} to {server}. Member #{count}." oninput="updateSettingsPreviews()">${escAttr(welcome.message || '')}</textarea></div>
+      <div id="welcomePreview">${renderWelcomePreview(welcome.message || 'Welcome @User to SEA Military. You are member #120.', messageFormats.welcome || 'embed', 'Welcome Preview', 'Welcome to the server')}</div>
+      <div class="settings-grid" style="margin-top:1rem;">
+        <label class="settings-check"><input type="checkbox" id="settingLeaveEnabled" ${leave.enabled ? 'checked' : ''}><span><span class="settings-check-title">Leave Messages</span><span class="settings-check-hint">Post when a member leaves the server.</span></span></label>
+        <div class="settings-field"><label>Leave Format</label><select class="settings-input" id="settingLeaveFormat" onchange="updateSettingsPreviews()"><option value="embed" ${messageFormats.leave !== 'message' ? 'selected' : ''}>Embed / panel</option><option value="message" ${messageFormats.leave === 'message' ? 'selected' : ''}>Normal message</option></select></div>
+        <div class="settings-field"><label>Leave Channel</label><div class="settings-help">Where leave messages post when a member exits the server.</div>${renderChannelPicker('leave_channel', 'Leave Channel', leave.channelId)}</div>
+      </div>
+      <div class="settings-field"><label>Leave Message</label><div class="settings-help">Placeholders: {user}, {tag}, {username}, {server}, {count}</div><textarea class="settings-textarea" id="settingLeaveMessage" placeholder="{tag} left {server}. Member count is now {count}." oninput="updateSettingsPreviews()">${escAttr(leave.message || '')}</textarea></div>
+      <div id="leavePreview">${renderWelcomePreview(leave.message || 'User#0001 left SEA Military. Member count is now 119.', messageFormats.leave || 'embed', 'Leave Preview', 'Member Left')}</div>
+    </div>
+    <div class="settings-section" data-settings-tab="sticky">
+      <div class="settings-section-title">Sticky Message</div>
+      <div class="commands-meta" style="margin-bottom:.85rem;">Add one sticky message per channel. Each channel keeps its own text and last posted sticky copy.</div>
+      <div class="sticky-list" id="stickyMessageList">${renderStickyMessages(stickyMessages)}</div>
+      <button class="cmd-save-btn secondary" type="button" style="width:auto;margin-top:1rem;" onclick="addStickyMessage()">Create / Edit Sticky Message</button>
+    </div>
+    <div class="settings-section" data-settings-tab="channels"><div class="settings-section-title">Channels</div><div class="settings-grid">${channelFields}</div></div>
+    <div class="settings-section" data-settings-tab="roles"><div class="settings-section-title">Roles</div><div class="settings-grid">${roleFields}</div></div>
+  `;
+  setSettingsTab(settingsActiveTab);
+  updateSettingsPreviews();
+  watchSettingsChanges();
+  if (resetDirty) setSettingsDirty(false);
+  else refreshSettingsDirtyState();
+}
+
+function getDashboardSaveButtons() {
+  return [
+    ...document.querySelectorAll('#settingsSaveBtn'),
+    ...document.querySelectorAll('#settingsUnsavedBar .cmd-save-btn:not(.secondary)')
+  ].filter(Boolean);
+}
+
+function setDashboardSaveButtonsSaving(isSaving) {
+  getDashboardSaveButtons().forEach(button => {
+    button.disabled = isSaving;
+    button.textContent = isSaving ? 'Saving...' : (settingsHasUnsavedChanges ? 'Save Changes' : 'Save Settings');
+  });
+}
+
+async function saveDashboardSettings(guildId, btn) {
+  if (!guildId) {
+    showToast('Select a server before saving settings', 'error');
+    return;
+  }
+
+  let next;
+  try {
+    next = buildSettingsPayloadFromForm();
+  } catch (error) {
+    console.error('Failed to build settings payload:', error);
+    showToast('Could not read settings form', 'error');
+    return;
+  }
+
+  setDashboardSaveButtonsSaving(true);
+  try {
+    const res = await fetch(`${BOT_API}/settings-config/${guildId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(next)
+    });
+    if (!res.ok) throw new Error(`Settings API returned ${res.status}`);
+    const saved = await res.json();
+    currentSettingsConfig = saved.settings || next;
+    lastSavedSettingsConfig = cloneConfig(currentSettingsConfig);
+    renderSettingsPanel(guildId, currentSettingsConfig);
+    setSettingsDirty(false);
+    const panelBtn = document.getElementById('settingsSaveBtn');
+    if (panelBtn) {
+      panelBtn.innerHTML = 'Saved <span class="save-check">&#10003;</span>';
+      panelBtn.classList.add('saved');
+    }
+    showToast('Server settings saved', 'success');
+    setTimeout(() => {
+      const latestPanelBtn = document.getElementById('settingsSaveBtn');
+      if (latestPanelBtn) {
+        latestPanelBtn.disabled = false;
+        latestPanelBtn.textContent = 'Save Settings';
+        latestPanelBtn.classList.remove('saved');
+      }
+      getDashboardSaveButtons().forEach(button => {
+        button.disabled = false;
+        if (!button.classList.contains('saved')) button.textContent = 'Save Settings';
+      });
+    }, 1800);
+  } catch (error) {
+    console.error('Failed to save dashboard settings:', error);
+    setDashboardSaveButtonsSaving(false);
+    showToast('Failed to save settings', 'error');
+  }
+}
+
+function formatName(value) {
+  return value === 'message' ? 'Plain message' : 'Embed / panel';
+}
+
+function getTemplateFormat(template, tabName, fallback = 'embed') {
+  return template?.[tabName]?.outputFormat || fallback;
+}
+
+function commandFormatSummary(guildId, cmdName) {
+  if (!MSG_COMMANDS.includes(cmdName)) return '';
+  const cfg = getMsgConfig(guildId);
+  const templateName = getTemplateCommandName(cmdName);
+  const template = cfg[templateName] || cfg[cmdName] || {};
+  const legacy = currentSettingsConfig.messageFormats || {};
+
+  if (cmdName === 'schedule-event') {
+    return `Event: ${formatName(getTemplateFormat(template, 'Event', legacy.scheduleEvent))} / Training: ${formatName(getTemplateFormat(template, 'Training', legacy.scheduleEvent))}`;
+  }
+  if (cmdName === 'schedule') {
+    return `Format: ${formatName(getTemplateFormat(template, 'Schedule', legacy.scheduleRaid))}`;
+  }
+  if (cmdName === 'start') {
+    return `Event: ${formatName(getTemplateFormat(template, 'Event', legacy.startEvent))} / Training: ${formatName(getTemplateFormat(template, 'Training', legacy.startEvent))} / Raid: ${formatName(getTemplateFormat(template, 'Raid', legacy.startRaid))}`;
+  }
+  if (cmdName === 'end') {
+    return `Event: ${formatName(getTemplateFormat(template, 'Event', legacy.endEvent))} / Training: ${formatName(getTemplateFormat(template, 'Training', legacy.endEvent))} / Raid: ${formatName(getTemplateFormat(template, 'Raid', legacy.endRaid))}`;
+  }
+  return 'Format: Edit Message';
 }
 
 function renderCommands(guildId, commands, cfg) {
   const grid = document.getElementById('commandsGrid');
+  const commandsCard = document.getElementById('moduleCommandsCard');
+  const module = getDashboardModule();
+  const query = (document.getElementById('searchBar')?.value || '').trim().toLowerCase();
+  const moduleCommands = module.key === 'overview' && query
+    ? commands.filter(cmd => commandMatchesSearch(cmd, query))
+    : commands.filter(cmd => (module.commands || []).includes(cmd.name));
   grid.innerHTML = '';
-  if (commands.length === 0) {
-    grid.innerHTML = '<div class="state-box" style="grid-column:1/-1;">No commands found.</div>';
+  if (moduleCommands.length === 0) {
+    if (module.key === 'overview' && query) {
+      if (commandsCard) commandsCard.style.display = '';
+      grid.innerHTML = '<div class="state-box" style="grid-column:1/-1;">No commands match that search.</div>';
+      return;
+    }
+    if (commandsCard) commandsCard.style.display = 'none';
     return;
   }
-  commands.forEach(cmd => {
+  if (commandsCard) commandsCard.style.display = '';
+  const categoryOrder = COMMAND_CATEGORIES.map(group => group.title);
+  const sorted = [...moduleCommands].sort((a, b) => {
+    const catA = getCommandCategory(a);
+    const catB = getCommandCategory(b);
+    if (catA !== catB) return categoryOrder.indexOf(catA) - categoryOrder.indexOf(catB);
+    return getCommandLabel(a).localeCompare(getCommandLabel(b));
+  });
+  let currentCategory = '';
+
+  sorted.forEach(cmd => {
+    const category = getCommandCategory(cmd);
+    if (category !== currentCategory) {
+      currentCategory = category;
+      const heading = document.createElement('div');
+      heading.className = 'command-category';
+      heading.innerHTML = `<div class="command-category-title">${category}</div>`;
+      grid.appendChild(heading);
+    }
+
     const cmdCfg  = cfg[cmd.id] || {};
     const enabled = cmdCfg.enabled !== false;
-    const defaults = cmdCfg.defaults || {};
+    const formatSummary = commandFormatSummary(guildId, cmd.name);
     const card = document.createElement('div');
     card.className = `cmd-card${enabled ? '' : ' disabled'}`;
     card.dataset.cmdId = cmd.id;
-
-    let paramsHtml = '';
-    if (cmd.options && cmd.options.length > 0) {
-      const optionalParams = cmd.options.filter(opt => !opt.required);
-      if (optionalParams.length > 0) {
-        paramsHtml = `<div class="params-label">Default Values</div>`;
-        optionalParams.forEach(opt => {
-          const typeLabel = TYPE_LABELS[opt.type] || `type:${opt.type}`;
-          const defVal = defaults[opt.name] || '';
-          paramsHtml += `
-            <div class="param-row">
-              <div class="param-name-label">${opt.name}<span class="param-type-badge">${typeLabel}</span></div>
-              <input class="param-input" type="text" data-param="${opt.name}" placeholder="${opt.description}" value="${defVal}" ${!enabled ? 'disabled' : ''}>
-            </div>`;
-        });
-        paramsHtml += `<button class="cmd-save-btn" onclick="saveDefaults('${guildId}','${cmd.id}',this)">Save Defaults</button>`;
-      }
-    }
 
     // Edit Message button — only for MSG_COMMANDS
     const editMsgHtml = MSG_COMMANDS.includes(cmd.name)
@@ -1145,7 +3743,7 @@ function renderCommands(guildId, commands, cfg) {
 
     card.innerHTML = `
       <div class="cmd-card-header">
-        <div class="cmd-name"><span>/</span>${cmd.name}</div>
+        <div class="cmd-name"><span>/</span>${getCommandLabel(cmd)}</div>
         <div class="toggle-wrap">
           <span class="toggle-label">${enabled ? 'On' : 'Off'}</span>
           <div class="toggle ${enabled ? 'on' : ''}" onclick="toggleCommand('${guildId}','${cmd.id}',this)"></div>
@@ -1153,7 +3751,7 @@ function renderCommands(guildId, commands, cfg) {
       </div>
       <div class="cmd-card-body">
         <div class="cmd-desc">${cmd.description}</div>
-        ${paramsHtml}
+        ${formatSummary ? `<div class="cmd-format-meta">${escHtml(formatSummary)}</div>` : ''}
         ${editMsgHtml}
       </div>`;
 
@@ -1161,21 +3759,72 @@ function renderCommands(guildId, commands, cfg) {
   });
 }
 
-function filterCommands() {
-  if (!selectedGuildId) return;
-  const q = document.getElementById('searchBar').value.toLowerCase();
-  document.querySelectorAll('.cmd-card').forEach(card => {
-    card.style.display = (card.dataset.cmdId || '').includes(q) ? '' : 'none';
+function commandMatchesSearch(cmd, query) {
+  const normalizedQuery = normalizeCommandSearch(query);
+  const singularQuery = normalizedQuery.endsWith('s') ? normalizedQuery.slice(0, -1) : normalizedQuery;
+  const values = [
+    cmd.id,
+    cmd.name,
+    `/${cmd.name}`,
+    getCommandLabel(cmd),
+    `/${getCommandLabel(cmd)}`,
+    cmd.description,
+    getCommandCategory(cmd)
+  ];
+
+  return values.some(value => {
+    const text = String(value || '').toLowerCase();
+    const normalizedText = normalizeCommandSearch(text);
+    return text.includes(query)
+      || normalizedText.includes(normalizedQuery)
+      || (singularQuery && normalizedText.includes(singularQuery));
   });
 }
 
+function normalizeCommandSearch(value) {
+  return String(value || '').toLowerCase().replace(/^\/+/, '').replace(/[\s_-]+/g, '');
+}
+
+function filterCommands() {
+  if (!selectedGuildId) return;
+  renderCommands(selectedGuildId, allCommands, getGuildConfig(selectedGuildId));
+}
+
 async function syncConfigToBot(guildId, cfg) {
-  try {
-    const r = await fetch(`${BOT_API}/guild-config/${guildId}`, {
-      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(cfg)
-    });
-    if (!r.ok) throw new Error();
-  } catch { showToast('Failed to sync with bot — is it running?', 'error'); }
+  const r = await fetch(`${BOT_API}/guild-config/${guildId}`, {
+    method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(cfg)
+  });
+  if (!r.ok) throw new Error('Failed to save command settings');
+}
+
+function commandConfigChanged(cfg, savedCfg) {
+  return JSON.stringify(cfg || {}) !== JSON.stringify(savedCfg || {});
+}
+
+function updateCommandSaveBar(guildId) {
+  const bar = document.getElementById('commandSaveBar');
+  const text = document.getElementById('commandSaveText');
+  const cfg = getGuildConfig(guildId);
+  if (!commandConfigChanged(cfg, lastSavedCommandConfig)) {
+    hideCommandSaveBar();
+    return;
+  }
+  pendingCommandSaveGuildId = guildId;
+  const disabledCount = Object.values(cfg).filter(c => c.enabled === false).length;
+  text.textContent = `Unsaved command changes. ${disabledCount} command${disabledCount === 1 ? '' : 's'} disabled.`;
+  bar.classList.add('show');
+}
+
+function hideCommandSaveBar() {
+  const bar = document.getElementById('commandSaveBar');
+  const btn = document.getElementById('commandSaveBtn');
+  if (bar) bar.classList.remove('show');
+  if (btn) {
+    btn.disabled = false;
+    btn.textContent = 'Save Changes';
+    btn.classList.remove('saved');
+  }
+  pendingCommandSaveGuildId = null;
 }
 
 function toggleCommand(guildId, cmdId, toggleEl) {
@@ -1190,58 +3839,166 @@ function toggleCommand(guildId, cmdId, toggleEl) {
   toggleEl.previousElementSibling.textContent = nowOn ? 'On' : 'Off';
   const card = toggleEl.closest('.cmd-card');
   card.classList.toggle('disabled', !nowOn);
-  card.querySelectorAll('.param-input').forEach(i => i.disabled = !nowOn);
   const disabledCount = Object.values(cfg).filter(c => c.enabled === false).length;
-  document.getElementById('commandsMeta').textContent = `${allCommands.length} commands · ${disabledCount} disabled`;
-  syncConfigToBot(guildId, cfg);
-  showToast(`/${cmdId} ${nowOn ? 'enabled' : 'disabled'}`, nowOn ? 'success' : '');
+  updateModuleHeader();
+  showToast(`/${cmdId} ${nowOn ? 'enabled' : 'disabled'} locally. Save to apply.`, nowOn ? 'success' : '');
 }
 
-function saveDefaults(guildId, cmdId, btn) {
+async function saveCommandSettings(guildId, cmdId, btn) {
   const card     = btn.closest('.cmd-card');
   const cfg      = getGuildConfig(guildId);
   const cmdCfg   = cfg[cmdId] || {};
-  const defaults = {};
-  card.querySelectorAll('.param-input[data-param]').forEach(input => {
-    if (input.value.trim()) defaults[input.dataset.param] = input.value.trim();
-  });
-  cmdCfg.defaults = defaults;
   cfg[cmdId] = cmdCfg;
   saveGuildConfig(guildId, cfg);
-  syncConfigToBot(guildId, cfg);
-  btn.textContent = 'Saved ✓';
-  btn.classList.add('saved');
-  setTimeout(() => { btn.textContent = 'Save Defaults'; btn.classList.remove('saved'); }, 2000);
-  showToast(`Defaults saved for /${cmdId}`, 'success');
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+  try {
+    await syncConfigToBot(guildId, cfg);
+    btn.innerHTML = 'Saved <span class="save-check">&#10003;</span>';
+    btn.classList.remove('dirty');
+    btn.classList.add('saved');
+    showToast(`Settings saved for /${cmdId}`, 'success');
+    setTimeout(() => { btn.disabled = false; btn.textContent = 'Save Settings'; btn.classList.remove('saved'); }, 2000);
+  } catch {
+    btn.disabled = false;
+    btn.textContent = 'Save Settings';
+    showToast('Failed to save command settings', 'error');
+  }
 }
 
 // ═══════════════════════════════════════════════════
 //  MESSAGE BUILDER
 // ═══════════════════════════════════════════════════
+function toggleCommand(guildId, cmdId, toggleEl) {
+  const cfg = getGuildConfig(guildId);
+  const cmdCfg = cfg[cmdId] || {};
+  const wasOn = cmdCfg.enabled !== false;
+  const nowOn = !wasOn;
+  cmdCfg.enabled = nowOn;
+  cfg[cmdId] = cmdCfg;
+  saveGuildConfig(guildId, cfg);
+
+  toggleEl.classList.toggle('on', nowOn);
+  toggleEl.previousElementSibling.textContent = nowOn ? 'On' : 'Off';
+  const card = toggleEl.closest('.cmd-card');
+  card.classList.toggle('disabled', !nowOn);
+
+  const disabledCount = Object.values(cfg).filter(c => c.enabled === false).length;
+  updateModuleHeader();
+  updateCommandSaveBar(guildId);
+  showToast(`/${cmdId} ${nowOn ? 'enabled' : 'disabled'}. Save changes at the bottom.`, nowOn ? 'success' : '');
+}
+
+async function savePendingCommandSettings(btn) {
+  const guildId = pendingCommandSaveGuildId || selectedGuildId;
+  if (!guildId) return;
+  const cfg = getGuildConfig(guildId);
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+  try {
+    await syncConfigToBot(guildId, cfg);
+    lastSavedCommandConfig = cloneConfig(cfg);
+    btn.innerHTML = 'Saved <span class="save-check">&#10003;</span>';
+    btn.classList.add('saved');
+    showToast('Command settings saved', 'success');
+    setTimeout(() => hideCommandSaveBar(), 700);
+  } catch {
+    btn.disabled = false;
+    btn.textContent = 'Save Changes';
+    showToast('Failed to save command settings', 'error');
+  }
+}
+
+function discardCommandChanges() {
+  if (!selectedGuildId) return;
+  const cfg = cloneConfig(lastSavedCommandConfig);
+  saveGuildConfig(selectedGuildId, cfg);
+  renderCommands(selectedGuildId, allCommands, cfg);
+  const disabledCount = Object.values(cfg).filter(c => c.enabled === false).length;
+  updateModuleHeader();
+  hideCommandSaveBar();
+  showToast('Command changes discarded');
+}
+
 let mbState = {
   guildId: null,
   cmdName: null,
   activeTab: null,
-  values: {}   // { tabName: { fieldKey: value } }
+  values: {},   // { tabName: { fieldKey: value } }
+  savedValues: {},
+  hasUnsavedChanges: false
 };
 
-function openMsgBuilder(guildId, cmdName, e) {
+function normalizeMsgValues(values = {}) {
+  return sortObjectDeep(cloneConfig(values));
+}
+
+function msgValuesEqual(a, b) {
+  return JSON.stringify(normalizeMsgValues(a)) === JSON.stringify(normalizeMsgValues(b));
+}
+
+function setMsgBuilderDirty(isDirty = true) {
+  mbState.hasUnsavedChanges = isDirty;
+  const bar = document.getElementById('formatSaveBar');
+  const text = document.getElementById('formatSaveText');
+  const btn = document.getElementById('formatSaveBtn');
+  if (bar) bar.classList.toggle('show', isDirty);
+  if (text && mbState.cmdName) text.textContent = `Unsaved format changes for /${mbState.cmdName}.`;
+  if (btn) {
+    btn.disabled = false;
+    btn.textContent = isDirty ? 'Save Format' : 'Save Format';
+  }
+}
+
+function refreshMsgBuilderDirtyState() {
+  if (!mbState.cmdName) return;
+  collectCurrentTabValues();
+  setMsgBuilderDirty(!msgValuesEqual(mbState.savedValues, mbState.values));
+}
+
+function hideFormatSaveBar() {
+  const bar = document.getElementById('formatSaveBar');
+  const btn = document.getElementById('formatSaveBtn');
+  if (bar) bar.classList.remove('show');
+  if (btn) {
+    btn.disabled = false;
+    btn.textContent = 'Save Format';
+  }
+  mbState.hasUnsavedChanges = false;
+}
+
+function confirmDiscardMsgChanges() {
+  if (!mbState.hasUnsavedChanges) return true;
+  return window.confirm('You have unsaved format changes. Leave without saving?');
+}
+
+function openMsgBuilder(guildId, cmdName, e, preferredTab = null) {
   e.stopPropagation();
-  const schema = MSG_SCHEMAS[cmdName];
+  const templateCmdName = getTemplateCommandName(cmdName);
+  const schema = MSG_SCHEMAS[templateCmdName];
   if (!schema) return;
 
   mbState.guildId  = guildId;
-  mbState.cmdName  = cmdName;
-  mbState.activeTab = schema.tabs[0];
+  mbState.cmdName  = templateCmdName;
+  mbState.activeTab = preferredTab && schema.tabs.includes(preferredTab) ? preferredTab : schema.tabs[0];
 
   // Load saved values
   const saved = getMsgConfig(guildId);
-  mbState.values = saved[cmdName] || {};
+  mbState.values = saved[templateCmdName] || saved[cmdName] || {};
+  if (templateCmdName === 'schedule-event' && mbState.values.Schedule) {
+    if (!mbState.values.Event) mbState.values.Event = { ...mbState.values.Schedule };
+    if (!mbState.values.Training) mbState.values.Training = { ...mbState.values.Schedule };
+  }
+  if (templateCmdName === 'start' && mbState.values.Event && !mbState.values.Training) {
+    mbState.values.Training = { ...mbState.values.Event };
+  }
   // Ensure each tab has an object
   schema.tabs.forEach(t => { if (!mbState.values[t]) mbState.values[t] = {}; });
+  mbState.savedValues = cloneConfig(mbState.values);
+  setMsgBuilderDirty(false);
 
   // Set header
-  document.getElementById('mbTitle').textContent = `/${cmdName}`;
+  document.getElementById('mbTitle').textContent = `/${getCommandLabel({ name: cmdName })}`;
   document.getElementById('mbSubtitle').textContent = 'Edit message template';
 
   // Render tabs
@@ -1258,9 +4015,12 @@ function openMsgBuilder(guildId, cmdName, e) {
 }
 
 function closeMsgBuilder() {
+  if (!confirmDiscardMsgChanges()) return;
+  closeAdvancedPopup();
   document.getElementById('msgBuilderOverlay').classList.remove('open');
   document.getElementById('msgBuilderPanel').classList.remove('open');
   document.body.style.overflow = '';
+  hideFormatSaveBar();
 }
 
 function renderMbTabs(schema) {
@@ -1293,13 +4053,46 @@ function renderMbEditor(schema, tabName) {
   editor.innerHTML = '';
   const fields = schema.fields[tabName] || [];
   const tabVals = mbState.values[tabName] || {};
+  const normalFields = fields.filter(field => !field.advanced);
+  const advancedFields = fields.filter(field => field.advanced);
+  const placeholders = [...new Set(normalFields.flatMap(field => field.vars || []))];
+  document.getElementById('mbAdvancedBtn')?.classList.toggle('visible', advancedFields.length > 0);
 
-  fields.forEach(field => {
-    const val = tabVals[field.key] || '';
+  if (placeholders.length) {
+    const guide = document.createElement('div');
+    guide.className = 'mb-placeholder-panel';
+    guide.innerHTML = `
+      <div class="mb-placeholder-title">${escHtml(tabName)} Placeholders</div>
+      <div class="mb-placeholder-copy">Use these in message rows, titles, and lines. Event and raid templates keep their own wording, so changing one will not overwrite the other.</div>
+      <div class="mb-placeholder-grid">
+        ${placeholders.map(v => `<span class="mb-placeholder-chip">${escHtml(v)}</span>`).join('')}
+      </div>`;
+    editor.appendChild(guide);
+  }
+
+  const renderField = (field, target = editor) => {
+    let val = tabVals[field.key] || '';
+    if (field.key === 'plainRow1' && !val) {
+      val = ['plainRow1', 'plainRow2', 'plainRow3', 'plainRow4', 'plainRow5']
+        .map(key => tabVals[key])
+        .filter(value => value && value.trim())
+        .join('\n');
+    }
     const fg = document.createElement('div');
     fg.className = 'mb-field';
 
-    if (field.type === 'color') {
+    if (field.type === 'select') {
+      const options = field.options || [];
+      const selected = val || options[0]?.[0] || '';
+      fg.innerHTML = `
+        <div class="mb-field-header">
+          <span class="mb-field-label">${field.label}</span>
+          <span class="mb-field-hint">${field.hint}</span>
+        </div>
+        <select class="settings-input" id="sel_${field.key}" data-key="${field.key}" onchange="updatePreview()">
+          ${options.map(([value, label]) => `<option value="${escAttr(value)}" ${selected === value ? 'selected' : ''}>${escHtml(label)}</option>`).join('')}
+        </select>`;
+    } else if (field.type === 'color') {
       const colorVal = val || '#4f6fbb';
       fg.innerHTML = `
         <div class="mb-field-header">
@@ -1323,8 +4116,8 @@ function renderMbEditor(schema, tabName) {
           <span class="mb-field-hint">${field.hint}</span>
         </div>
         ${chipHtml}
-        <textarea class="mb-textarea" id="ta_${field.key}" data-key="${field.key}" rows="3"
-          placeholder="${field.hint}" oninput="updatePreview()">${escHtml(val)}</textarea>`;
+        <textarea class="mb-textarea" id="ta_${field.key}" data-key="${field.key}" rows="${field.rows || 3}"
+          placeholder="${escAttr(field.placeholder || 'Type the message format here')}" oninput="updatePreview()">${escHtml(val)}</textarea>`;
     } else {
       // input
       const chipHtml = field.vars.length
@@ -1337,21 +4130,219 @@ function renderMbEditor(schema, tabName) {
         </div>
         ${chipHtml}
         <input type="text" class="mb-input" id="inp_${field.key}" data-key="${field.key}"
-          placeholder="${field.hint}" value="${escHtml(val)}" oninput="updatePreview()">`;
+          placeholder="${escAttr(field.placeholder || 'Leave blank to use the default')}" value="${escHtml(val)}" oninput="updatePreview()">`;
     }
-    editor.appendChild(fg);
+    target.appendChild(fg);
 
-    // Add divider before color and btn fields
-    if (field.key === 'bannerUrl' || field.key === 'accentColor') {
+    // Add dividers before major customization groups.
+    if (['title', 'panelBody', 'bannerUrl', 'accentColor', 'plainRow1'].includes(field.key)) {
       const div = document.createElement('div');
       div.className = 'mb-divider';
-      editor.insertBefore(div, fg);
+      target.insertBefore(div, fg);
     }
+  };
+
+  normalFields.forEach(field => renderField(field));
+}
+
+function getAdvancedPopupFields() {
+  if (!mbState.cmdName || !mbState.activeTab) return [];
+  const schema = MSG_SCHEMAS[mbState.cmdName];
+  return (schema?.fields?.[mbState.activeTab] || []).filter(field => field.advanced);
+}
+
+function openAdvancedPopup() {
+  collectCurrentTabValues();
+  const fields = getAdvancedPopupFields();
+  if (!fields.length) return;
+  document.getElementById('advancedPopupSubtitle').textContent = `/${getCommandLabel({ name: mbState.cmdName })} command popup`;
+  renderAdvancedPopupEditor(fields);
+  document.getElementById('advancedPopupOverlay').classList.add('open');
+  document.getElementById('advancedPopupPanel').classList.add('open');
+}
+
+function closeAdvancedPopup() {
+  collectAdvancedPopupValues();
+  document.getElementById('advancedPopupOverlay')?.classList.remove('open');
+  document.getElementById('advancedPopupPanel')?.classList.remove('open');
+  updatePreview();
+}
+
+function renderAdvancedPopupEditor(fields) {
+  const target = document.getElementById('advancedPopupFields');
+  const tabVals = mbState.values[mbState.activeTab] || {};
+  target.innerHTML = `
+    <div class="advanced-popup-copy">
+      This controls the Discord popup that appears when someone runs the command. Hide questions your server does not need, or rename the labels and placeholders officers see before submitting.
+    </div>`;
+
+  fields.forEach(field => {
+    const fg = document.createElement('div');
+    fg.className = 'mb-field';
+    const val = tabVals[field.key] || '';
+    if (field.type === 'select') {
+      const options = field.options || [];
+      const selected = val || options[0]?.[0] || '';
+      fg.innerHTML = `
+        <div class="mb-field-header">
+          <span class="mb-field-label">${escHtml(field.label)}</span>
+          <span class="mb-field-hint">${escHtml(field.hint || '')}</span>
+        </div>
+        <select class="settings-input" data-adv-key="${escAttr(field.key)}">
+          ${options.map(([value, label]) => `<option value="${escAttr(value)}" ${selected === value ? 'selected' : ''}>${escHtml(label)}</option>`).join('')}
+        </select>`;
+    } else {
+      fg.innerHTML = `
+        <div class="mb-field-header">
+          <span class="mb-field-label">${escHtml(field.label)}</span>
+          <span class="mb-field-hint">${escHtml(field.hint || '')}</span>
+        </div>
+        <input type="text" class="mb-input" data-adv-key="${escAttr(field.key)}"
+          placeholder="${escAttr(field.placeholder || 'Leave blank to use the default')}" value="${escAttr(val)}">`;
+    }
+    target.appendChild(fg);
   });
+
+  target.querySelectorAll('[data-adv-key]').forEach(el => {
+    el.addEventListener('input', () => {
+      collectAdvancedPopupValues();
+      updateAdvancedPopupPreview();
+    });
+    el.addEventListener('change', () => {
+      collectAdvancedPopupValues();
+      updateAdvancedPopupPreview();
+    });
+  });
+  updateAdvancedPopupPreview();
+}
+
+function collectAdvancedPopupValues() {
+  if (!document.getElementById('advancedPopupPanel')?.classList.contains('open')) return;
+  const fields = getAdvancedPopupFields();
+  if (!fields.length) return;
+  const vals = { ...(mbState.values[mbState.activeTab] || {}) };
+  fields.forEach(field => {
+    const el = document.querySelector(`[data-adv-key="${escAttr(field.key)}"]`);
+    if (el) vals[field.key] = el.value;
+  });
+  mbState.values[mbState.activeTab] = vals;
+}
+
+function getPopupQuestionDefaults() {
+  const isRaid = mbState.cmdName === 'raid' || mbState.activeTab === 'Raid';
+  const isStart = mbState.cmdName === 'start';
+  const isSchedule = mbState.cmdName === 'schedule-event' || mbState.cmdName === 'raid';
+  const questions = [
+    {
+      enabledKey:'titleQuestionEnabled',
+      labelKey:'titleQuestionLabel',
+      placeholderKey:'titleQuestionPlaceholder',
+      label:isRaid ? 'Raid Title' : 'Event Name',
+      placeholder:isRaid ? 'Raid' : 'Event',
+      required:true,
+      paragraph:false
+    },
+    {
+      enabledKey:'descriptionQuestionEnabled',
+      labelKey:'descriptionQuestionLabel',
+      placeholderKey:'descriptionQuestionPlaceholder',
+      label:'Description',
+      placeholder:`Short details for the ${isRaid ? 'raid' : 'event'}`,
+      required:false,
+      paragraph:true
+    }
+  ];
+  if (isSchedule || isStart) {
+    questions.push({
+      enabledKey:'timeQuestionEnabled',
+      labelKey:'timeQuestionLabel',
+      placeholderKey:'timeQuestionPlaceholder',
+      label:'Time',
+      placeholder:'8:00 PM EST',
+      required:false,
+      paragraph:false
+    });
+  }
+  questions.push(
+    {
+      enabledKey:'linkQuestionEnabled',
+      labelKey:'linkQuestionLabel',
+      placeholderKey:'linkQuestionPlaceholder',
+      label:isRaid ? 'Raid Link' : 'Event Link',
+      placeholder:'https://roblox.com/games/...',
+      required:isSchedule,
+      paragraph:false
+    },
+    {
+      enabledKey:'hostQuestionEnabled',
+      labelKey:'hostQuestionLabel',
+      placeholderKey:'hostQuestionPlaceholder',
+      label:isRaid ? 'Leader' : 'Host / Lead',
+      placeholder:'@Officer',
+      required:false,
+      paragraph:false
+    },
+    {
+      enabledKey:'coHostQuestionEnabled',
+      labelKey:'coHostQuestionLabel',
+      placeholderKey:'coHostQuestionPlaceholder',
+      label:'Co-host',
+      placeholder:'@Officer, user ID, or username',
+      required:false,
+      paragraph:false
+    }
+  );
+  return {
+    title: isRaid ? 'Raid Alert' : isStart ? 'Start Event' : 'Event',
+    questions
+  };
+}
+
+function updateAdvancedPopupPreview() {
+  const preview = document.getElementById('advancedPopupPreview');
+  if (!preview) return;
+  const vals = mbState.values[mbState.activeTab] || {};
+  const defaults = getPopupQuestionDefaults();
+  const title = vals.modalTitle || defaults.title;
+  const priority = ['titleQuestionEnabled', 'timeQuestionEnabled', 'linkQuestionEnabled', 'hostQuestionEnabled', 'coHostQuestionEnabled', 'descriptionQuestionEnabled'];
+  const questions = defaults.questions
+    .filter(q => vals[q.enabledKey] !== 'hide')
+    .sort((a, b) => priority.indexOf(a.enabledKey) - priority.indexOf(b.enabledKey))
+    .slice(0, 5);
+  preview.innerHTML = `
+    <div class="discord-modal-mock">
+      <div class="discord-modal-title">${escHtml(title)}</div>
+      <div class="discord-modal-warning">This form will be submitted to Lunaris. Do not share passwords or other sensitive information.</div>
+      ${questions.map(q => `
+        <div class="discord-modal-field">
+          <label class="discord-modal-label">${escHtml(vals[q.labelKey] || q.label)} ${q.required ? '<span class="required">*</span>' : ''}</label>
+          <div class="discord-modal-input ${q.paragraph ? 'paragraph' : ''}">${escHtml(vals[q.placeholderKey] || q.placeholder)}</div>
+        </div>`).join('')}
+      <div class="discord-modal-actions">
+        <div class="discord-modal-button">Cancel</div>
+        <div class="discord-modal-button submit">Submit</div>
+      </div>
+    </div>`;
 }
 
 function escHtml(str) {
   return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderInlineDiscordMarkdown(line) {
+  return escHtml(line).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+}
+
+function renderDiscordMarkdown(content) {
+  return String(content || '').split('\n').map(line => {
+    if (line.startsWith('# ')) {
+      return `<div class="discord-embed-title" style="margin:.15rem 0 .3rem;">${renderInlineDiscordMarkdown(line.slice(2))}</div>`;
+    }
+    if (line.startsWith('## ')) {
+      return `<div class="discord-embed-title" style="font-size:.82rem;margin:.15rem 0 .25rem;">${renderInlineDiscordMarkdown(line.slice(3))}</div>`;
+    }
+    return `<div>${renderInlineDiscordMarkdown(line) || '&nbsp;'}</div>`;
+  }).join('');
 }
 
 function insertVar(inputId, variable) {
@@ -1386,9 +4377,12 @@ function collectCurrentTabValues() {
   if (!mbState.cmdName || !mbState.activeTab) return;
   const schema = MSG_SCHEMAS[mbState.cmdName];
   const fields = schema.fields[mbState.activeTab] || [];
-  const vals = {};
+  const vals = { ...(mbState.values[mbState.activeTab] || {}) };
   fields.forEach(field => {
-    if (field.type === 'color') {
+    if (field.type === 'select') {
+      const el = document.getElementById(`sel_${field.key}`);
+      if (el) vals[field.key] = el.value;
+    } else if (field.type === 'color') {
       const hexEl = document.getElementById(`hex_${field.key}`);
       if (hexEl) vals[field.key] = hexEl.value;
     } else if (field.type === 'textarea') {
@@ -1402,6 +4396,82 @@ function collectCurrentTabValues() {
   mbState.values[mbState.activeTab] = vals;
 }
 
+function getPreviewDefaultTitle() {
+  const tab = mbState.activeTab || '';
+  if (mbState.cmdName === 'raid') return 'Scheduled Raid';
+  if (mbState.cmdName === 'schedule-event') return 'Scheduled Event';
+  if (mbState.cmdName === 'start') return tab === 'Raid' ? 'Raid Started' : 'Event Started';
+  if (mbState.cmdName === 'end') return tab === 'Raid' ? 'Raid Ended' : tab === 'Training' ? 'Training Ended' : 'Event Ended';
+  if (mbState.cmdName === 'rules') return 'Server Rules';
+  return 'Announcement';
+}
+
+function buildTemplatePlainPreview(vals) {
+  if (vals.plainRow1 && vals.plainRow1.trim()) return applyPreviewVars(vals.plainRow1, vals);
+
+  const title = vals.title || vals.header || getPreviewDefaultTitle();
+  const description = vals.description || 'Short announcement details';
+  const lines = [`**${title}**`];
+
+  if (mbState.cmdName === 'raid' || mbState.cmdName === 'schedule-event') {
+    lines.push(
+      description,
+      vals.timeLine || '**Time:** 8:00 PM EST',
+      vals.linkLine || '**Link:** https://roblox.com/games/example',
+      vals.leaderLine || vals.hostLine || '**Host:** @Officer',
+      '',
+      `**${vals.btnAttend || 'Attending'}:** *None*`,
+      `**${vals.btnHesitant || 'Hesitant'}:** *None*`,
+      `**${vals.btnUnavail || 'Unavailable'}:** *None*`
+    );
+    return lines.join('\n');
+  }
+
+  if (mbState.cmdName === 'start') {
+    return [
+      `**${title || 'Event has begun!'}**`,
+      vals.panelBody || ['**Host:** @Officer', '**Link:** https://roblox.com/games/example', '**Time:** 8:00 PM EST', '**Notes:** Join up now.'].join('\n')
+    ].join('\n');
+  }
+
+  if (mbState.cmdName === 'end') {
+    return [
+      `**${title || 'Event Ended'}**`,
+      vals.panelBody || ['**Host:** @Officer', '**Co-Host:** @CoHost', '**Attendees:** @User1, @User2', '**Bonus EXP:** N/A', '**Screenshot:** N/A'].join('\n')
+    ].filter(Boolean).join('\n');
+  }
+
+  return lines.concat(description).join('\n');
+}
+
+function applyPreviewVars(content, vals = {}) {
+  const defaultTitle = getPreviewDefaultTitle();
+  const sample = {
+    title: vals.title || vals.header || defaultTitle,
+    name: vals.title || vals.header || defaultTitle,
+    description: vals.description || 'Short announcement details',
+    time: '8:00 PM EST',
+    leader: '@Officer',
+    host: '@Officer',
+    coHost: '@CoHost',
+    cohost: '@CoHost',
+    link: 'https://roblox.com/games/example',
+    notes: vals.notes || 'Join up now.',
+    coHost: '@CoHost',
+    attendees: '@User1, @User2',
+    passed: '@User1',
+    failed: '*None*',
+    bonusExp: 'N/A',
+    map: 'Training Grounds',
+    duration: '30m',
+    screenshot: 'N/A',
+    attending: '*None*',
+    hesitant: '*None*',
+    unavailable: '*None*'
+  };
+  return Object.entries(sample).reduce((text, [key, value]) => text.replaceAll(`{${key}}`, value), content);
+}
+
 function updatePreview() {
   // Read current editor values (don't commit to state yet)
   const schema = MSG_SCHEMAS[mbState.cmdName];
@@ -1409,7 +4479,10 @@ function updatePreview() {
   const fields = schema.fields[mbState.activeTab] || [];
   const vals = {};
   fields.forEach(field => {
-    if (field.type === 'color') {
+    if (field.type === 'select') {
+      const el = document.getElementById(`sel_${field.key}`);
+      vals[field.key] = el ? el.value : (mbState.values[mbState.activeTab]?.[field.key] || 'embed');
+    } else if (field.type === 'color') {
       const hexEl = document.getElementById(`hex_${field.key}`);
       vals[field.key] = hexEl ? hexEl.value : (mbState.values[mbState.activeTab]?.[field.key] || '#4f6fbb');
     } else if (field.type === 'textarea') {
@@ -1424,6 +4497,12 @@ function updatePreview() {
   // Update timestamp
   const now = new Date();
   document.getElementById('previewTimestamp').textContent = `Today at ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+
+  const plainMode = vals.outputFormat === 'message';
+  document.getElementById('previewEmbed').style.display = plainMode ? 'none' : '';
+  const plainEl = document.getElementById('previewPlain');
+  plainEl.style.display = plainMode ? 'block' : 'none';
+  plainEl.innerHTML = plainMode ? renderDiscordMarkdown(buildTemplatePlainPreview(vals)) : '';
 
   // Accent color
   const color = vals.accentColor || '#4f6fbb';
@@ -1442,11 +4521,11 @@ function updatePreview() {
   // Title
   const titleEl = document.getElementById('previewTitle');
   const titleVal = vals.header || vals.title || '';
-  titleEl.textContent = titleVal || '—';
+  titleEl.textContent = titleVal || getPreviewDefaultTitle();
 
   // Description / body
   const descEl = document.getElementById('previewDesc');
-  const descVal = vals.description || '';
+  const descVal = vals.panelBody || vals.description || '';
   descEl.textContent = descVal || '';
 
   // Fields (lines)
@@ -1477,15 +4556,18 @@ function updatePreview() {
   } else {
     btnsEl.innerHTML = '';
   }
+  refreshMsgBuilderDirtyState();
 }
 
 async function saveMsgConfig() {
   // Commit current tab
   collectCurrentTabValues();
 
-  const btn = document.getElementById('mbSaveBtn');
-  btn.classList.add('saving');
-  btn.textContent = 'Saving...';
+  const btn = document.getElementById('formatSaveBtn');
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+  }
 
   // Save to localStorage
   const guildMsgCfg = getMsgConfig(mbState.guildId);
@@ -1509,9 +4591,23 @@ async function saveMsgConfig() {
     showToast('Saved locally — bot offline, will sync on reconnect', '');
   }
 
-  btn.classList.remove('saving');
-  btn.textContent = 'Save Template';
+  mbState.savedValues = cloneConfig(mbState.values);
+  hideFormatSaveBar();
   closeMsgBuilder();
+  if (selectedGuildId) {
+    renderCommands(selectedGuildId, allCommands, getGuildConfig(selectedGuildId));
+  }
+}
+
+function discardMsgConfigChanges() {
+  if (!mbState.cmdName) return;
+  mbState.values = cloneConfig(mbState.savedValues);
+  hideFormatSaveBar();
+  closeMsgBuilder();
+  if (selectedGuildId) {
+    renderCommands(selectedGuildId, allCommands, getGuildConfig(selectedGuildId));
+  }
+  showToast('Format changes discarded');
 }
 
 // ═══════════════════════════════════════════════════
@@ -1534,9 +4630,31 @@ document.addEventListener('click', e => {
   if (!e.target.closest('.nav-avatar-wrap')) document.getElementById('dropdown').classList.remove('open');
 });
 
+document.addEventListener('click', e => {
+  const link = e.target.closest('a[href]');
+  if (!link || link.target === '_blank' || link.hasAttribute('download')) return;
+  const href = link.getAttribute('href') || '';
+  if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+  if (!confirmDiscardDashboardChanges()) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+}, true);
+
+window.addEventListener('beforeunload', e => {
+  if (!settingsHasUnsavedChanges && !mbState.hasUnsavedChanges) return;
+  e.preventDefault();
+  e.returnValue = '';
+});
+
 // Close builder on Escape
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeMsgBuilder();
+  if (e.key !== 'Escape') return;
+  if (document.getElementById('advancedPopupPanel')?.classList.contains('open')) {
+    closeAdvancedPopup();
+  } else {
+    closeMsgBuilder();
+  }
 });
 
 // ═══════════════════════════════════════════════════

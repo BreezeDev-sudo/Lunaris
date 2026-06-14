@@ -3,9 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lunaris — SEA Military</title>
+<meta name="description" content="Lunaris is a SEA Military Discord bot and Roblox military logging dashboard for scheduling events, formatting logs, managing roles, and keeping division reports consistent.">
+<meta name="keywords" content="Lunaris, SEA Military bot, SEA Military Discord bot, Roblox military bot, Roblox event logging bot, Discord logging bot, division logging, Lunaris dashboard">
+<meta property="og:title" content="Lunaris - SEA Military Discord Bot">
+<meta property="og:description" content="A Roblox SEA Military Discord bot and dashboard for event scheduling, logging, role permissions, and formatted division reports.">
+<meta property="og:url" content="https://lunaris.livmellow.com/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://lunaris.livmellow.com/favicon.ico">
+<meta name="theme-color" content="#05050d">
+<link rel="canonical" href="https://lunaris.livmellow.com/">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="48x48" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/favicon.ico">
+<link rel="manifest" href="/site.webmanifest">
+<title>Lunaris - SEA Military Discord Bot</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Share+Tech+Mono&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Share+Tech+Mono&family=Raleway:wght@300;400;500&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Share+Tech+Mono&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet"></noscript>
+<link rel="preload" href="/favicon.ico" as="image" fetchpriority="high">
 <style>
   :root {
     --bg-deep:       #000000;
@@ -18,8 +36,8 @@
     --accent:        #4f6fbb;
     --accent-bright: #7da0f0;
     --text-primary:  #e8ecf7;
-    --text-secondary:#8a97b8;
-    --text-dim:      #3a4460;
+    --text-secondary:#b4bfdc;
+    --text-dim:      #7b88aa;
     --success:       #27ae60;
     --discord:       #5865F2;
     --discord-hover: #4752c4;
@@ -32,7 +50,7 @@
     background: #000;
     color: var(--text-primary);
     font-family: 'Raleway', sans-serif;
-    font-weight: 300;
+    font-weight: 400;
     min-height: 100vh;
     overflow-x: hidden;
     cursor: none;
@@ -736,15 +754,93 @@
   }
 
   /* ── FOOTER ── */
+  .content-band {
+    position: relative;
+    z-index: 1;
+    padding: 5rem 2rem;
+    border-top: 1px solid var(--border);
+    background: rgba(0,0,0,0.72);
+  }
+
+  .content-inner {
+    width: min(1080px, 100%);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .section-kicker {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.28em;
+    color: var(--accent-bright);
+    text-transform: uppercase;
+    margin-bottom: 0.9rem;
+  }
+
+  .section-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    color: var(--moon-silver);
+    letter-spacing: 0.08em;
+    margin-bottom: 1.2rem;
+  }
+
+  .section-copy {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+
+  .feature-list {
+    display: grid;
+    gap: 0.8rem;
+    margin-top: 1.2rem;
+  }
+
+  .feature-item {
+    border: 1px solid var(--border);
+    background: rgba(10,10,20,0.68);
+    border-radius: 8px;
+    padding: 1rem 1.1rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+
+  .feature-item strong {
+    display: block;
+    color: var(--moon-silver);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+  }
+
+  @media (max-width: 840px) {
+    body { cursor: auto; }
+    #cursor-dot, #cursor-ring { display: none; }
+    .content-inner { grid-template-columns: 1fr; gap: 2rem; }
+    .hero { min-height: auto; padding: 7rem 1.2rem 5rem; }
+    nav { height: 58px; padding: 0 1rem; }
+    .nav-title { font-size: 0.9rem; }
+    .hero-copy, .section-copy, .feature-item { color: var(--text-secondary); }
+    .content-section { padding: 3.5rem 1.2rem; }
+    footer { align-items: flex-start; padding: 1.5rem 1.2rem; }
+    .footer-statuses { width: 100%; justify-content: flex-start; }
+  }
+
   footer {
     position: relative;
     z-index: 1;
     border-top: 1px solid var(--border);
     padding: 2.5rem;
-    display: flex;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
     gap: 1rem;
     background: rgba(0,0,0,0.6);
   }
@@ -760,31 +856,63 @@
     font-family: 'Share Tech Mono', monospace;
     font-size: 0.62rem;
     letter-spacing: 0.15em;
-    color: var(--text-dim);
+    color: var(--text-secondary);
     text-align: center;
+    justify-self: end;
+    white-space: nowrap;
+  }
+
+  .footer-statuses {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.55rem;
+    justify-self: center;
   }
 
   .footer-status {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    padding: 0.38rem 0.55rem;
+    border: 1px solid rgba(39,174,96,0.35);
+    border-radius: 999px;
+    background: rgba(39,174,96,0.08);
     font-family: 'Share Tech Mono', monospace;
     font-size: 0.65rem;
     color: var(--success);
     letter-spacing: 0.1em;
   }
 
+  .footer-status.offline {
+    border-color: rgba(231,76,60,0.42);
+    background: rgba(231,76,60,0.08);
+    color: #ff8f8f;
+  }
+
+  .footer-status.unknown {
+    border-color: rgba(243,156,18,0.42);
+    background: rgba(243,156,18,0.08);
+    color: #ffd08a;
+  }
+
   .status-dot {
     width: 6px; height: 6px;
     border-radius: 50%;
-    background: var(--success);
-    box-shadow: 0 0 6px var(--success);
+    background: currentColor;
+    box-shadow: 0 0 6px currentColor;
     animation: pulse-dot 2s ease-in-out infinite;
   }
 
   @keyframes pulse-dot {
-    0%,100%{ box-shadow: 0 0 6px var(--success); }
-    50%    { box-shadow: 0 0 12px var(--success); }
+    0%,100%{ box-shadow: 0 0 6px currentColor; }
+    50%    { box-shadow: 0 0 12px currentColor; }
+  }
+
+  @media (max-width: 840px) {
+    footer { grid-template-columns: 1fr;align-items: flex-start; padding: 1.5rem 1.2rem; }
+    .footer-meta { justify-self: start;text-align: left; }
+    .footer-statuses { width: 100%; justify-content: flex-start;justify-self: start; }
   }
 </style>
 </head>
@@ -802,14 +930,15 @@
 
 <!-- ── NAV ── -->
 <nav>
-  <a href="#" class="nav-brand">
-    <img src="LunarisIcon.png" class="nav-logo" alt="Lunaris">
+  <a href="/" class="nav-brand">
+    <img src="favicon.ico" class="nav-logo" alt="Lunaris" width="36" height="36" decoding="async">
     <span class="nav-title">LUNARIS</span>
   </a>
 
   <div class="nav-page">HOME</div>
 
   <div class="nav-right">
+    <a href="/faq#tutorial" class="nav-btn">Tutorial</a>
 
     <!-- Guest state: Discord login only -->
     <div id="nav-guest" style="display:flex;gap:0.6rem;align-items:center;">
@@ -831,7 +960,7 @@
           <span class="user-badge">Discord</span>
         </div>
       </div>
-      <a href="dashboard.html" class="nav-btn primary">Dashboard</a>
+      <a href="/dashboard" class="nav-btn primary">Dashboard</a>
     </div>
 
     <!-- Avatar dropdown (always shown) -->
@@ -840,9 +969,13 @@
         <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
       </div>
       <div class="nav-dropdown" id="dropdown">
-        <a href="dashboard.html" class="dropdown-item" id="dd-dashboard" style="display:none">
+        <a href="/dashboard" class="dropdown-item" id="dd-dashboard" style="display:none">
           <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
           Dashboard
+        </a>
+        <a href="/faq#tutorial" class="dropdown-item">
+          <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 15h.01M9.1 9a3 3 0 115.4 1.8c-.9.6-1.5 1.1-1.5 2.2"/></svg>
+          FAQ
         </a>
         <a href="#" class="dropdown-item" id="dd-profile" style="display:none">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
@@ -863,6 +996,7 @@
 </nav>
 
 <!-- ── HERO ── -->
+<main>
 <section class="hero">
   <div class="hero-glow"></div>
   <div class="orbit orbit-1"></div>
@@ -871,7 +1005,7 @@
 
   <div class="hero-content">
     <div class="hero-logo-wrap">
-      <img src="LunarisIcon.png" class="hero-logo" alt="Lunaris">
+      <img src="favicon.ico" class="hero-logo" alt="Lunaris" width="132" height="132" fetchpriority="high" decoding="async">
       <div class="hero-logo-ring"></div>
     </div>
 
@@ -890,16 +1024,17 @@
         <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2"><polyline points="5 12 12 19 19 12"/><line x1="12" y1="5" x2="12" y2="19"/></svg>
         Login with Discord
       </a>
-      <a href="dashboard.html" class="cta-btn secondary">Dashboard</a>
+      <a href="/dashboard" class="cta-btn secondary">Dashboard</a>
+      <a href="https://discord.com/oauth2/authorize?client_id=1509283594357702799&permissions=2147871744&scope=bot%20applications.commands" class="cta-btn secondary" target="_blank" rel="noopener">Invite Bot</a>
     </div>
 
     <div class="stats-bar">
       <div class="stat-item">
         <span class="stat-value" id="sv-uptime">0%</span>
-        <span class="stat-label">Uptime</span>
+        <span class="stat-label">Lunaris</span>
       </div>
       <div class="stat-item">
-        <span class="stat-value" id="sv-latency">&lt;0ms</span>
+        <span class="stat-value" id="sv-latency">0ms</span>
         <span class="stat-label">Avg Latency</span>
       </div>
     </div>
@@ -911,13 +1046,37 @@
   </div>
 </section>
 
+<section class="content-band" id="about">
+  <div class="content-inner">
+    <div>
+      <div class="section-kicker">About</div>
+      <h2 class="section-title">Built For SEA Military Divisions</h2>
+      <p class="section-copy">Lunaris is a bot intended to speed up logging, formatting, and engagement within SEA Military divisions. The project was started May 27th, 2026 by 0breezedev and livlig3.</p>
+      <p class="section-copy">Use Lunaris as a SEA Military Discord bot for Roblox military event logging, role permissions, raid schedules, and clean division reports.</p>
+      <p class="section-copy">Our goal is to make it easier for division leaders and officers to host events. Lunaris takes care of the format, so you can take care of the event.</p>
+      <div class="hero-actions" style="justify-content:flex-start;margin-top:1.4rem;">
+        <a href="https://discord.com/oauth2/authorize?client_id=1509283594357702799&permissions=2147871744&scope=bot%20applications.commands" class="cta-btn primary" target="_blank" rel="noopener">Invite Bot</a>
+        <a href="/dashboard" class="cta-btn secondary">Open Dashboard</a>
+      </div>
+    </div>
+    <div class="feature-list">
+      <div class="feature-item"><strong>Why Us?</strong>Lunaris gives server admins dashboard access to configure formats and event messages, keeping officers in line and preventing incorrect formats from being posted.</div>
+      <div class="feature-item"><strong>Configurable Formats</strong>Unlike static logging bots, Lunaris lets users create or adapt existing formats directly from the dashboard.</div>
+      <div class="feature-item"><strong>Premium Bot</strong>Premium includes optional extras such as automatic group promotions, priority support, and extra utility commands. Premium starts at $1 a month and mainly supports continued development.</div>
+    </div>
+  </div>
+</section>
+
 <!-- ── FOOTER ── -->
+</main>
 <footer>
   <span class="footer-brand">LUNARIS</span>
-  <span class="footer-meta">SEA MILITARY · LOGGING SYSTEM · © 2026</span>
-  <div class="footer-status">
-    <div class="status-dot"></div>
-    ALL SYSTEMS NOMINAL
+  <span class="footer-meta">Lunaris &copy; 2026</span>
+  <div class="footer-statuses" id="footerStatuses">
+    <div class="footer-status unknown">
+      <div class="status-dot"></div>
+      CHECKING BOTS
+    </div>
   </div>
 </footer>
 
@@ -1047,7 +1206,39 @@ function showToast(msg, type = '') {
 }
 
 // ── INIT: check for token on page load ──
+function renderBotStatuses(bots) {
+  const wrap = document.getElementById('footerStatuses');
+  if (!wrap) return;
+  wrap.innerHTML = bots.map(bot => {
+    const state = bot.configured === false ? 'unknown' : bot.online ? 'online' : 'offline';
+    const label = bot.configured === false ? 'NOT CONFIGURED' : bot.online ? 'ONLINE' : 'OFFLINE';
+    return `
+      <div class="footer-status ${state === 'online' ? '' : state}">
+        <div class="status-dot"></div>
+        ${bot.name.toUpperCase()}: ${label}
+      </div>
+    `;
+  }).join('');
+}
+
+async function loadBotStatuses() {
+  try {
+    const res = await fetch('/health');
+    if (!res.ok) throw new Error('Health check failed');
+    const data = await res.json();
+    renderBotStatuses(data.bots || [{ name: 'Main Bot', online: data.online, configured: true }]);
+  } catch {
+    renderBotStatuses([
+      { name: 'Main Bot', online: false, configured: true },
+      { name: 'Support Bot', online: false, configured: false }
+    ]);
+  }
+}
+
 (async function init() {
+  loadBotStatuses();
+  setInterval(loadBotStatuses, 30000);
+
   // 1. Check if Discord just redirected back with a token in the hash
   const freshToken = extractTokenFromHash();
   if (freshToken) {
@@ -1214,8 +1405,8 @@ document.addEventListener('click', (e) => {
 const statObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      animateCount({ el: document.getElementById('sv-uptime'),  target: 99.9, suffix: '%',  prefix: '',  decimals: 1 });
-      animateCount({ el: document.getElementById('sv-latency'), target: 80,   suffix: 'ms', prefix: '<', decimals: 0 });
+      animateCount({ el: document.getElementById('sv-uptime'),  target: 99.9, suffix: '%',  prefix: '', decimals: 1 });
+      animateCount({ el: document.getElementById('sv-latency'), target: 70, suffix: 'ms', prefix: '', decimals: 0 });
       statObserver.disconnect();
     }
   });
