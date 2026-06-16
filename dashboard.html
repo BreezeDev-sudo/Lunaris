@@ -6,13 +6,13 @@
 <meta name="description" content="Manage Lunaris Discord bot settings, command permissions, channels, role pings, and message templates for SEA Military division servers.">
 <meta property="og:title" content="Lunaris Dashboard">
 <meta property="og:description" content="Configure Lunaris modules for SEA Military events, raids, moderation, sticky messages, roles, channels, and logging.">
-<meta property="og:image" content="https://lunaris.livmellow.com/favicon.ico">
+<meta property="og:image" content="https://lunaris.livmellow.com/LunarisIcon-132.png">
 <meta name="theme-color" content="#05050d">
 <link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="48x48" href="/favicon.ico">
-<link rel="icon" type="image/png" sizes="96x96" href="/favicon.ico">
-<link rel="icon" type="image/png" sizes="192x192" href="/favicon.ico">
-<link rel="apple-touch-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+<link rel="apple-touch-icon" href="/favicon.png">
 <link rel="manifest" href="/site.webmanifest">
 <title>Dashboard — Lunaris</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1963,7 +1963,7 @@
 <!-- NAV -->
 <nav>
   <a href="/" class="nav-brand">
-    <img src="favicon.ico" class="nav-logo" alt="Lunaris" width="36" height="36" decoding="async">
+    <img src="LunarisIcon-72.png" class="nav-logo" alt="Lunaris" width="36" height="36" decoding="async">
     <span class="nav-title">LUNARIS</span>
   </a>
   <div class="nav-page">DASHBOARD</div>
@@ -2092,7 +2092,7 @@
       <div class="mb-preview-label">Live Preview</div>
       <div class="discord-mockup" id="discordPreview">
         <div class="discord-msg-area">
-          <div class="discord-avatar"><img src="/favicon.ico" alt="Lunaris" onerror="this.remove();this.parentElement.textContent='L';"></div>
+          <div class="discord-avatar"><img src="/favicon.png" alt="Lunaris" onerror="this.remove();this.parentElement.textContent='L';"></div>
           <div class="discord-content">
             <div class="discord-username">
               Lunaris
@@ -2156,7 +2156,7 @@
 //  CONFIG
 // ═══════════════════════════════════════════════════
 const DISCORD_CLIENT_ID = '1509283594357702799';
-const BOT_API           = 'https://api.lunaris.livmellow.com';
+const BOT_API           = window.location.origin;
 const REDIRECT_URI      = window.location.origin + window.location.pathname;
 
 const COMMAND_LABELS = {
@@ -2172,8 +2172,8 @@ const COMMAND_LABELS = {
 
 const COMMAND_CATEGORIES = [
   { title: 'Events', commands: ['schedule', 'schedule-event', 'events', 'start', 'end', 'cancel'] },
-  { title: 'Moderation', commands: ['ban', 'kick', 'mute', 'unban', 'warn', 'warns', 'mod-logs', 'moderation-panel'] },
-  { title: 'Mass Ban', commands: ['massban', 'massban-add', 'massban-list', 'massban-remove'] },
+  { title: 'Moderation', commands: ['ban', 'kick', 'mute', 'unmute', 'unban', 'warn', 'warns', 'mod-logs', 'moderation-panel', 'massmove'] },
+  { title: 'Mass Ban', commands: ['massban', 'updateseamassban'] },
   { title: 'Server Setup', commands: ['settings', 'rules', 'log'] },
   { title: 'Support', commands: ['help', 'status', 'support'] }
 ];
@@ -2183,7 +2183,7 @@ const DASHBOARD_MODULES = [
   { key: 'events', title: 'Events', icon: '&#9671;', group: 'Modules', subtitle: 'Event channels, ping roles, schedule/start/end formats, and popup questions', settingsTab: 'eventModule', settingsTabs: ['eventModule'], commands: ['schedule-event', 'events', 'start', 'end', 'cancel'] },
   { key: 'training', title: 'Training', icon: '&#9651;', group: 'Modules', subtitle: 'Training log setup and training-specific ending format', settingsTab: 'trainingModule', settingsTabs: ['trainingModule'], commands: ['schedule-event', 'start', 'end', 'log'] },
   { key: 'raids', title: 'Raids', icon: '&#9876;', group: 'Modules', subtitle: 'Raid channels, ping roles, schedule/start/end formats, and popup questions', settingsTab: 'raidModule', settingsTabs: ['raidModule'], commands: ['schedule', 'start', 'end', 'cancel'] },
-  { key: 'moderation', title: 'Moderation', icon: '&#9635;', group: 'Modules', subtitle: 'Moderation commands, logs, and mass-ban tools', settingsTab: 'moderationModule', settingsTabs: ['moderationModule'], commands: ['ban', 'kick', 'mute', 'unban', 'warn', 'warns', 'mod-logs', 'moderation-panel', 'massban', 'massban-add', 'massban-list', 'massban-remove'] },
+  { key: 'moderation', title: 'Moderation', icon: '&#9635;', group: 'Modules', subtitle: 'Moderation commands, logs, voice moves, and mass-ban tools', settingsTab: 'moderationModule', settingsTabs: ['moderationModule'], commands: ['ban', 'kick', 'mute', 'unmute', 'unban', 'warn', 'warns', 'mod-logs', 'moderation-panel', 'massmove', 'massban', 'updateseamassban'] },
   { key: 'sticky', title: 'Sticky', icon: '&#9679;', group: 'Automation', subtitle: 'Sticky message setup', settingsTab: 'sticky', settingsTabs: ['sticky'], commands: [] },
   { key: 'welcome', title: 'Welcome', icon: '&#10022;', group: 'Automation', subtitle: 'Welcome and leave messages', settingsTab: 'welcome', settingsTabs: ['welcome'], commands: [] },
   { key: 'roles', title: 'Roles', icon: '&#9675;', group: 'Setup', subtitle: 'Global permissions, logger roles, and auto roles', settingsTab: 'roles', settingsTabs: ['roles'], commands: ['settings', 'log'] },
@@ -2616,7 +2616,7 @@ function renderModuleSidebar() {
   const groups = [...new Set(DASHBOARD_MODULES.map(module => module.group || 'Modules'))];
   sidebar.innerHTML = `
     <div class="module-sidebar-brand">
-      <img class="module-sidebar-logo" src="/favicon.ico" alt="Lunaris">
+      <img class="module-sidebar-logo" src="/LunarisIcon-72.png" alt="Lunaris">
       <div>
         <div class="module-sidebar-name">Lunaris</div>
         <div class="module-sidebar-subtitle">SEA Military</div>
@@ -3073,7 +3073,7 @@ function renderDiscordPlainPreview(content, label = 'Preview') {
     <div class="mb-preview-label" style="margin:.4rem 0 .7rem;">${escAttr(label)}</div>
     <div class="discord-mockup">
       <div class="discord-msg-area">
-        <div class="discord-avatar"><img src="/favicon.ico" alt="Lunaris" onerror="this.remove();this.parentElement.textContent='L';"></div>
+        <div class="discord-avatar"><img src="/favicon.png" alt="Lunaris" onerror="this.remove();this.parentElement.textContent='L';"></div>
         <div class="discord-content">
           <div class="discord-username">Lunaris <span class="discord-bot-tag">BOT</span> <span class="discord-timestamp">Today at 20:00</span></div>
           <div class="discord-embed-desc" style="margin-top:.35rem;">${renderDiscordMarkdown(content)}</div>
@@ -3095,13 +3095,13 @@ function renderWelcomePreview(content, mode, label, title) {
     <div class="mb-preview-label" style="margin:.4rem 0 .7rem;">${escAttr(label)}</div>
     <div class="discord-mockup">
       <div class="discord-msg-area">
-        <div class="discord-avatar"><img src="/favicon.ico" alt="Lunaris" onerror="this.remove();this.parentElement.textContent='L';"></div>
+        <div class="discord-avatar"><img src="/favicon.png" alt="Lunaris" onerror="this.remove();this.parentElement.textContent='L';"></div>
         <div class="discord-content">
           <div class="discord-username">Lunaris <span class="discord-bot-tag">BOT</span> <span class="discord-timestamp">Today at 20:00</span></div>
           <div class="welcome-panel-preview">
             <div class="welcome-panel-inner">
               <div class="welcome-panel-title">
-                <img src="/favicon.ico" alt="">
+                <img src="/favicon.png" alt="">
                 <span>${escHtml(title)}</span>
               </div>
               <div class="welcome-panel-divider"></div>
@@ -3630,6 +3630,9 @@ async function saveDashboardSettings(guildId, btn) {
     if (!res.ok) throw new Error(`Settings API returned ${res.status}`);
     const saved = await res.json();
     currentSettingsConfig = saved.settings || next;
+    if (saved.guildMeta) {
+      currentGuildMeta = saved.guildMeta;
+    }
     lastSavedSettingsConfig = cloneConfig(currentSettingsConfig);
     renderSettingsPanel(guildId, currentSettingsConfig);
     setSettingsDirty(false);
